@@ -23,7 +23,7 @@ This Erasmus+ project aims to develop a platform, designed to assist Erasmus+ st
 + Adapting their plan each day toward the Sprint Goal;
 + Holding each other accountable as professionals.
 
-**Developer (Lucas) is responsible for:**
+**Developer (Lucas Butery) is responsible for:**
 + Creating a plan for the Sprint, the Sprint Backlog;
 + Instilling quality by adhering to a Definition of Done;
 + Adapting their plan each day toward the Sprint Goal;
