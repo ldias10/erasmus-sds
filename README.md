@@ -2,7 +2,7 @@
 This Erasmus+ project aims to develop a platform, designed to assist Erasmus+ students in selecting courses for their Learning Agreement (LA). The main problem addressed by the project is the difficulty students face in deciding which courses to include in their LA. This sotware will offer features such as presenting a list of available courses with official descriptions, including links to ECTS details, as well as showcasing comments and reviews from other Erasmus+ students about the courses. Additionally, students can comment on courses, add materials, and create their Learning Agreement within the platform. They can manage their selection by adding or deleting courses to a virtual basket and export their finalized Learning Agreement as a document.
 
 
-## Roles and responsabilities
+## Roles and responsibilities
 **Scrum Master (Luís Dias) is responsible for:**
 + Coaching the team members in self-management and cross-functionality;
 + Helping the Scrum Team focus on creating high-value Increments that meet the Definition of Done;
