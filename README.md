@@ -31,6 +31,8 @@ This Erasmus+ project aims to develop a platform, designed to assist Erasmus+ st
 
 
 ## Communication strategies
-
+Our communication strategy is flexible and adapted to the needs of our team. We will utilize both online and in-person meetings to ensure effective collaboration.
+For more critical meetings such as sprint plannings or milestone discussions, we will convene in person at the Poznan University of Technology. These face-to-face reunions will allow for in-depth discussions and decision-making.
+For smaller tasks or routine updates, we will utilize online platforms like Discord or Google Meets. These virtual meetings will enable us to efficiently address smaller issues and keep the project moving forward.
 
 ## Installation manual
