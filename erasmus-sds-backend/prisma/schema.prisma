@@ -1,0 +1,151 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int        @id @default(autoincrement())
+  email      String     @unique @db.VarChar()
+  password   String     @db.VarChar()
+  name       String     @db.VarChar()
+  surname    String     @db.VarChar()
+  isVerified Boolean    @default(false)
+  Admin      Admin?
+  Professor  Professor?
+  Student    Student?
+}
+
+model Admin {
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id])
+}
+
+model Professor {
+  userId        Int                       @unique
+  user          User                      @relation(fields: [userId], references: [id])
+  fieldsOfStudy ProfessorOnFieldOfStudy[]
+}
+
+model Student {
+  userId        Int                     @unique
+  user          User                    @relation(fields: [userId], references: [id])
+  countryId     Int
+  country       Country                 @relation(fields: [countryId], references: [id])
+  schoolId      Int
+  School        School                  @relation(fields: [schoolId], references: [id])
+  studyLevelId  Int
+  StudyLevel    StudyLevel              @relation(fields: [studyLevelId], references: [id])
+  fieldsOfStudy StudentOnFieldOfStudy[]
+  courses       StudentOnCourse[]
+  comments      Comment[]
+}
+
+model Country {
+  id       Int       @id @default(autoincrement())
+  name     String    @db.VarChar()
+  tag      String    @db.VarChar(5)
+  students Student[]
+}
+
+model University {
+  id      Int      @id @default(autoincrement())
+  name    String   @db.VarChar()
+  schools School[]
+}
+
+model School {
+  id           Int        @id @default(autoincrement())
+  name         String     @db.VarChar()
+  universityId Int
+  University   University @relation(fields: [universityId], references: [id])
+  students     Student[]
+}
+
+model FieldOfStudy {
+  id         Int                       @id @default(autoincrement())
+  name       String                    @db.VarChar()
+  professors ProfessorOnFieldOfStudy[]
+  students   StudentOnFieldOfStudy[]
+  courses    Course[]
+}
+
+model ProfessorOnFieldOfStudy {
+  fieldOfStudyId  Int
+  FieldOfStudy    FieldOfStudy @relation(fields: [fieldOfStudyId], references: [id])
+  professorUserId Int
+  Professor       Professor    @relation(fields: [professorUserId], references: [userId])
+
+  @@id([fieldOfStudyId, professorUserId])
+}
+
+model StudentOnFieldOfStudy {
+  studentUserId  Int
+  Student        Student      @relation(fields: [studentUserId], references: [userId])
+  fieldOfStudyId Int
+  FieldOfStudy   FieldOfStudy @relation(fields: [fieldOfStudyId], references: [id])
+
+  @@id([fieldOfStudyId, studentUserId])
+}
+
+model Course {
+  id             Int               @id @default(autoincrement())
+  name           String            @db.VarChar()
+  description    String            @db.VarChar()
+  ects           Int
+  hoursOfLecture Float
+  hoursOfLabs    Float
+  numberOfExams  Int
+  isAvailable    Boolean           @default(false)
+  fieldOfStudyId Int
+  FieldOfStudy   FieldOfStudy      @relation(fields: [fieldOfStudyId], references: [id])
+  studyLevelId   Int
+  StudyLevel     StudyLevel        @relation(fields: [studyLevelId], references: [id])
+  Students       StudentOnCourse[]
+  Comments       Comment[]
+}
+
+model StudentOnCourse {
+  studentUserId Int
+  Student       Student @relation(fields: [studentUserId], references: [userId])
+  courseId      Int
+  Course        Course  @relation(fields: [courseId], references: [id])
+  Rate          Rate?
+
+  @@id([studentUserId, courseId])
+}
+
+model Comment {
+  id            Int      @id @default(autoincrement())
+  content       String   @db.VarChar()
+  date          DateTime @db.Timestamp()
+  studentUserId Int
+  Student       Student  @relation(fields: [studentUserId], references: [userId])
+  courseId      Int
+  Course        Course   @relation(fields: [courseId], references: [id])
+}
+
+model Rate {
+  studentId       Int
+  courseId        Int
+  StudentOnCourse StudentOnCourse @relation(fields: [studentId, courseId], references: [studentUserId, courseId])
+  rate            Int
+
+  @@unique([studentId, courseId])
+}
+
+model StudyLevel {
+  id       Int       @id @default(autoincrement())
+  name     String    @db.VarChar()
+  students Student[]
+  courses  Course[]
+}
