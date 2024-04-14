@@ -51,16 +51,19 @@ model Student {
 }
 
 model Country {
-  id       Int       @id @default(autoincrement())
-  name     String    @db.VarChar()
-  tag      String    @db.VarChar(5)
-  students Student[]
+  id           Int          @id @default(autoincrement())
+  name         String       @db.VarChar()
+  tag          String       @db.VarChar(5)
+  students     Student[]
+  universities University[]
 }
 
 model University {
-  id      Int      @id @default(autoincrement())
-  name    String   @db.VarChar()
-  schools School[]
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar()
+  countryId Int
+  Country   Country  @relation(fields: [countryId], references: [id])
+  schools   School[]
 }
 
 model School {
