@@ -2,13 +2,15 @@ import dotenv from "dotenv";
 import {fastify} from "fastify";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
-import cors from '@fastify/cors'
+import cors from '@fastify/cors';
+import fastifyBcrypt from "fastify-bcrypt";
 import prismaPlugin from './plugins/prisma'
 import CourseRoutes from "./routes/course";
 import StudyLevelRoutes from "./routes/study_level";
 import FieldOfStudyRoutes from "./routes/field_of_study";
 import UniversityRoutes from "./routes/university";
 import SchoolRoutes from "./routes/school";
+import AdminRoutes from "./routes/admin";
 
 dotenv.config();
 const app = fastify({logger: true});
@@ -41,6 +43,9 @@ const corsOptions = {
 app.register(fastifySwagger, swaggerOptions);
 app.register(fastifySwaggerUi, swaggerUiOptions);
 app.register(cors, corsOptions);
+app.register(fastifyBcrypt, {
+    saltWorkFactor: 12
+});
 
 app.register((app, options, done) => {
     app.get("/", {
@@ -63,6 +68,7 @@ app.register((app, options, done) => {
 });
 
 app.register(prismaPlugin);
+app.register(AdminRoutes);
 app.register(CourseRoutes);
 app.register(FieldOfStudyRoutes);
 app.register(SchoolRoutes);
