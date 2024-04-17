@@ -38,7 +38,7 @@ const UniversityRoutes = async (app, options) => {
             if (!name || !countryId) {
                 return response.send(400);
             }
-            const university = await universityService.create(name, countryId);
+            const university = await universityService.create(name, Number(countryId));
             return response.code(201).send(university);
         }
         catch (error) {
@@ -54,7 +54,7 @@ const UniversityRoutes = async (app, options) => {
             if (!name || !countryId) {
                 return response.send(400);
             }
-            const university = await universityService.update(id, name, countryId);
+            const university = await universityService.update(id, name, Number(countryId));
             if (!university) {
                 return response.send(404);
             }

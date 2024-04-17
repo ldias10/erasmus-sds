@@ -10,69 +10,57 @@ class AdminService {
     async getAll() {
         const admins = await this.app.prisma.admin.findMany({
             include: {
+                user: true,
+            }
+        });
+        const adminsDTO = admins.map((admin) => this.adminToAdminDTO(admin));
+        return adminsDTO;
+    }
+    async get(id) {
+        const admin = await this.app.prisma.admin.findUnique({
+            where: {
+                userId: id
+            },
+            include: {
+                user: true,
+            }
+        });
+        return admin ? this.adminToAdminDTO(admin) : null;
+    }
+    async create(email, password, name, surname, isVerified) {
+        const user = await this.userService.create(email, password, name, surname, isVerified);
+        const admin = await this.app.prisma.admin.create({
+            data: {
+                userId: user.id
+            },
+            include: {
                 user: true
             }
         });
-        return this.app.prisma.user.findMany();
-    }
-    async get(id) {
-        return this.app.prisma.user.findUnique({
-            where: {
-                id: id,
-            }
-        });
-    }
-    async create(email, password, name, surname, isVerified) {
-        const hashedPassword = await this.app.bcrypt.hash(password);
-        return this.app.prisma.user.create({
-            data: {
-                email: email,
-                password: hashedPassword,
-                name: name,
-                surname: surname,
-                isVerified: isVerified,
-            }
-        });
+        return this.adminToAdminDTO(admin);
     }
     async update(id, email, name, surname, isVerified) {
-        return this.app.prisma.user.update({
-            where: {
-                id: id,
-            },
-            data: {
-                email: email,
-                name: name,
-                surname: surname,
-                isVerified: isVerified,
-            }
-        });
+        return await this.userService.update(id, email, name, surname, isVerified);
     }
     async updatePassword(id, currentPassword, newPassword) {
-        const user = await this.app.prisma.user.findUnique({
-            where: {
-                id: id
-            }
-        });
-        if (!user || !(await this.app.bcrypt.compare(user.password, currentPassword))) {
-            return false;
-        }
-        const hashedNewPassword = await this.app.bcrypt.hash(newPassword);
-        await this.app.prisma.user.update({
-            where: {
-                id: id
-            },
-            data: {
-                password: hashedNewPassword
-            }
-        });
-        return true;
+        return await this.userService.updatePassword(id, currentPassword, newPassword);
     }
     async delete(id) {
-        return this.app.prisma.user.delete({
+        const admin = await this.app.prisma.admin.delete({
             where: {
-                id: id
+                userId: id
             }
         });
+        return await this.userService.delete(id);
+    }
+    adminToAdminDTO(admin) {
+        return {
+            userId: admin.userId,
+            email: admin.user.email,
+            name: admin.user.name,
+            surname: admin.user.surname,
+            isVerified: admin.user.isVerified,
+        };
     }
 }
 exports.AdminService = AdminService;

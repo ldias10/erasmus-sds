@@ -71,7 +71,7 @@ const SchoolRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
                 return response.send(400);
             }
 
-            const school: School = await schoolService.update(id, name, universityId);
+            const school: School = await schoolService.update(id, name, Number(universityId));
             if (!school) {
                 return response.send(404);
             }

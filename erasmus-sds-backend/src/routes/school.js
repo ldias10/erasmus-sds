@@ -54,7 +54,7 @@ const SchoolRoutes = async (app, options) => {
             if (!name || !universityId) {
                 return response.send(400);
             }
-            const school = await schoolService.update(id, name, universityId);
+            const school = await schoolService.update(id, name, Number(universityId));
             if (!school) {
                 return response.send(404);
             }

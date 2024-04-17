@@ -1,8 +1,8 @@
 import {FastifyInstance} from "fastify";
-import {Admin, User} from "@prisma/client";
+import {Professor, User} from "@prisma/client";
 import {UserDTO, UserService} from "./user";
 
-export interface AdminDTO {
+export interface ProfessorDTO {
     userId: number,
     email: string,
     name: string,
@@ -10,7 +10,7 @@ export interface AdminDTO {
     isVerified: boolean,
 }
 
-export class AdminService {
+export class ProfessorService {
 
     private app: FastifyInstance;
     private userService: UserService;
@@ -20,19 +20,21 @@ export class AdminService {
         this.userService = new UserService(app);
     }
 
-    public async getAll(): Promise<AdminDTO[]> {
-        const admins: (Admin & { user: User })[] = await this.app.prisma.admin.findMany({
+    public async getAll(): Promise<ProfessorDTO[]> {
+        const professors: (Professor & { user: User })[] = await this.app.prisma.professor.findMany({
             include: {
                 user: true,
             }
         });
 
-        const adminsDTO: AdminDTO[] = admins.map((admin: (Admin & { user: User })) => this.adminToAdminDTO(admin));
-        return adminsDTO;
+        const professorDTOS: ProfessorDTO[] = professors.map((professor: (Professor & {
+            user: User
+        })) => this.professorToProfessorDTO(professor));
+        return professorDTOS;
     }
 
-    public async get(id: number): Promise<AdminDTO | null> {
-        const admin: (Admin & { user: User }) | null = await this.app.prisma.admin.findUnique({
+    public async get(id: number): Promise<ProfessorDTO | null> {
+        const professor: (Professor & { user: User }) | null = await this.app.prisma.professor.findUnique({
             where: {
                 userId: id
             },
@@ -41,13 +43,13 @@ export class AdminService {
             }
         });
 
-        return admin ? this.adminToAdminDTO(admin) : null;
+        return professor ? this.professorToProfessorDTO(professor) : null;
     }
 
-    public async create(email: string, password: string, name: string, surname: string, isVerified: boolean): Promise<AdminDTO> {
+    public async create(email: string, password: string, name: string, surname: string, isVerified: boolean): Promise<ProfessorDTO> {
         const user: UserDTO = await this.userService.create(email, password, name, surname, isVerified);
 
-        const admin: Admin & { user: User } = await this.app.prisma.admin.create({
+        const professor: Professor & { user: User } = await this.app.prisma.professor.create({
             data: {
                 userId: user.id
             },
@@ -55,7 +57,7 @@ export class AdminService {
                 user: true
             }
         });
-        return this.adminToAdminDTO(admin);
+        return this.professorToProfessorDTO(professor);
     }
 
     public async update(id: number, email: string, name: string, surname: string, isVerified: boolean): Promise<UserDTO> {
@@ -67,7 +69,7 @@ export class AdminService {
     }
 
     public async delete(id: number): Promise<UserDTO> {
-        const admin: Admin = await this.app.prisma.admin.delete({
+        const professor: Professor = await this.app.prisma.professor.delete({
             where: {
                 userId: id
             }
@@ -76,13 +78,13 @@ export class AdminService {
         return await this.userService.delete(id);
     }
 
-    private adminToAdminDTO(admin: Admin & { user: User }): AdminDTO {
+    private professorToProfessorDTO(professor: Professor & { user: User }): ProfessorDTO {
         return {
-            userId: admin.userId,
-            email: admin.user.email,
-            name: admin.user.name,
-            surname: admin.user.surname,
-            isVerified: admin.user.isVerified,
+            userId: professor.userId,
+            email: professor.user.email,
+            name: professor.user.name,
+            surname: professor.user.surname,
+            isVerified: professor.user.isVerified,
         }
     }
 }

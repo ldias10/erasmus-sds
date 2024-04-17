@@ -11,6 +11,11 @@ import FieldOfStudyRoutes from "./routes/field_of_study";
 import UniversityRoutes from "./routes/university";
 import SchoolRoutes from "./routes/school";
 import AdminRoutes from "./routes/admin";
+import CountryRoutes from "./routes/country";
+import ProfessorRoutes from "./routes/professor";
+import StudentRoutes from "./routes/student";
+import CommentRoutes from "./routes/comment";
+import RateRoutes from "./routes/rate";
 
 dotenv.config();
 const app = fastify({logger: true});
@@ -69,9 +74,14 @@ app.register((app, options, done) => {
 
 app.register(prismaPlugin);
 app.register(AdminRoutes);
+app.register(CommentRoutes);
+app.register(CountryRoutes);
 app.register(CourseRoutes);
 app.register(FieldOfStudyRoutes);
+app.register(ProfessorRoutes);
+app.register(RateRoutes);
 app.register(SchoolRoutes);
+app.register(StudentRoutes);
 app.register(StudyLevelRoutes);
 app.register(UniversityRoutes);
 

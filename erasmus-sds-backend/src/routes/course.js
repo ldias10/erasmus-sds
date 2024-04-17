@@ -34,7 +34,6 @@ const CourseRoutes = async (app, options) => {
     const courseService = new course_1.CourseService(app);
     app.get('/courses', {}, async (request, response) => {
         try {
-            console.log(await app.prisma.admin.findMany({ include: { user: true } }));
             const courses = await courseService.getAll();
             return response.code(200).send(courses);
         }

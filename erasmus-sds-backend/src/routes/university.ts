@@ -51,7 +51,7 @@ const UniversityRoutes: FastifyPluginAsync = async (app: FastifyInstance, option
                 return response.send(400);
             }
 
-            const university: University = await universityService.create(name, countryId);
+            const university: University = await universityService.create(name, Number(countryId));
             return response.code(201).send(university);
         } catch (error) {
             request.log.error(error);
@@ -71,7 +71,7 @@ const UniversityRoutes: FastifyPluginAsync = async (app: FastifyInstance, option
                 return response.send(400);
             }
 
-            const university: University = await universityService.update(id, name, countryId);
+            const university: University = await universityService.update(id, name, Number(countryId));
             if (!university) {
                 return response.send(404);
             }

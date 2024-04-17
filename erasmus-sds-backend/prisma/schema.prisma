@@ -143,7 +143,7 @@ model Rate {
   StudentOnCourse StudentOnCourse @relation(fields: [studentId, courseId], references: [studentUserId, courseId])
   rate            Int
 
-  @@unique([studentId, courseId])
+  @@id(name: "rateId", [studentId, courseId])
 }
 
 model StudyLevel {
