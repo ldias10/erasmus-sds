@@ -1,1 +1,81 @@
+# -------------------- GLOBAL --------------------
 erasmus-sds-frontend.iml
+
+
+
+
+
+# -------------------- BACKEND --------------------
+
+# IntelliJ IDEA
+/erasmus-sds-backend/.idea/
+/erasmus-sds-backend/erasmus-sds-backend.iml
+
+# dependencies
+/erasmus-sds-backend/node_modules
+/erasmus-sds-backend/.pnp
+/erasmus-sds-backend/.pnp.js
+/erasmus-sds-backend/.yarn/install-state.gz
+
+# debug
+/erasmus-sds-backend/npm-debug.log*
+/erasmus-sds-backend/yarn-debug.log*
+/erasmus-sds-backend/yarn-error.log*
+
+# local env files
+/erasmus-sds-backend/.env*
+
+# typescript
+/erasmus-sds-backend/*.tsbuildinfo
+/erasmus-sds-backend/next-env.d.ts
+
+# prisma migrations
+/erasmus-sds-backend/prisma/migrations/
+
+# build
+/erasmus-sds-backend/src/*.js
+/erasmus-sds-backend/src/**/*.js
+
+
+
+
+
+# -------------------- FRONTEND --------------------
+
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+/erasmus-sds-frontend/.idea/
+
+# dependencies
+/erasmus-sds-frontend/node_modules
+/erasmus-sds-frontend/.pnp
+/erasmus-sds-frontend/.pnp.js
+/erasmus-sds-frontend/.yarn/install-state.gz
+
+# testing
+/erasmus-sds-frontend/coverage
+
+# next.js
+/erasmus-sds-frontend/.next/
+/erasmus-sds-frontend/out/
+
+# production
+/erasmus-sds-frontend/build
+
+# misc
+/erasmus-sds-frontend/.DS_Store
+/erasmus-sds-frontend/*.pem
+
+# debug
+/erasmus-sds-frontend/npm-debug.log*
+/erasmus-sds-frontend/yarn-debug.log*
+/erasmus-sds-frontend/yarn-error.log*
+
+# local env files
+/erasmus-sds-frontend/.env*.local
+
+# vercel
+/erasmus-sds-frontend/.vercel
+
+# typescript
+/erasmus-sds-frontend/*.tsbuildinfo
+/erasmus-sds-frontend/next-env.d.ts
