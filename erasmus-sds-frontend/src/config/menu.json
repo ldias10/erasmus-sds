@@ -1,0 +1,41 @@
+{
+  "main": [
+    {
+      "name": "Home",
+      "url": "/"
+    },
+    {
+      "name": "Courses",
+      "url": "/courses"
+    },
+    {
+      "name": "LA",
+      "url": "/learning_agreement"
+    },
+    {
+      "name": "Pages",
+      "url": "",
+      "hasChildren": true,
+      "children": [
+        {
+          "name": "Contact",
+          "url": "/contact"
+        },
+        {
+          "name": "Blog",
+          "url": "/blog"
+        }
+      ]
+    }
+  ],
+  "footer": [
+    {
+      "name": "Courses",
+      "url": "/courses"
+    },
+    {
+      "name": "LA",
+      "url": "/learning_agreement"
+    }
+  ]
+}
