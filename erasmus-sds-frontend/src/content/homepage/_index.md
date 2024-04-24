@@ -1,8 +1,8 @@
 ---
 # Banner
 banner:
-  title: "The Ultimate Starter Template You Need To Start Your Next Project"
-  content: "Nextplate is a free starter template built with Next and TailwindCSS, providing everything you need to jumpstart your Next project and save valuable time."
+  title: "Connecting minds, crossing borders: together at StudySync"
+  content: "Embark on this adventure with us and find out everything you need to know for your Erasmus programme!"
   image: "/images/banner.png"
   button:
     enable: true
