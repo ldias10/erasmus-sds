@@ -1,6 +1,6 @@
 "use client";
 
-import { CustomerError } from "@/lib/types";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
@@ -12,6 +12,7 @@ const Login = () => {
   const [formData, setFormData] = useState<FormData>({
     email: "",
     password: "",
+    isVerified: false,
   });
 
   const [loading, setLoading] = useState(false);
