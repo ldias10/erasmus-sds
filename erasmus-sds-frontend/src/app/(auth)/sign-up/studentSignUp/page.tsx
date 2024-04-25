@@ -109,6 +109,7 @@ const StudentSignUp = () => {
                     placeholder="Enter your first name"
                     type="text"
                     onChange={handleChange}
+                    required={true}
                   />
                 </div>
 
@@ -119,6 +120,7 @@ const StudentSignUp = () => {
                     placeholder="Enter your last name"
                     type="text"
                     onChange={handleChange}
+                    required={true}
                   />
                 </div>
 
@@ -130,6 +132,7 @@ const StudentSignUp = () => {
                     placeholder="Type your email"
                     type="email"
                     onChange={handleChange}
+                    required={true}
                   />
                 </div>
 
@@ -137,7 +140,8 @@ const StudentSignUp = () => {
                   <label className="form-label mt-8">Country</label>
                   <select className='form-input' 
                           name='countryId'
-                          onChange={handleChangeSelect}>
+                          onChange={handleChangeSelect}
+                          required={true}>
                     <option value="">-- select one --</option>
                     <option value="004">Afghanistan</option>
                     <option value="008">Albania</option>
@@ -393,7 +397,8 @@ const StudentSignUp = () => {
                   <label className="form-label mt-8">School</label>
                   <select className='form-input' 
                           name='schoolId'
-                          onChange={handleChangeSelect}>
+                          onChange={handleChangeSelect}
+                          required={true}>
                     <option value="">-- select one --</option>
                     <option value="1">IMT Atlantique</option>
                     <option value="2">Poznań</option>
@@ -420,6 +425,7 @@ const StudentSignUp = () => {
                     placeholder="********"
                     type="password"
                     onChange={handleChange}
+                    required={true}
                   />
                 </div>
 
