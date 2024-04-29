@@ -11,7 +11,10 @@ export const studentsGet = {
                         email: {type: "string"},
                         name: {type: "string"},
                         surname: {type: "string"},
-                        isVerified: {type: "boolean"}
+                        isVerified: {type: "boolean"},
+                        countryId: {type: "integer"},
+                        schoolId: {type: "integer"},
+                        studyLevelId: {type: "integer"},
                     },
                 },
                 description: "OK"
@@ -45,7 +48,10 @@ export const studentGet = {
                     email: {type: "string"},
                     name: {type: "string"},
                     surname: {type: "string"},
-                    isVerified: {type: "boolean"}
+                    isVerified: {type: "boolean"},
+                    countryId: {type: "integer"},
+                    schoolId: {type: "integer"},
+                    studyLevelId: {type: "integer"},
                 },
                 description: "OK",
             },
@@ -72,13 +78,16 @@ export const studentPost = {
         tags: ["Student"],
         body: {
             type: "object",
-            required: ["email", "password", "name", "surname"],
+            required: ["email", "password", "name", "surname", "countryId", "schoolId", "studyLevelId"],
             properties: {
                 email: {type: "string"},
                 password: {type: "string"},
                 name: {type: "string"},
                 surname: {type: "string"},
-                isVerified: {type: "boolean", description: "If not specified, set to false."}
+                isVerified: {type: "boolean", description: "If not specified, set to false."},
+                countryId: {type: "integer"},
+                schoolId: {type: "integer"},
+                studyLevelId: {type: "integer"},
             }
         },
         response: {
@@ -89,7 +98,10 @@ export const studentPost = {
                     email: {type: "string"},
                     name: {type: "string"},
                     surname: {type: "string"},
-                    isVerified: {type: "boolean"}
+                    isVerified: {type: "boolean"},
+                    countryId: {type: "integer"},
+                    schoolId: {type: "integer"},
+                    studyLevelId: {type: "integer"},
                 },
                 description: "Created"
             },
@@ -123,12 +135,15 @@ export const studentPut = {
         },
         body: {
             type: "object",
-            required: ["email", "name", "surname", "isVerified"],
+            required: ["email", "name", "surname", "isVerified", "countryId", "schoolId", "studyLevelId"],
             properties: {
                 email: {type: "string"},
                 name: {type: "string"},
                 surname: {type: "string"},
-                isVerified: {type: "boolean"}
+                isVerified: {type: "boolean"},
+                countryId: {type: "integer"},
+                schoolId: {type: "integer"},
+                studyLevelId: {type: "integer"},
             }
         },
         response: {
@@ -139,7 +154,10 @@ export const studentPut = {
                     email: {type: "string"},
                     name: {type: "string"},
                     surname: {type: "string"},
-                    isVerified: {type: "boolean"}
+                    isVerified: {type: "boolean"},
+                    countryId: {type: "integer"},
+                    schoolId: {type: "integer"},
+                    studyLevelId: {type: "integer"},
                 },
                 description: "OK"
             },
