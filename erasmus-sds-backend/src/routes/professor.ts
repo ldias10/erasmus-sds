@@ -2,6 +2,14 @@ import {FastifyInstance, FastifyPluginAsync, FastifyPluginOptions} from "fastify
 import fp from "fastify-plugin";
 import {UserDTO} from "../services/user";
 import {ProfessorDTO, ProfessorService} from "../services/professor";
+import {
+    professorDelete,
+    professorGet,
+    professorPost,
+    professorPut,
+    professorPutPassword,
+    professorsGet
+} from "../docs/professor";
 
 interface professorParams {
     id: number;
@@ -30,32 +38,32 @@ interface professorUpdatePasswordAttrs {
 const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: FastifyPluginOptions) => {
     const professorService: ProfessorService = new ProfessorService(app);
 
-    app.get('/professors', {}, async (request, response) => {
+    app.get('/professors', professorsGet, async (request, response) => {
         try {
             const professors: ProfessorDTO[] = await professorService.getAll();
             return response.code(200).send(professors);
         } catch (error) {
             request.log.error(error);
-            return response.send(500);
+            return response.code(500).send({error: "Internal Server Error"});
         }
     });
 
-    app.get<{ Params: professorParams }>('/professor/:id', {}, async (request, response) => {
+    app.get<{ Params: professorParams }>('/professor/:id', professorGet, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const professor: ProfessorDTO | null = await professorService.get(id);
             if (!professor) {
-                return response.send(404);
+                return response.code(404).send({error: "Not found"});
             }
 
             return response.code(200).send(professor);
         } catch (error) {
             request.log.error(error);
-            return response.send(500);
+            return response.code(500).send({error: "Internal Server Error"});
         }
     });
 
-    app.post<{ Body: professorCreateAttrs }>('/professor', {}, async (request, response) => {
+    app.post<{ Body: professorCreateAttrs }>('/professor', professorPost, async (request, response) => {
         try {
             const body: professorCreateAttrs = request.body;
             const {
@@ -65,22 +73,22 @@ const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options
                 surname,
                 isVerified
             } = body;
-            if (!email || !password || !name || !surname || !isVerified) {
-                return response.send(400);
+            if (!email || !password || !name || !surname) {
+                return response.code(400).send({error: "Bad Request"});
             }
 
-            const professor: ProfessorDTO = await professorService.create(email, password, name, surname, isVerified);
+            const professor: ProfessorDTO = await professorService.create(email, password, name, surname, isVerified || false);
             return response.code(201).send(professor);
         } catch (error) {
             request.log.error(error);
-            return response.send(500);
+            return response.code(500).send({error: "Internal Server Error"});
         }
     });
 
     app.put<{
         Params: professorParams,
         Body: professorUpdateAttrs
-    }>('/professor/:id', {}, async (request, response) => {
+    }>('/professor/:id', professorPut, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const body: professorUpdateAttrs = request.body;
@@ -91,25 +99,25 @@ const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options
                 isVerified
             } = body;
             if (!email || !name || !surname || !isVerified) {
-                return response.send(400);
+                return response.code(400).send({error: "Bad Request"});
             }
 
             const professor: UserDTO = await professorService.update(id, email, name, surname, isVerified);
             if (!professor) {
-                return response.send(404);
+                return response.code(404).send({error: "Not found"});
             }
 
             return response.code(200).send(professor);
         } catch (error) {
             request.log.error(error);
-            return response.send(500);
+            return response.code(500).send({error: "Internal Server Error"});
         }
     });
 
     app.put<{
         Params: professorParams,
         Body: professorUpdatePasswordAttrs
-    }>('/professor/:id/updatePassword', {}, async (request, response) => {
+    }>('/professor/:id/updatePassword', professorPutPassword, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const body: professorUpdatePasswordAttrs = request.body;
@@ -118,33 +126,33 @@ const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options
                 newPassword,
             } = body;
             if (!currentPassword || !newPassword) {
-                return response.send(400);
+                return response.code(400).send({error: "Bad Request"});
             }
 
             const isPasswordUpdated: boolean = await professorService.updatePassword(id, currentPassword, newPassword);
             if (!isPasswordUpdated) {
-                return response.send(404);
+                return response.code(404).send({error: "Not found"});
             }
 
             return response.code(200);
         } catch (error) {
             request.log.error(error);
-            return response.send(500);
+            return response.code(500).send({error: "Internal Server Error"});
         }
     });
 
-    app.delete<{ Params: professorParams }>('/professor/:id', {}, async (request, response) => {
+    app.delete<{ Params: professorParams }>('/professor/:id', professorDelete, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const professor: UserDTO = await professorService.delete(id);
             if (!professor) {
-                return response.send(404);
+                return response.code(404).send({error: "Not found"});
             }
 
             return response.code(204).send(professor);
         } catch (error) {
             request.log.error(error);
-            return response.send(500);
+            return response.code(500).send({error: "Internal Server Error"});
         }
     });
 }

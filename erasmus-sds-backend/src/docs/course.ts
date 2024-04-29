@@ -1,6 +1,6 @@
-export const countriesGet = {
+export const coursesGet = {
     schema: {
-        tags: ["Country"],
+        tags: ["Course"],
         response: {
             200: {
                 type: "array",
@@ -9,7 +9,14 @@ export const countriesGet = {
                     properties: {
                         id: {type: "integer"},
                         name: {type: "string"},
-                        tag: {type: "string"},
+                        description: {type: "string"},
+                        ects: {type: "integer"},
+                        hoursOfLecture: {type: "number"},
+                        hoursOfLabs: {type: "number"},
+                        numberOfExams: {type: "integer"},
+                        isAvailable: {type: "boolean"},
+                        fieldOfStudyId: {type: "integer"},
+                        studyLevelId: {type: "integer"}
                     },
                 },
                 description: "OK"
@@ -25,9 +32,9 @@ export const countriesGet = {
     }
 };
 
-export const countryGet = {
+export const courseGet = {
     schema: {
-        tags: ["Country"],
+        tags: ["Course"],
         params: {
             type: "object",
             properties: {
@@ -41,7 +48,14 @@ export const countryGet = {
                 properties: {
                     id: {type: "integer"},
                     name: {type: "string"},
-                    tag: {type: "string"},
+                    description: {type: "string"},
+                    ects: {type: "integer"},
+                    hoursOfLecture: {type: "number"},
+                    hoursOfLabs: {type: "number"},
+                    numberOfExams: {type: "integer"},
+                    isAvailable: {type: "boolean"},
+                    fieldOfStudyId: {type: "integer"},
+                    studyLevelId: {type: "integer"}
                 },
                 description: "OK",
             },
@@ -63,15 +77,22 @@ export const countryGet = {
     }
 };
 
-export const countryPost = {
+export const coursePost = {
     schema: {
-        tags: ["Country"],
+        tags: ["Course"],
         body: {
             type: "object",
-            required: ["name", "tag"],
+            required: ["name", "description", "ects", "hoursOfLecture", "hoursOfLabs", "numberOfExams", "fieldOfStudyId", "studyLevelId"],
             properties: {
                 name: {type: "string"},
-                tag: {type: "string"},
+                description: {type: "string"},
+                ects: {type: "integer"},
+                hoursOfLecture: {type: "number"},
+                hoursOfLabs: {type: "number"},
+                numberOfExams: {type: "integer"},
+                isAvailable: {type: "boolean", description: "If not specified, set to false."},
+                fieldOfStudyId: {type: "integer"},
+                studyLevelId: {type: "integer"}
             }
         },
         response: {
@@ -80,7 +101,14 @@ export const countryPost = {
                 properties: {
                     id: {type: "integer"},
                     name: {type: "string"},
-                    tag: {type: "string"},
+                    description: {type: "string"},
+                    ects: {type: "integer"},
+                    hoursOfLecture: {type: "number"},
+                    hoursOfLabs: {type: "number"},
+                    numberOfExams: {type: "integer"},
+                    isAvailable: {type: "boolean"},
+                    fieldOfStudyId: {type: "integer"},
+                    studyLevelId: {type: "integer"}
                 },
                 description: "Created"
             },
@@ -102,9 +130,9 @@ export const countryPost = {
     }
 };
 
-export const countryPut = {
+export const coursePut = {
     schema: {
-        tags: ["Country"],
+        tags: ["Course"],
         params: {
             type: "object",
             properties: {
@@ -114,10 +142,17 @@ export const countryPut = {
         },
         body: {
             type: "object",
-            required: ["name", "tag"],
+            required: ["name", "description", "ects", "hoursOfLecture", "hoursOfLabs", "numberOfExams", "isAvailable", "fieldOfStudyId", "studyLevelId"],
             properties: {
                 name: {type: "string"},
-                tag: {type: "string"},
+                description: {type: "string"},
+                ects: {type: "integer"},
+                hoursOfLecture: {type: "number"},
+                hoursOfLabs: {type: "number"},
+                numberOfExams: {type: "integer"},
+                isAvailable: {type: "boolean"},
+                fieldOfStudyId: {type: "integer"},
+                studyLevelId: {type: "integer"}
             }
         },
         response: {
@@ -126,7 +161,14 @@ export const countryPut = {
                 properties: {
                     id: {type: "integer"},
                     name: {type: "string"},
-                    tag: {type: "string"},
+                    description: {type: "string"},
+                    ects: {type: "integer"},
+                    hoursOfLecture: {type: "number"},
+                    hoursOfLabs: {type: "number"},
+                    numberOfExams: {type: "integer"},
+                    isAvailable: {type: "boolean"},
+                    fieldOfStudyId: {type: "integer"},
+                    studyLevelId: {type: "integer"}
                 },
                 description: "OK"
             },
@@ -155,9 +197,9 @@ export const countryPut = {
     }
 };
 
-export const countryDelete = {
+export const courseDelete = {
     schema: {
-        tags: ["Country"],
+        tags: ["Course"],
         params: {
             type: "object",
             properties: {
@@ -171,7 +213,14 @@ export const countryDelete = {
                 properties: {
                     id: {type: "integer"},
                     name: {type: "string"},
-                    tag: {type: "string"},
+                    description: {type: "string"},
+                    ects: {type: "integer"},
+                    hoursOfLecture: {type: "number"},
+                    hoursOfLabs: {type: "number"},
+                    numberOfExams: {type: "integer"},
+                    isAvailable: {type: "boolean"},
+                    fieldOfStudyId: {type: "integer"},
+                    studyLevelId: {type: "integer"}
                 },
                 description: "No Content"
             },

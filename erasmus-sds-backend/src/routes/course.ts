@@ -2,6 +2,7 @@ import {FastifyInstance, FastifyPluginAsync, FastifyPluginOptions} from "fastify
 import {Course} from "@prisma/client";
 import {CourseService} from "../services/course";
 import fp from "fastify-plugin";
+import {courseDelete, courseGet, coursePost, coursePut, coursesGet} from "../docs/course";
 
 const coursesSchema = {
     schema: {
@@ -48,31 +49,31 @@ interface courseAttrs {
 const CourseRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: FastifyPluginOptions) => {
     const courseService: CourseService = new CourseService(app);
 
-    app.get('/courses', {}, async (request, response) => {
+    app.get('/courses', coursesGet, async (request, response) => {
         try {
             const courses: Course[] = await courseService.getAll();
             return response.code(200).send(courses);
         } catch (error) {
             request.log.error(error);
-            return response.send(500);
+            return response.code(500).send({error: "Internal Server Error"});
         }
     });
 
-    app.get<{ Params: courseParams }>('/course/:id', {}, async (request, response) => {
+    app.get<{ Params: courseParams }>('/course/:id', courseGet, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const course: Course | null = await courseService.get(id);
             if (!course) {
-                return response.send(404);
+                return response.code(404).send({error: "Not found"});
             }
 
             return response.code(200).send(course);
         } catch (error) {
-            return response.send(500);
+            return response.code(500).send({error: "Internal Server Error"});
         }
     });
 
-    app.post<{ Body: courseAttrs }>('/course', {}, async (request, response) => {
+    app.post<{ Body: courseAttrs }>('/course', coursePost, async (request, response) => {
         try {
             const body: courseAttrs = request.body;
             const {
@@ -87,8 +88,8 @@ const CourseRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
                 studyLevelId
             } = body;
 
-            if (!name || !description || !ects || !hoursOfLecture || !hoursOfLabs || !numberOfExams || !isAvailable || !fieldOfStudyId || !studyLevelId) {
-                return response.code(400).send();
+            if (!name || !description || !ects || !hoursOfLecture || !hoursOfLabs || !numberOfExams || !fieldOfStudyId || !studyLevelId) {
+                return response.code(400).send({error: "Bad Request"});
             }
 
             const course: Course = await courseService.create(
@@ -98,18 +99,18 @@ const CourseRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
                 Number(hoursOfLecture),
                 Number(hoursOfLabs),
                 Number(numberOfExams),
-                isAvailable,
+                isAvailable || false,
                 Number(fieldOfStudyId),
                 Number(studyLevelId)
             );
             return response.code(201).send(course);
         } catch (error) {
             request.log.error(error);
-            return response.send(500);
+            return response.code(500).send({error: "Internal Server Error"});
         }
     });
 
-    app.put<{ Params: courseParams, Body: courseAttrs }>('/course/:id', {}, async (request, response) => {
+    app.put<{ Params: courseParams, Body: courseAttrs }>('/course/:id', coursePut, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const body: courseAttrs = request.body;
@@ -126,7 +127,7 @@ const CourseRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
             } = body;
 
             if (!name || !description || !ects || !hoursOfLecture || !hoursOfLabs || !numberOfExams || !isAvailable || !fieldOfStudyId || !studyLevelId) {
-                return response.code(400).send();
+                return response.code(400).send({error: "Bad Request"});
             }
 
             const course: Course = await courseService.update(
@@ -142,28 +143,28 @@ const CourseRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
                 Number(studyLevelId)
             );
             if (!course) {
-                return response.code(404).send();
+                return response.code(404).send({error: "Not found"});
             }
 
             return response.code(200).send(course);
         } catch (error) {
             request.log.error(error);
-            return response.send(500);
+            return response.code(500).send({error: "Internal Server Error"});
         }
     });
 
-    app.delete<{ Params: courseParams }>('/course/:id', {}, async (request, response) => {
+    app.delete<{ Params: courseParams }>('/course/:id', courseDelete, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const course: Course = await courseService.delete(id);
             if (!course) {
-                return response.send(404);
+                return response.code(404).send({error: "Not found"});
             }
 
             return response.code(204).send(course);
         } catch (error) {
             request.log.error(error);
-            return response.send(500);
+            return response.code(500).send({error: "Internal Server Error"});
         }
     });
 }

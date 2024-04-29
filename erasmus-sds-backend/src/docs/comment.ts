@@ -1,6 +1,6 @@
-export const countriesGet = {
+export const commentsGet = {
     schema: {
-        tags: ["Country"],
+        tags: ["Comment"],
         response: {
             200: {
                 type: "array",
@@ -8,8 +8,10 @@ export const countriesGet = {
                     type: "object",
                     properties: {
                         id: {type: "integer"},
-                        name: {type: "string"},
-                        tag: {type: "string"},
+                        content: {type: "string"},
+                        date: {type: "string", format: "date-time"},
+                        studentUserId: {type: "integer"},
+                        courseId: {type: "integer"},
                     },
                 },
                 description: "OK"
@@ -25,9 +27,9 @@ export const countriesGet = {
     }
 };
 
-export const countryGet = {
+export const commentGet = {
     schema: {
-        tags: ["Country"],
+        tags: ["Comment"],
         params: {
             type: "object",
             properties: {
@@ -40,8 +42,10 @@ export const countryGet = {
                 type: "object",
                 properties: {
                     id: {type: "integer"},
-                    name: {type: "string"},
-                    tag: {type: "string"},
+                    content: {type: "string"},
+                    date: {type: "string", format: "date-time"},
+                    studentUserId: {type: "integer"},
+                    courseId: {type: "integer"},
                 },
                 description: "OK",
             },
@@ -63,15 +67,20 @@ export const countryGet = {
     }
 };
 
-export const countryPost = {
+export const commentPost = {
     schema: {
-        tags: ["Country"],
+        tags: ["Comment"],
         body: {
             type: "object",
-            required: ["name", "tag"],
+            required: ["content", "studentUserId", "courseId"],
             properties: {
-                name: {type: "string"},
-                tag: {type: "string"},
+                content: {type: "string"},
+                date: {
+                    type: "string", format: "date-time",
+                    description: "If not specified, the current date is set."
+                },
+                studentUserId: {type: "integer"},
+                courseId: {type: "integer"},
             }
         },
         response: {
@@ -79,8 +88,10 @@ export const countryPost = {
                 type: "object",
                 properties: {
                     id: {type: "integer"},
-                    name: {type: "string"},
-                    tag: {type: "string"},
+                    content: {type: "string"},
+                    date: {type: "string", format: "date-time"},
+                    studentUserId: {type: "integer"},
+                    courseId: {type: "integer"},
                 },
                 description: "Created"
             },
@@ -102,9 +113,9 @@ export const countryPost = {
     }
 };
 
-export const countryPut = {
+export const commentPut = {
     schema: {
-        tags: ["Country"],
+        tags: ["Comment"],
         params: {
             type: "object",
             properties: {
@@ -114,10 +125,12 @@ export const countryPut = {
         },
         body: {
             type: "object",
-            required: ["name", "tag"],
+            required: ["content", "date", "studentUserId", "courseId"],
             properties: {
-                name: {type: "string"},
-                tag: {type: "string"},
+                content: {type: "string"},
+                date: {type: "string", format: "date-time"},
+                studentUserId: {type: "integer"},
+                courseId: {type: "integer"},
             }
         },
         response: {
@@ -125,8 +138,10 @@ export const countryPut = {
                 type: "object",
                 properties: {
                     id: {type: "integer"},
-                    name: {type: "string"},
-                    tag: {type: "string"},
+                    content: {type: "string"},
+                    date: {type: "string", format: "date-time"},
+                    studentUserId: {type: "integer"},
+                    courseId: {type: "integer"},
                 },
                 description: "OK"
             },
@@ -155,9 +170,9 @@ export const countryPut = {
     }
 };
 
-export const countryDelete = {
+export const commentDelete = {
     schema: {
-        tags: ["Country"],
+        tags: ["Comment"],
         params: {
             type: "object",
             properties: {
@@ -170,8 +185,10 @@ export const countryDelete = {
                 type: "object",
                 properties: {
                     id: {type: "integer"},
-                    name: {type: "string"},
-                    tag: {type: "string"},
+                    content: {type: "string"},
+                    date: {type: "string", format: "date-time"},
+                    studentUserId: {type: "integer"},
+                    courseId: {type: "integer"},
                 },
                 description: "No Content"
             },

@@ -1,15 +1,17 @@
-export const countriesGet = {
+export const professorsGet = {
     schema: {
-        tags: ["Country"],
+        tags: ["Professor"],
         response: {
             200: {
                 type: "array",
                 items: {
                     type: "object",
                     properties: {
-                        id: {type: "integer"},
+                        userId: {type: "integer"},
+                        email: {type: "string"},
                         name: {type: "string"},
-                        tag: {type: "string"},
+                        surname: {type: "string"},
+                        isVerified: {type: "boolean"}
                     },
                 },
                 description: "OK"
@@ -25,9 +27,9 @@ export const countriesGet = {
     }
 };
 
-export const countryGet = {
+export const professorGet = {
     schema: {
-        tags: ["Country"],
+        tags: ["Professor"],
         params: {
             type: "object",
             properties: {
@@ -39,9 +41,11 @@ export const countryGet = {
             200: {
                 type: "object",
                 properties: {
-                    id: {type: "integer"},
+                    userId: {type: "integer"},
+                    email: {type: "string"},
                     name: {type: "string"},
-                    tag: {type: "string"},
+                    surname: {type: "string"},
+                    isVerified: {type: "boolean"}
                 },
                 description: "OK",
             },
@@ -63,24 +67,29 @@ export const countryGet = {
     }
 };
 
-export const countryPost = {
+export const professorPost = {
     schema: {
-        tags: ["Country"],
+        tags: ["Professor"],
         body: {
             type: "object",
-            required: ["name", "tag"],
+            required: ["email", "password", "name", "surname"],
             properties: {
+                email: {type: "string"},
+                password: {type: "string"},
                 name: {type: "string"},
-                tag: {type: "string"},
+                surname: {type: "string"},
+                isVerified: {type: "boolean", description: "If not specified, set to false."}
             }
         },
         response: {
             201: {
                 type: "object",
                 properties: {
-                    id: {type: "integer"},
+                    userId: {type: "integer"},
+                    email: {type: "string"},
                     name: {type: "string"},
-                    tag: {type: "string"},
+                    surname: {type: "string"},
+                    isVerified: {type: "boolean"}
                 },
                 description: "Created"
             },
@@ -102,9 +111,9 @@ export const countryPost = {
     }
 };
 
-export const countryPut = {
+export const professorPut = {
     schema: {
-        tags: ["Country"],
+        tags: ["Professor"],
         params: {
             type: "object",
             properties: {
@@ -114,10 +123,12 @@ export const countryPut = {
         },
         body: {
             type: "object",
-            required: ["name", "tag"],
+            required: ["email", "name", "surname", "isVerified"],
             properties: {
+                email: {type: "string"},
                 name: {type: "string"},
-                tag: {type: "string"},
+                surname: {type: "string"},
+                isVerified: {type: "boolean"}
             }
         },
         response: {
@@ -125,8 +136,10 @@ export const countryPut = {
                 type: "object",
                 properties: {
                     id: {type: "integer"},
+                    email: {type: "string"},
                     name: {type: "string"},
-                    tag: {type: "string"},
+                    surname: {type: "string"},
+                    isVerified: {type: "boolean"}
                 },
                 description: "OK"
             },
@@ -155,9 +168,57 @@ export const countryPut = {
     }
 };
 
-export const countryDelete = {
+export const professorPutPassword = {
     schema: {
-        tags: ["Country"],
+        tags: ["Professor"],
+        params: {
+            type: "object",
+            properties: {
+                id: {type: "integer"}
+            },
+            required: ["id"]
+        },
+        body: {
+            type: "object",
+            required: ["currentPassword", "newPassword"],
+            properties: {
+                currentPassword: {type: "string"},
+                newPassword: {type: "string"},
+            }
+        },
+        response: {
+            200: {
+                type: "boolean",
+                description: "OK"
+            },
+            400: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Bad Request"
+            },
+            404: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Not Found"
+            },
+            500: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Internal Server Error"
+            }
+        }
+    }
+};
+
+export const professorDelete = {
+    schema: {
+        tags: ["Professor"],
         params: {
             type: "object",
             properties: {
@@ -170,8 +231,10 @@ export const countryDelete = {
                 type: "object",
                 properties: {
                     id: {type: "integer"},
+                    email: {type: "string"},
                     name: {type: "string"},
-                    tag: {type: "string"},
+                    surname: {type: "string"},
+                    isVerified: {type: "boolean"}
                 },
                 description: "No Content"
             },
@@ -192,5 +255,3 @@ export const countryDelete = {
         }
     }
 };
-
-

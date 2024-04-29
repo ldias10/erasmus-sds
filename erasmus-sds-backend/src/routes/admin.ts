@@ -2,6 +2,7 @@ import {FastifyInstance, FastifyPluginAsync, FastifyPluginOptions} from "fastify
 import fp from "fastify-plugin";
 import {AdminDTO, AdminService} from "../services/admin";
 import {UserDTO} from "../services/user";
+import {adminDelete, adminGet, adminPost, adminPut, adminPutPassword, adminsGet} from "../docs/admin";
 
 interface adminParams {
     id: number;
@@ -30,32 +31,32 @@ interface adminUpdatePasswordAttrs {
 const AdminRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: FastifyPluginOptions) => {
     const adminService: AdminService = new AdminService(app);
 
-    app.get('/admins', {}, async (request, response) => {
+    app.get('/admins', adminsGet, async (request, response) => {
         try {
             const admins: AdminDTO[] = await adminService.getAll();
             return response.code(200).send(admins);
         } catch (error) {
             request.log.error(error);
-            return response.send(500);
+            return response.code(500).send({error: "Internal Server Error"});
         }
     });
 
-    app.get<{ Params: adminParams }>('/admin/:id', {}, async (request, response) => {
+    app.get<{ Params: adminParams }>('/admin/:id', adminGet, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const admin: AdminDTO | null = await adminService.get(id);
             if (!admin) {
-                return response.send(404);
+                return response.code(404).send({error: "Not found"});
             }
 
             return response.code(200).send(admin);
         } catch (error) {
             request.log.error(error);
-            return response.send(500);
+            return response.code(500).send({error: "Internal Server Error"});
         }
     });
 
-    app.post<{ Body: adminCreateAttrs }>('/admin', {}, async (request, response) => {
+    app.post<{ Body: adminCreateAttrs }>('/admin', adminPost, async (request, response) => {
         try {
             const body: adminCreateAttrs = request.body;
             const {
@@ -65,19 +66,19 @@ const AdminRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fa
                 surname,
                 isVerified
             } = body;
-            if (!email || !password || !name || !surname || !isVerified) {
-                return response.send(400);
+            if (!email || !password || !name || !surname) {
+                return response.code(400).send({error: "Bad Request"});
             }
 
-            const admin: AdminDTO = await adminService.create(email, password, name, surname, isVerified);
+            const admin: AdminDTO = await adminService.create(email, password, name, surname, isVerified || false);
             return response.code(201).send(admin);
         } catch (error) {
             request.log.error(error);
-            return response.send(500);
+            return response.code(500).send({error: "Internal Server Error"});
         }
     });
 
-    app.put<{ Params: adminParams, Body: adminUpdateAttrs }>('/admin/:id', {}, async (request, response) => {
+    app.put<{ Params: adminParams, Body: adminUpdateAttrs }>('/admin/:id', adminPut, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const body: adminUpdateAttrs = request.body;
@@ -88,25 +89,25 @@ const AdminRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fa
                 isVerified
             } = body;
             if (!email || !name || !surname || !isVerified) {
-                return response.send(400);
+                return response.code(400).send({error: "Bad Request"});
             }
 
             const admin: UserDTO = await adminService.update(id, email, name, surname, isVerified);
             if (!admin) {
-                return response.send(404);
+                return response.code(404).send({error: "Not found"});
             }
 
             return response.code(200).send(admin);
         } catch (error) {
             request.log.error(error);
-            return response.send(500);
+            return response.code(500).send({error: "Internal Server Error"});
         }
     });
 
     app.put<{
         Params: adminParams,
         Body: adminUpdatePasswordAttrs
-    }>('/admin/:id/updatePassword', {}, async (request, response) => {
+    }>('/admin/:id/updatePassword', adminPutPassword, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const body: adminUpdatePasswordAttrs = request.body;
@@ -115,33 +116,33 @@ const AdminRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fa
                 newPassword,
             } = body;
             if (!currentPassword || !newPassword) {
-                return response.send(400);
+                return response.code(400).send({error: "Bad Request"});
             }
 
             const isPasswordUpdated: boolean = await adminService.updatePassword(id, currentPassword, newPassword);
             if (!isPasswordUpdated) {
-                return response.send(404);
+                return response.code(404).send({error: "Not found"});
             }
 
-            return response.code(200);
+            return response.code(200).send(isPasswordUpdated);
         } catch (error) {
             request.log.error(error);
-            return response.send(500);
+            return response.code(500).send({error: "Internal Server Error"});
         }
     });
 
-    app.delete<{ Params: adminParams }>('/admin/:id', {}, async (request, response) => {
+    app.delete<{ Params: adminParams }>('/admin/:id', adminDelete, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const admin: UserDTO = await adminService.delete(id);
             if (!admin) {
-                return response.send(404);
+                return response.code(404).send({error: "Not found"});
             }
 
             return response.code(204).send(admin);
         } catch (error) {
             request.log.error(error);
-            return response.send(500);
+            return response.code(500).send({error: "Internal Server Error"});
         }
     });
 }
