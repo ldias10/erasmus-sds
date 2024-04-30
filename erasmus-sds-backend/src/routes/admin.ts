@@ -3,6 +3,7 @@ import fp from "fastify-plugin";
 import {AdminDTO, AdminService} from "../services/admin";
 import {UserDTO} from "../services/user";
 import {adminDelete, adminGet, adminPost, adminPut, adminPutPassword, adminsGet} from "../docs/admin";
+import {isNull, isStringEmpty} from "../utils/utils";
 
 interface adminParams {
     id: number;
@@ -66,7 +67,7 @@ const AdminRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fa
                 surname,
                 isVerified
             } = body;
-            if (!email || !password || !name || !surname) {
+            if (isStringEmpty(email) || isStringEmpty(password) || isStringEmpty(name) || isStringEmpty(surname)) {
                 return response.code(400).send({error: "Bad Request"});
             }
 
@@ -88,15 +89,15 @@ const AdminRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fa
                 surname,
                 isVerified
             } = body;
-            if (!email || !name || !surname || !isVerified) {
+            if (isStringEmpty(email) || isStringEmpty(name) || isStringEmpty(surname) || isNull(isVerified)) {
                 return response.code(400).send({error: "Bad Request"});
             }
 
-            const admin: UserDTO = await adminService.update(id, email, name, surname, isVerified);
-            if (!admin) {
+            if (!await adminService.get(id)) {
                 return response.code(404).send({error: "Not found"});
             }
 
+            const admin: AdminDTO = await adminService.update(id, email, name, surname, isVerified);
             return response.code(200).send(admin);
         } catch (error) {
             request.log.error(error);
@@ -115,8 +116,12 @@ const AdminRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fa
                 currentPassword,
                 newPassword,
             } = body;
-            if (!currentPassword || !newPassword) {
+            if (isStringEmpty(currentPassword) || isStringEmpty(newPassword)) {
                 return response.code(400).send({error: "Bad Request"});
+            }
+
+            if (!await adminService.get(id)) {
+                return response.code(404).send({error: "Not found"});
             }
 
             const isPasswordUpdated: boolean = await adminService.updatePassword(id, currentPassword, newPassword);
@@ -134,11 +139,11 @@ const AdminRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fa
     app.delete<{ Params: adminParams }>('/admin/:id', adminDelete, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
-            const admin: UserDTO = await adminService.delete(id);
-            if (!admin) {
+            if (!await adminService.get(id)) {
                 return response.code(404).send({error: "Not found"});
             }
 
+            const admin: UserDTO = await adminService.delete(id);
             return response.code(204).send(admin);
         } catch (error) {
             request.log.error(error);

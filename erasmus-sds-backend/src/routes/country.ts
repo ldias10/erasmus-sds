@@ -3,6 +3,7 @@ import {Country} from "@prisma/client";
 import fp from "fastify-plugin";
 import {CountryService} from "../services/country";
 import {countriesGet, countryDelete, countryGet, countryPost, countryPut} from "../docs/country";
+import {isStringEmpty} from "../utils/utils";
 
 interface countryParams {
     id: number;
@@ -48,7 +49,7 @@ const CountryRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
                 name,
                 tag
             } = body;
-            if (!name || !tag) {
+            if (isStringEmpty(name) || isStringEmpty(tag)) {
                 return response.code(400).send({error: "Bad Request"});
             }
 
@@ -68,15 +69,15 @@ const CountryRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
                 name,
                 tag
             } = body;
-            if (!name || !tag) {
+            if (isStringEmpty(name) || isStringEmpty(tag)) {
                 return response.code(400).send({error: "Bad Request"});
             }
 
-            const country: Country = await countryService.update(id, name, tag);
-            if (!country) {
+            if (!await countryService.get(id)) {
                 return response.code(404).send({error: "Not found"});
             }
 
+            const country: Country = await countryService.update(id, name, tag);
             return response.code(200).send(country);
         } catch (error) {
             request.log.error(error);
@@ -87,11 +88,11 @@ const CountryRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
     app.delete<{ Params: countryParams }>('/country/:id', countryDelete, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
-            const country: Country = await countryService.delete(id);
-            if (!country) {
+            if (!await countryService.get(id)) {
                 return response.code(404).send({error: "Not found"});
             }
 
+            const country: Country = await countryService.delete(id);
             return response.code(204).send(country);
         } catch (error) {
             request.log.error(error);

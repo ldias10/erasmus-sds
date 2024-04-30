@@ -67,6 +67,14 @@ export const rateGet = {
 export const ratePost = {
     schema: {
         tags: ["Rate"],
+        params: {
+            type: "object",
+            properties: {
+                studentId: {type: "integer"},
+                courseId: {type: "integer"},
+            },
+            required: ["studentId", "courseId"]
+        },
         body: {
             type: "object",
             required: ["rate"],
@@ -90,6 +98,20 @@ export const ratePost = {
                     error: {type: "string"}
                 },
                 description: "Bad Request"
+            },
+            404: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Not Found"
+            },
+            409: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "The resource already exists and cannot be created again."
             },
             500: {
                 type: "object",
@@ -115,9 +137,9 @@ export const ratePut = {
         },
         body: {
             type: "object",
-            required: ["name"],
+            required: ["rate"],
             properties: {
-                name: {type: "string"},
+                rate: {type: "string"},
             }
         },
         response: {
@@ -130,19 +152,19 @@ export const ratePut = {
                 },
                 description: "OK"
             },
-            404: {
-                type: "object",
-                properties: {
-                    error: {type: "string"}
-                },
-                description: "Not Found"
-            },
             400: {
                 type: "object",
                 properties: {
                     error: {type: "string"}
                 },
                 description: "Bad Request"
+            },
+            404: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Not Found"
             },
             500: {
                 type: "object",

@@ -58,8 +58,9 @@ export class AdminService {
         return this.adminToAdminDTO(admin);
     }
 
-    public async update(id: number, email: string, name: string, surname: string, isVerified: boolean): Promise<UserDTO> {
-        return await this.userService.update(id, email, name, surname, isVerified);
+    public async update(id: number, email: string, name: string, surname: string, isVerified: boolean): Promise<AdminDTO> {
+        await this.userService.update(id, email, name, surname, isVerified);
+        return (await this.get(id))!;
     }
 
     public async updatePassword(id: number, currentPassword: string, newPassword: string): Promise<boolean> {

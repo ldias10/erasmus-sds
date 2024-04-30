@@ -53,21 +53,8 @@ app.register(fastifyBcrypt, {
 });
 
 app.register((app, options, done) => {
-    app.get("/", {
-        schema: {
-            tags: ["Default"],
-            response: {
-                200: {
-                    type: "object",
-                    properties: {
-                        ping: {type: "string"},
-                    },
-                },
-            },
-        },
-        handler: (req, res) => {
-            res.send({ping: "pong"});
-        },
+    app.get('/', {schema: {hide: true}}, (request, response) => {
+        response.redirect("/docs");
     });
     done();
 });

@@ -3,6 +3,9 @@ import {Comment} from "@prisma/client";
 import fp from "fastify-plugin";
 import {CommentService} from "../services/comment";
 import {commentDelete, commentGet, commentPost, commentPut, commentsGet} from "../docs/comment";
+import {StudentService} from "../services/student";
+import {CourseService} from "../services/course";
+import {isNull, isStringEmpty} from "../utils/utils";
 
 interface commentParams {
     id: number;
@@ -17,6 +20,8 @@ interface commentAttrs {
 
 const CommentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: FastifyPluginOptions) => {
     const commentService: CommentService = new CommentService(app);
+    const studentService: StudentService = new StudentService(app);
+    const courseService: CourseService = new CourseService(app);
 
     app.get('/comments', commentsGet, async (request, response) => {
         try {
@@ -52,8 +57,12 @@ const CommentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
                 studentUserId,
                 courseId
             } = body;
-            if (!content || !studentUserId || !courseId) {
+            if (isStringEmpty(content) || isNull(studentUserId) || isNull(courseId)) {
                 return response.code(400).send({error: "Bad Request"});
+            }
+
+            if (!await studentService.get(studentUserId) || !await courseService.get(courseId)) {
+                return response.code(404).send({error: "Not found"});
             }
 
             const comment: Comment = await commentService.create(content, date || new Date(), Number(studentUserId), Number(courseId));
@@ -74,15 +83,15 @@ const CommentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
                 studentUserId,
                 courseId
             } = body;
-            if (!content || !date || !studentUserId || !courseId) {
+            if (isStringEmpty(content) || isNull(date) || isNull(studentUserId) || isNull(courseId)) {
                 return response.code(400).send({error: "Bad Request"});
             }
 
-            const comment: Comment = await commentService.update(id, content, date, Number(studentUserId), Number(courseId));
-            if (!comment) {
+            if (!await studentService.get(studentUserId) || !await courseService.get(courseId) || !await commentService.get(id)) {
                 return response.code(404).send({error: "Not found"});
             }
 
+            const comment: Comment = await commentService.update(id, content, date, Number(studentUserId), Number(courseId));
             return response.code(200).send(comment);
         } catch (error) {
             request.log.error(error);
@@ -93,11 +102,11 @@ const CommentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
     app.delete<{ Params: commentParams }>('/comment/:id', commentDelete, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
-            const comment: Comment = await commentService.delete(id);
-            if (!comment) {
+            if (!await commentService.get(id)) {
                 return response.code(404).send({error: "Not found"});
             }
 
+            const comment: Comment = await commentService.delete(id);
             return response.code(204).send(comment);
         } catch (error) {
             request.log.error(error);

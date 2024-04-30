@@ -10,6 +10,7 @@ import {
     professorPutPassword,
     professorsGet
 } from "../docs/professor";
+import {isNull, isStringEmpty} from "../utils/utils";
 
 interface professorParams {
     id: number;
@@ -73,7 +74,7 @@ const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options
                 surname,
                 isVerified
             } = body;
-            if (!email || !password || !name || !surname) {
+            if (isStringEmpty(email) || isStringEmpty(password) || isStringEmpty(name) || isStringEmpty(surname)) {
                 return response.code(400).send({error: "Bad Request"});
             }
 
@@ -98,15 +99,15 @@ const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options
                 surname,
                 isVerified
             } = body;
-            if (!email || !name || !surname || !isVerified) {
+            if (isStringEmpty(email) || isStringEmpty(name) || isStringEmpty(surname) || isNull(isVerified)) {
                 return response.code(400).send({error: "Bad Request"});
             }
 
-            const professor: UserDTO = await professorService.update(id, email, name, surname, isVerified);
-            if (!professor) {
+            if (!await professorService.get(id)) {
                 return response.code(404).send({error: "Not found"});
             }
 
+            const professor: ProfessorDTO = await professorService.update(id, email, name, surname, isVerified);
             return response.code(200).send(professor);
         } catch (error) {
             request.log.error(error);
@@ -125,8 +126,12 @@ const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options
                 currentPassword,
                 newPassword,
             } = body;
-            if (!currentPassword || !newPassword) {
+            if (isStringEmpty(currentPassword) || isStringEmpty(newPassword)) {
                 return response.code(400).send({error: "Bad Request"});
+            }
+
+            if (!await professorService.get(id)) {
+                return response.code(404).send({error: "Not found"});
             }
 
             const isPasswordUpdated: boolean = await professorService.updatePassword(id, currentPassword, newPassword);
@@ -144,11 +149,11 @@ const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options
     app.delete<{ Params: professorParams }>('/professor/:id', professorDelete, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
-            const professor: UserDTO = await professorService.delete(id);
-            if (!professor) {
+            if (!await professorService.get(id)) {
                 return response.code(404).send({error: "Not found"});
             }
 
+            const professor: UserDTO = await professorService.delete(id);
             return response.code(204).send(professor);
         } catch (error) {
             request.log.error(error);

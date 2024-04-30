@@ -119,6 +119,13 @@ export const coursePost = {
                 },
                 description: "Bad Request"
             },
+            404: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Not Found"
+            },
             500: {
                 type: "object",
                 properties: {

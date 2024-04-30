@@ -3,32 +3,9 @@ import {Course} from "@prisma/client";
 import {CourseService} from "../services/course";
 import fp from "fastify-plugin";
 import {courseDelete, courseGet, coursePost, coursePut, coursesGet} from "../docs/course";
-
-const coursesSchema = {
-    schema: {
-        tags: ["Course"],
-        response: {
-            200: {
-                type: "array",
-                items: {
-                    type: "object",
-                    properties: {
-                        id: {type: "number", example: 1},
-                        name: {type: "string", example: "Software Development Studio 1"},
-                        description: {type: "string", example: "This course ...."},
-                        ects: {type: "number", example: 6},
-                        hoursOfLecture: {type: "number", example: 3},
-                        hoursOfLabs: {type: "number", example: 20},
-                        numberOfExams: {type: "number", example: 1},
-                        isAvailable: {type: "boolean", example: true},
-                        fieldOfStudyId: {type: "number", example: 1},
-                        studyLevelId: {type: "number", example: 2}
-                    }
-                },
-            },
-        },
-    }
-};
+import {FieldOfStudyService} from "../services/field_of_study";
+import {StudyLevelService} from "../services/study_level";
+import {isNull, isStringEmpty} from "../utils/utils";
 
 interface courseParams {
     id: number;
@@ -48,6 +25,8 @@ interface courseAttrs {
 
 const CourseRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: FastifyPluginOptions) => {
     const courseService: CourseService = new CourseService(app);
+    const filedOfStudyService: FieldOfStudyService = new FieldOfStudyService(app);
+    const studyLevelService: StudyLevelService = new StudyLevelService(app);
 
     app.get('/courses', coursesGet, async (request, response) => {
         try {
@@ -87,9 +66,12 @@ const CourseRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
                 fieldOfStudyId,
                 studyLevelId
             } = body;
-
-            if (!name || !description || !ects || !hoursOfLecture || !hoursOfLabs || !numberOfExams || !fieldOfStudyId || !studyLevelId) {
+            if (isStringEmpty(name) || isStringEmpty(description) || isNull(ects) || isNull(hoursOfLecture) || isNull(hoursOfLabs) || isNull(numberOfExams) || isNull(fieldOfStudyId) || isNull(studyLevelId)) {
                 return response.code(400).send({error: "Bad Request"});
+            }
+
+            if (!await filedOfStudyService.get(fieldOfStudyId) || !await studyLevelService.get(studyLevelId)) {
+                return response.code(404).send({error: "Not found"});
             }
 
             const course: Course = await courseService.create(
@@ -126,8 +108,12 @@ const CourseRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
                 studyLevelId
             } = body;
 
-            if (!name || !description || !ects || !hoursOfLecture || !hoursOfLabs || !numberOfExams || !isAvailable || !fieldOfStudyId || !studyLevelId) {
+            if (isStringEmpty(name) || isStringEmpty(description) || isNull(ects) || isNull(hoursOfLecture) || isNull(hoursOfLabs) || isNull(numberOfExams) || isNull(isAvailable) || isNull(fieldOfStudyId) || isNull(studyLevelId)) {
                 return response.code(400).send({error: "Bad Request"});
+            }
+
+            if (!await filedOfStudyService.get(fieldOfStudyId) || !await studyLevelService.get(studyLevelId) || !await courseService.get(id)) {
+                return response.code(404).send({error: "Not found"});
             }
 
             const course: Course = await courseService.update(
@@ -142,10 +128,6 @@ const CourseRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
                 Number(fieldOfStudyId),
                 Number(studyLevelId)
             );
-            if (!course) {
-                return response.code(404).send({error: "Not found"});
-            }
-
             return response.code(200).send(course);
         } catch (error) {
             request.log.error(error);
@@ -156,11 +138,11 @@ const CourseRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
     app.delete<{ Params: courseParams }>('/course/:id', courseDelete, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
-            const course: Course = await courseService.delete(id);
-            if (!course) {
+            if (!await courseService.get(id)) {
                 return response.code(404).send({error: "Not found"});
             }
 
+            const course: Course = await courseService.delete(id);
             return response.code(204).send(course);
         } catch (error) {
             request.log.error(error);

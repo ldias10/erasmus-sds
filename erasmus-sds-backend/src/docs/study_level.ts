@@ -124,19 +124,19 @@ export const studyLevelPut = {
                 },
                 description: "OK"
             },
-            404: {
-                type: "object",
-                properties: {
-                    error: {type: "string"}
-                },
-                description: "Not Found"
-            },
             400: {
                 type: "object",
                 properties: {
                     error: {type: "string"}
                 },
                 description: "Bad Request"
+            },
+            404: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Not Found"
             },
             500: {
                 type: "object",

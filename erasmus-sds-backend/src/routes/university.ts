@@ -2,7 +2,9 @@ import {FastifyInstance, FastifyPluginAsync, FastifyPluginOptions} from "fastify
 import {University} from "@prisma/client";
 import fp from "fastify-plugin";
 import {UniversityService} from "../services/university";
-import { UniversitiesGet, UniversityDelete, UniversityGet, UniversityPost, UniversityPut } from "../docs/university";
+import {UniversitiesGet, UniversityDelete, UniversityGet, UniversityPost, UniversityPut} from "../docs/university";
+import {CountryService} from "../services/country";
+import {isNull, isStringEmpty} from "../utils/utils";
 
 interface universityParams {
     id: number;
@@ -15,6 +17,7 @@ interface universityAttrs {
 
 const UniversityRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: FastifyPluginOptions) => {
     const universityService: UniversityService = new UniversityService(app);
+    const countryService: CountryService = new CountryService(app);
 
     app.get('/universities', UniversitiesGet, async (request, response) => {
         try {
@@ -48,8 +51,12 @@ const UniversityRoutes: FastifyPluginAsync = async (app: FastifyInstance, option
                 name,
                 countryId
             } = body;
-            if (!name || !countryId) {
+            if (isStringEmpty(name) || isNull(countryId)) {
                 return response.code(400).send({error: "Bad Request"});
+            }
+
+            if (!await countryService.get(countryId)) {
+                return response.code(404).send({error: "Not found"});
             }
 
             const university: University = await universityService.create(name, Number(countryId));
@@ -60,7 +67,10 @@ const UniversityRoutes: FastifyPluginAsync = async (app: FastifyInstance, option
         }
     });
 
-    app.put<{ Params: universityParams, Body: universityAttrs }>('/university/:id', UniversityPut, async (request, response) => {
+    app.put<{
+        Params: universityParams,
+        Body: universityAttrs
+    }>('/university/:id', UniversityPut, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const body: universityAttrs = request.body;
@@ -68,15 +78,15 @@ const UniversityRoutes: FastifyPluginAsync = async (app: FastifyInstance, option
                 name,
                 countryId
             } = body;
-            if (!name || !countryId) {
+            if (isStringEmpty(name) || isNull(countryId)) {
                 return response.code(400).send({error: "Bad Request"});
             }
 
-            const university: University = await universityService.update(id, name, Number(countryId));
-            if (!university) {
+            if (!await countryService.get(countryId) || !await universityService.get(id)) {
                 return response.code(404).send({error: "Not found"});
             }
 
+            const university: University = await universityService.update(id, name, Number(countryId));
             return response.code(200).send(university);
         } catch (error) {
             request.log.error(error);
@@ -87,11 +97,11 @@ const UniversityRoutes: FastifyPluginAsync = async (app: FastifyInstance, option
     app.delete<{ Params: universityParams }>('/university/:id', UniversityDelete, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
-            const university: University = await universityService.delete(id);
-            if (!university) {
+            if (!await universityService.get(id)) {
                 return response.code(404).send({error: "Not found"});
             }
 
+            const university: University = await universityService.delete(id);
             return response.code(204).send(university);
         } catch (error) {
             request.log.error(error);

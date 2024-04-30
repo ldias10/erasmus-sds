@@ -135,7 +135,7 @@ export const adminPut = {
             200: {
                 type: "object",
                 properties: {
-                    id: {type: "integer"},
+                    userId: {type: "integer"},
                     email: {type: "string"},
                     name: {type: "string"},
                     surname: {type: "string"},

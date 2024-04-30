@@ -2,7 +2,8 @@ import {FastifyInstance, FastifyPluginAsync, FastifyPluginOptions} from "fastify
 import {StudyLevel} from "@prisma/client";
 import fp from "fastify-plugin";
 import {StudyLevelService} from "../services/study_level";
-import { studiesLevelGet, studyLevelDelete, studyLevelGet, studyLevelPost, studyLevelPut } from "../docs/study_level";
+import {studiesLevelGet, studyLevelDelete, studyLevelGet, studyLevelPost, studyLevelPut} from "../docs/study_level";
+import {isStringEmpty} from "../utils/utils";
 
 interface studyLevelParams {
     id: number;
@@ -30,7 +31,7 @@ const StudyLevelRoutes: FastifyPluginAsync = async (app: FastifyInstance, option
             const id: number = Number(request.params.id);
             const studyLevel: StudyLevel | null = await studyLevelService.get(id);
             if (!studyLevel) {
-            return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "Not found"});
             }
 
             return response.code(200).send(studyLevel);
@@ -44,8 +45,8 @@ const StudyLevelRoutes: FastifyPluginAsync = async (app: FastifyInstance, option
         try {
             const body: studyLevelAttrs = request.body;
             const name: string = body.name;
-            if (!name) {
-            return response.code(400).send({error: "Bad Request"});
+            if (isStringEmpty(name)) {
+                return response.code(400).send({error: "Bad Request"});
             }
 
             const studyLevel: StudyLevel = await studyLevelService.create(name);
@@ -56,20 +57,23 @@ const StudyLevelRoutes: FastifyPluginAsync = async (app: FastifyInstance, option
         }
     });
 
-    app.put<{ Params: studyLevelParams, Body: studyLevelAttrs }>('/studyLevel/:id', studyLevelPut, async (request, response) => {
+    app.put<{
+        Params: studyLevelParams,
+        Body: studyLevelAttrs
+    }>('/studyLevel/:id', studyLevelPut, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const body: studyLevelAttrs = request.body;
             const name: string = body.name;
-            if (!name) {
+            if (isStringEmpty(name)) {
                 return response.code(400).send({error: "Bad Request"});
             }
 
-            const studyLevel: StudyLevel = await studyLevelService.update(id, name);
-            if (!studyLevel) {
+            if (!await studyLevelService.get(id)) {
                 return response.code(404).send({error: "Not found"});
             }
 
+            const studyLevel: StudyLevel = await studyLevelService.update(id, name);
             return response.code(200).send(studyLevel);
         } catch (error) {
             request.log.error(error);
@@ -80,11 +84,11 @@ const StudyLevelRoutes: FastifyPluginAsync = async (app: FastifyInstance, option
     app.delete<{ Params: studyLevelParams }>('/studyLevel/:id', studyLevelDelete, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
-            const studyLevel: StudyLevel = await studyLevelService.delete(id);
-            if (!studyLevel) {
+            if (!await studyLevelService.get(id)) {
                 return response.code(404).send({error: "Not found"});
             }
 
+            const studyLevel: StudyLevel = await studyLevelService.delete(id);
             return response.code(204).send(studyLevel);
         } catch (error) {
             request.log.error(error);

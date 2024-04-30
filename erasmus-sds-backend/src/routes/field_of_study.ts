@@ -2,7 +2,14 @@ import {FastifyInstance, FastifyPluginAsync, FastifyPluginOptions} from "fastify
 import {FieldOfStudy} from "@prisma/client";
 import fp from "fastify-plugin";
 import {FieldOfStudyService} from "../services/field_of_study";
-import { fieldOfStudyDelete, fieldOfStudyGet, fieldOfStudyPost, fieldOfStudyPut, fieldsOfStudyGet } from "../docs/field_of_study";
+import {
+    fieldOfStudyDelete,
+    fieldOfStudyGet,
+    fieldOfStudyPost,
+    fieldOfStudyPut,
+    fieldsOfStudyGet
+} from "../docs/field_of_study";
+import {isStringEmpty} from "../utils/utils";
 
 interface fieldOfStudyParams {
     id: number;
@@ -44,7 +51,7 @@ const FieldOfStudyRoutes: FastifyPluginAsync = async (app: FastifyInstance, opti
         try {
             const body: fieldOfStudyAttrs = request.body;
             const name: string = body.name;
-            if (!name) {
+            if (isStringEmpty(name)) {
                 return response.code(400).send({error: "Bad Request"});
             }
 
@@ -56,20 +63,23 @@ const FieldOfStudyRoutes: FastifyPluginAsync = async (app: FastifyInstance, opti
         }
     });
 
-    app.put<{Params: fieldOfStudyParams, Body: fieldOfStudyAttrs }>('/fieldOfStudy/:id', fieldOfStudyPut, async (request, response) => {
+    app.put<{
+        Params: fieldOfStudyParams,
+        Body: fieldOfStudyAttrs
+    }>('/fieldOfStudy/:id', fieldOfStudyPut, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const body: fieldOfStudyAttrs = request.body;
             const name: string = body.name;
-            if (!name) {
+            if (isStringEmpty(name)) {
                 return response.code(400).send({error: "Bad Request"});
             }
 
-            const fieldOfStudy: FieldOfStudy = await fieldOfStudyService.update(id, name);
-            if (!fieldOfStudy) {
+            if (!await fieldOfStudyService.get(id)) {
                 return response.code(404).send({error: "Not found"});
             }
 
+            const fieldOfStudy: FieldOfStudy = await fieldOfStudyService.update(id, name);
             return response.code(200).send(fieldOfStudy);
         } catch (error) {
             request.log.error(error);
@@ -80,11 +90,11 @@ const FieldOfStudyRoutes: FastifyPluginAsync = async (app: FastifyInstance, opti
     app.delete<{ Params: fieldOfStudyParams }>('/fieldOfStudy/:id', fieldOfStudyDelete, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
-            const fieldOfStudy: FieldOfStudy = await fieldOfStudyService.delete(id);
-            if (!fieldOfStudy) {
+            if (!await fieldOfStudyService.get(id)) {
                 return response.code(404).send({error: "Not found"});
             }
 
+            const fieldOfStudy: FieldOfStudy = await fieldOfStudyService.delete(id);
             return response.code(204).send(fieldOfStudy);
         } catch (error) {
             request.log.error(error);

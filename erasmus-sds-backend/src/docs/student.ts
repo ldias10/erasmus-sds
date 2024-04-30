@@ -112,6 +112,13 @@ export const studentPost = {
                 },
                 description: "Bad Request"
             },
+            404: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Not Found"
+            },
             500: {
                 type: "object",
                 properties: {
@@ -150,7 +157,7 @@ export const studentPut = {
             200: {
                 type: "object",
                 properties: {
-                    id: {type: "integer"},
+                    userId: {type: "integer"},
                     email: {type: "string"},
                     name: {type: "string"},
                     surname: {type: "string"},

@@ -3,6 +3,10 @@ import fp from "fastify-plugin";
 import {UserDTO} from "../services/user";
 import {StudentDTO, StudentService} from "../services/student";
 import {studentDelete, studentGet, studentPost, studentPut, studentPutPassword, studentsGet} from "../docs/student";
+import {CountryService} from "../services/country";
+import {SchoolService} from "../services/school";
+import {StudyLevelService} from "../services/study_level";
+import {isNull, isStringEmpty} from "../utils/utils";
 
 interface studentParams {
     id: number;
@@ -36,6 +40,9 @@ interface studentUpdatePasswordAttrs {
 
 const StudentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: FastifyPluginOptions) => {
     const studentService: StudentService = new StudentService(app);
+    const countryService: CountryService = new CountryService(app);
+    const schoolService: SchoolService = new SchoolService(app);
+    const studyLevelService: StudyLevelService = new StudyLevelService(app);
 
     app.get('/students', studentsGet, async (request, response) => {
         try {
@@ -75,11 +82,15 @@ const StudentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
                 schoolId,
                 studyLevelId
             } = body;
-            if (!email || !password || !name || !surname || !isVerified || !countryId || !schoolId || !studyLevelId) {
+            if (isStringEmpty(email) || isStringEmpty(password) || isStringEmpty(name) || isStringEmpty(surname) || isNull(countryId) || isNull(schoolId) || isNull(studyLevelId)) {
                 return response.code(400).send({error: "Bad Request"});
             }
 
-            const student: StudentDTO = await studentService.create(email, password, name, surname, isVerified, Number(countryId), Number(schoolId), Number(studyLevelId));
+            if (!await countryService.get(countryId) || !await schoolService.get(schoolId) || !await studyLevelService.get(studyLevelId)) {
+                return response.code(404).send({error: "Not found"});
+            }
+
+            const student: StudentDTO = await studentService.create(email, password, name, surname, isVerified || false, Number(countryId), Number(schoolId), Number(studyLevelId));
             return response.code(201).send(student);
         } catch (error) {
             request.log.error(error);
@@ -103,15 +114,15 @@ const StudentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
                 schoolId,
                 studyLevelId
             } = body;
-            if (!email || !name || !surname || !isVerified || !countryId || !schoolId || !studyLevelId) {
+            if (isStringEmpty(email) || isStringEmpty(name) || isStringEmpty(surname) || isNull(isVerified) || isNull(countryId) || isNull(schoolId) || isNull(studyLevelId)) {
                 return response.code(400).send({error: "Bad Request"});
             }
 
-            const student: StudentDTO = await studentService.update(id, email, name, surname, isVerified, Number(countryId), Number(schoolId), Number(studyLevelId));
-            if (!student) {
+            if (!await countryService.get(countryId) || !await schoolService.get(schoolId) || !await studyLevelService.get(studyLevelId) || !await studentService.get(id)) {
                 return response.code(404).send({error: "Not found"});
             }
 
+            const student: StudentDTO = await studentService.update(id, email, name, surname, isVerified, Number(countryId), Number(schoolId), Number(studyLevelId));
             return response.code(200).send(student);
         } catch (error) {
             request.log.error(error);
@@ -130,8 +141,12 @@ const StudentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
                 currentPassword,
                 newPassword,
             } = body;
-            if (!currentPassword || !newPassword) {
+            if (isStringEmpty(currentPassword) || isStringEmpty(newPassword)) {
                 return response.code(400).send({error: "Bad Request"});
+            }
+
+            if (!await studentService.get(id)) {
+                return response.code(404).send({error: "Not found"});
             }
 
             const isPasswordUpdated: boolean = await studentService.updatePassword(id, currentPassword, newPassword);
@@ -149,11 +164,11 @@ const StudentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
     app.delete<{ Params: studentParams }>('/student/:id', studentDelete, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
-            const student: UserDTO = await studentService.delete(id);
-            if (!student) {
+            if (!await studentService.get(id)) {
                 return response.code(404).send({error: "Not found"});
             }
 
+            const student: UserDTO = await studentService.delete(id);
             return response.code(204).send(student);
         } catch (error) {
             request.log.error(error);
