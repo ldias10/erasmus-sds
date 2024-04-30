@@ -71,6 +71,10 @@ const AdminRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fa
                 return response.code(400).send({error: "Bad Request"});
             }
 
+            if (await adminService.isEmailAddressAlreadyUsed(email)) {
+                return response.code(409).send({error: "Email address already in use."});
+            }
+
             const admin: AdminDTO = await adminService.create(email, password, name, surname, isVerified || false);
             return response.code(201).send(admin);
         } catch (error) {
@@ -95,6 +99,10 @@ const AdminRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fa
 
             if (!await adminService.get(id)) {
                 return response.code(404).send({error: "Not found"});
+            }
+
+            if (await adminService.isEmailAddressAlreadyUsedByAnotherUser(id, email)) {
+                return response.code(409).send({error: "Email address already in use."});
             }
 
             const admin: AdminDTO = await adminService.update(id, email, name, surname, isVerified);

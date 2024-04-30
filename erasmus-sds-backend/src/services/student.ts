@@ -99,6 +99,14 @@ export class StudentService {
         return await this.userService.delete(id);
     }
 
+    public async isEmailAddressAlreadyUsed(email: string): Promise<boolean> {
+        return await this.userService.isEmailAddressAlreadyUsed(email);
+    }
+
+    public async isEmailAddressAlreadyUsedByAnotherUser(id: number, email: string): Promise<boolean> {
+        return await this.userService.isEmailAddressAlreadyUsedByAnotherUser(id, email);
+    }
+
     private studentToStudentDTO(student: Student & { user: User }): StudentDTO {
         return {
             userId: student.userId,

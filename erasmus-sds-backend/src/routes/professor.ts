@@ -78,6 +78,10 @@ const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options
                 return response.code(400).send({error: "Bad Request"});
             }
 
+            if (await professorService.isEmailAddressAlreadyUsed(email)) {
+                return response.code(409).send({error: "Email address already in use."});
+            }
+
             const professor: ProfessorDTO = await professorService.create(email, password, name, surname, isVerified || false);
             return response.code(201).send(professor);
         } catch (error) {
@@ -105,6 +109,10 @@ const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options
 
             if (!await professorService.get(id)) {
                 return response.code(404).send({error: "Not found"});
+            }
+
+            if (await professorService.isEmailAddressAlreadyUsedByAnotherUser(id, email)) {
+                return response.code(409).send({error: "Email address already in use."});
             }
 
             const professor: ProfessorDTO = await professorService.update(id, email, name, surname, isVerified);

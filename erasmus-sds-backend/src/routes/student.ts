@@ -90,6 +90,10 @@ const StudentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
                 return response.code(404).send({error: "Not found"});
             }
 
+            if (await studentService.isEmailAddressAlreadyUsed(email)) {
+                return response.code(409).send({error: "Email address already in use."});
+            }
+
             const student: StudentDTO = await studentService.create(email, password, name, surname, isVerified || false, Number(countryId), Number(schoolId), Number(studyLevelId));
             return response.code(201).send(student);
         } catch (error) {
@@ -120,6 +124,10 @@ const StudentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
 
             if (!await countryService.get(countryId) || !await schoolService.get(schoolId) || !await studyLevelService.get(studyLevelId) || !await studentService.get(id)) {
                 return response.code(404).send({error: "Not found"});
+            }
+
+            if (await studentService.isEmailAddressAlreadyUsedByAnotherUser(id, email)) {
+                return response.code(409).send({error: "Email address already in use."});
             }
 
             const student: StudentDTO = await studentService.update(id, email, name, surname, isVerified, Number(countryId), Number(schoolId), Number(studyLevelId));

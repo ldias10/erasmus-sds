@@ -77,6 +77,14 @@ export class AdminService {
         return await this.userService.delete(id);
     }
 
+    public async isEmailAddressAlreadyUsed(email: string): Promise<boolean> {
+        return await this.userService.isEmailAddressAlreadyUsed(email);
+    }
+
+    public async isEmailAddressAlreadyUsedByAnotherUser(id: number, email: string): Promise<boolean> {
+        return await this.userService.isEmailAddressAlreadyUsedByAnotherUser(id, email);
+    }
+
     private adminToAdminDTO(admin: Admin & { user: User }): AdminDTO {
         return {
             userId: admin.userId,

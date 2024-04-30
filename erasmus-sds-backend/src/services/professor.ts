@@ -79,6 +79,14 @@ export class ProfessorService {
         return await this.userService.delete(id);
     }
 
+    public async isEmailAddressAlreadyUsed(email: string): Promise<boolean> {
+        return await this.userService.isEmailAddressAlreadyUsed(email);
+    }
+
+    public async isEmailAddressAlreadyUsedByAnotherUser(id: number, email: string): Promise<boolean> {
+        return await this.userService.isEmailAddressAlreadyUsedByAnotherUser(id, email);
+    }
+
     private professorToProfessorDTO(professor: Professor & { user: User }): ProfessorDTO {
         return {
             userId: professor.userId,

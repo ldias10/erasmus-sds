@@ -100,6 +100,13 @@ export const adminPost = {
                 },
                 description: "Bad Request"
             },
+            409: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Email address already in use."
+            },
             500: {
                 type: "object",
                 properties: {
@@ -156,6 +163,13 @@ export const adminPut = {
                     error: {type: "string"}
                 },
                 description: "Not Found"
+            },
+            409: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Email address already in use."
             },
             500: {
                 type: "object",

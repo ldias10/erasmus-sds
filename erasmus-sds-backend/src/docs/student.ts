@@ -119,6 +119,13 @@ export const studentPost = {
                 },
                 description: "Not Found"
             },
+            409: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Email address already in use."
+            },
             500: {
                 type: "object",
                 properties: {
@@ -181,6 +188,13 @@ export const studentPut = {
                     error: {type: "string"}
                 },
                 description: "Not Found"
+            },
+            409: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Email address already in use."
             },
             500: {
                 type: "object",

@@ -1,5 +1,6 @@
 import {FastifyInstance} from "fastify";
 import {User} from "@prisma/client";
+import {isNull} from "../utils/utils";
 
 export interface UserDTO {
     id: number,
@@ -88,4 +89,31 @@ export class UserService {
             }
         });
     }
+
+    public async isEmailAddressAlreadyUsed(email: string): Promise<boolean> {
+        const user: User | null = await this.app.prisma.user.findUnique({
+            where: {
+                email: email
+            }
+        });
+
+        return !isNull(user);
+    }
+
+    public async isEmailAddressAlreadyUsedByAnotherUser(id: number, email: string): Promise<boolean> {
+        const userById: User | null = await this.app.prisma.user.findUnique({
+            where: {
+                id: id
+            }
+        });
+
+        const userByEmail: User | null = await this.app.prisma.user.findUnique({
+            where: {
+                email: email
+            }
+        });
+
+        return (!isNull(userById) && !isNull(userByEmail)) && userById?.id !== userByEmail?.id;
+    }
+
 }
