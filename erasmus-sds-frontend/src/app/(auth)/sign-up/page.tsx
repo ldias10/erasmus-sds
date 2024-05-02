@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { BiLoaderAlt } from "react-icons/bi";
 
-import SelectInput from './SelectInput';
+import SelectInput from '../../../layouts/components/SelectInput';
 
 export interface FormData {
   surname?: string;

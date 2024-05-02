@@ -8,6 +8,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useEffect } from "react";
 import { IoSearch } from "react-icons/io5";
+import { CgProfile } from "react-icons/cg";
 
 //  child navigation link interface
 export interface IChildNavigationLink {
@@ -41,7 +42,7 @@ const Header = () => {
     >
       <nav className="navbar container">
         {/* logo */}
-        <div className="order-0">
+        <div className="order-0 pr-16">
           <Logo />
         </div>
         {/* navbar toggler */}
@@ -126,7 +127,7 @@ const Header = () => {
                 </li>
               )}
             </React.Fragment>
-          ))}
+          ))} 
           {navigation_button.enable && (
             <li className="mt-4 inline-block lg:hidden">
               <Link
@@ -157,6 +158,9 @@ const Header = () => {
               {navigation_button.label}
             </Link>
           )}
+          <Link href="/editProfile" className="text-3xl p-2">
+            <CgProfile />
+          </Link>
         </div>
       </nav>
     </header>

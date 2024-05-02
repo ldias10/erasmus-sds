@@ -3,18 +3,13 @@
 // import { CustomerError } from "@/lib/shopify/types";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, FormEvent, useState } from "react";
-import { BiLoaderAlt } from "react-icons/bi";
-
-export interface FormData {
-  surname?: string;
-  name?: string;
-  email: string;
-  isVerified: boolean;
-  password: string;
-}
+import { FormEvent, useState } from "react";
+import SignupForm from "@/components/SignUpForm";
+import { FormData } from "@/components/SignUpForm";
 
 const TeacherSignUp = () => {
+
+
   const router = useRouter();
   const [formData, setFormData] = useState<FormData>({
     surname: "",
@@ -22,27 +17,14 @@ const TeacherSignUp = () => {
     email: "",
     isVerified: false,
     password: "",
+    countryId: 0,
+    schoolId: 0,
+    studyLevelId: 0,
     
   });
 
   const [loading, setLoading] = useState(false);
   const [errorMessages, setErrorMessages] = useState([]);
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-    console.log(formData);
-  };
-
-  const handleChangeSelect = (e: ChangeEvent<HTMLSelectElement>): void => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
 
   const handleSignUp = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
@@ -59,14 +41,17 @@ const TeacherSignUp = () => {
       });
 
       const responseData = await response.json();
-      console.log("The Response is---------------------------:",response
-        ,"And response.ok is: ",response.ok
-      );
+      // console.log("The Response data is: ",responseData);
+
 
       if (response.ok) {
         setErrorMessages([]);
-        const data = responseData;
-        localStorage.setItem("user", JSON.stringify(data));
+
+        sessionStorage.setItem("userData", JSON.stringify(responseData));
+        console.log("The User data is: ",sessionStorage.getItem("userData"));
+
+        sessionStorage.setItem("userState", "teacher");
+        console.log(sessionStorage.getItem("userState"));
         router.push("/");
       } else {
         const errors = responseData.errors || [];
@@ -92,74 +77,14 @@ const TeacherSignUp = () => {
                 </p>
               </div>
 
-              <form onSubmit={handleSignUp}>
-                <div>
-                  <label className="form-label">Name</label>
-                  <input
-                    name="firstName"
-                    className="form-input"
-                    placeholder="Enter your first name"
-                    type="text"
-                    onChange={handleChange}
-                    required={true}
-                  />
-                </div>
-
-                <div className="pt-2">
-                  <input
-                    name="lastName"
-                    className="form-input"
-                    placeholder="Enter your last name"
-                    type="text"
-                    onChange={handleChange}
-                    required={true}
-                  />
-                </div>
-
-                <div>
-                  <label className="form-label mt-8">Email Address</label>
-                  <input
-                    name="email"
-                    className="form-input"
-                    placeholder="Type your email"
-                    type="email"
-                    onChange={handleChange}
-                    required={true}
-                  />
-                </div>
-
-                <div>
-                  <label className="form-label mt-8">Password</label>
-                  <input
-                    name="password"
-                    className="form-input"
-                    placeholder="********"
-                    type="password"
-                    onChange={handleChange}
-                    required={true}
-                  />
-                </div>
-
-                {/* {errorMessages.map((error: CustomerError) => (
-                  <p
-                    key={error.code}
-                    className="ont-medium text-red-500 truncate mt-2"
-                  >
-                    *{error.message}
-                  </p>
-                ))} */}
-
-                <button
-                  type="submit"
-                  className="btn btn-primary md:text-lg md:font-medium w-full mt-10"
-                >
-                  {loading ? (
-                    <BiLoaderAlt className={`animate-spin mx-auto`} size={26} />
-                  ) : (
-                    "Sign Up"
-                  )}
-                </button>
-              </form>
+              <SignupForm
+                formData={formData}
+                onSubmit={handleSignUp}
+                setFormData={setFormData}
+                loading={loading}
+                buttonText="Sign Up"
+                isStudent={false}
+              />
 
               <div className="flex gap-x-2 text-sm md:text-base mt-6">
                 <p className="text-light dark:text-darkmode-light">
