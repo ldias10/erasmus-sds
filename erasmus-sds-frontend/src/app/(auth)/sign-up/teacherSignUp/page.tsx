@@ -51,6 +51,7 @@ const TeacherSignUp = () => {
         console.log("The User data is: ",sessionStorage.getItem("userData"));
 
         sessionStorage.setItem("userState", "teacher");
+        window.dispatchEvent(new Event("storage"));
         console.log(sessionStorage.getItem("userState"));
         router.push("/");
       } else {

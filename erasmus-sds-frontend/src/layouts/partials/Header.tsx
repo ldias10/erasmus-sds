@@ -6,7 +6,7 @@ import config from "@/config/config.json";
 import menu from "@/config/menu.json";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
 
@@ -30,6 +30,23 @@ const Header = () => {
   const { navigation_button, settings } = config;
   // get current path
   const pathname = usePathname();
+  const [isVisible, setIsVisible] = useState(false);
+  useEffect(() => {
+    const updateVisibility = () => {
+      const newValue = sessionStorage.getItem('userState');
+      setIsVisible(newValue === 'student' || newValue === 'teacher');
+    };
+    updateVisibility();
+    const handleStorageChange = () => {
+      updateVisibility();   
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   // scroll to top on route change
   useEffect(() => {
@@ -158,13 +175,28 @@ const Header = () => {
               {navigation_button.label}
             </Link>
           )}
-          <Link href="/editProfile" className="text-3xl p-2">
-            <CgProfile />
-          </Link>
+          {/* userState==="teacher" */}
+          {isVisible && (
+            <Link href="/editProfile" className="text-3xl p-2">
+              <CgProfile />
+            </Link>
+          )}
         </div>
       </nav>
     </header>
   );
 };
+
+
+// export async function getServerSideProps(context: any) {
+//   // Fetch session storage value or any other initial data
+//   const initialVisibility:boolean = false;
+
+//   return {
+//     props: {
+//       initialVisibility: initialVisibility, // or simply initialVisibility
+//     },
+//   };
+// }
 
 export default Header;

@@ -51,6 +51,7 @@ const StudentSignUp = () => {
         console.log("The User data is: ",sessionStorage.getItem("userData"));
 
         sessionStorage.setItem("userState", "student");
+        window.dispatchEvent(new Event("storage"));
         console.log(sessionStorage.getItem("userState"));
 
         router.push("/");
