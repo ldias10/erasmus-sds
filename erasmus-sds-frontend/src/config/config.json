@@ -5,11 +5,11 @@
     "base_path": "/",
     "trailing_slash": false,
     "favicon": "/images/earth.png",
-    "logo": "/images/logo.png",
+    "logo": "/images/study-bg.png",
     "logo_darkmode": "/images/logo-darkmode.png",
-    "logo_width": "150",
-    "logo_height": "27",
-    "logo_text": "Nextplate"
+    "logo_width": "250",
+    "logo_height": "50",
+    "logo_text": "StudySync"
   },
 
   "settings": {

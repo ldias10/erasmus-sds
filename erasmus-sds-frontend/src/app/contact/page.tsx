@@ -3,12 +3,14 @@ import { getListPage } from "@/lib/contentParser";
 import PageHeader from "@/partials/PageHeader";
 import SeoMeta from "@/partials/SeoMeta";
 import { RegularPage } from "@/types";
+import Testimonials from "@/partials/Testimonials";
 
 const Contact = async () => {
   const data: RegularPage = getListPage("contact/_index.md");
   const { frontmatter } = data;
   const { title, description, meta_title, image } = frontmatter;
   const { contact_form_action } = config.params;
+  const testimonial = getListPage("sections/testimonial.md");
 
   return (
     <>
@@ -68,6 +70,8 @@ const Contact = async () => {
           </div>
         </div>
       </section>
+      <Testimonials data={testimonial} />
+
     </>
   );
 };

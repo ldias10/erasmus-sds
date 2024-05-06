@@ -1,4 +1,3 @@
-import Social from "@/components/Social";
 import ImageFallback from "@/helpers/ImageFallback";
 import { plainify } from "@/lib/utils/textConverter";
 import Link from "next/link";
@@ -17,10 +16,10 @@ const AuthorCard = ({ data }: { data: any }) => {
         />
       )}
       <h4 className="mb-3">
-        <Link href={`/authors/${data.slug}`}>{title}</Link>
+        {/* <Link href={`/authors/${data.slug}`}>{title}</Link> */}
+        <Link href={`/contact`}>{title}</Link>
       </h4>
       <p className="mb-4">{plainify(data.content?.slice(0, 100))}</p>
-      <Social source={social} className="social-icons" />
     </div>
   );
 };
