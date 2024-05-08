@@ -49,6 +49,15 @@ export class StudentService {
         return student ? this.studentToStudentDTO(student) : null;
     }
 
+    public async getByEmail(email: string): Promise<StudentDTO | null> {
+        const user: UserDTO | null = await this.userService.getByEmail(email);
+        if (!user) {
+            return null;
+        }
+
+        return await this.get(user.id);
+    }
+
     public async create(email: string, password: string, name: string, surname: string, isVerified: boolean, countryId: number, schoolId: number, studyLevelId: number): Promise<StudentDTO> {
         const user: UserDTO = await this.userService.create(email, password, name, surname, isVerified);
 
@@ -105,6 +114,10 @@ export class StudentService {
 
     public async isEmailAddressAlreadyUsedByAnotherUser(id: number, email: string): Promise<boolean> {
         return await this.userService.isEmailAddressAlreadyUsedByAnotherUser(id, email);
+    }
+
+    public async login(email: string, password: string): Promise<boolean> {
+        return await this.userService.login(email, password);
     }
 
     private studentToStudentDTO(student: Student & { user: User }): StudentDTO {

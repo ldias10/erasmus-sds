@@ -52,7 +52,9 @@ const CourseRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
         }
     });
 
-    app.post<{ Body: courseAttrs }>('/course', coursePost, async (request, response) => {
+    app.post<{
+        Body: courseAttrs
+    }>('/course', {preHandler: [app.authenticate, app.authorizeAdminOrProfessor], ...coursePost}, async (request, response) => {
         try {
             const body: courseAttrs = request.body;
             const {
@@ -92,7 +94,10 @@ const CourseRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
         }
     });
 
-    app.put<{ Params: courseParams, Body: courseAttrs }>('/course/:id', coursePut, async (request, response) => {
+    app.put<{
+        Params: courseParams,
+        Body: courseAttrs
+    }>('/course/:id', {preHandler: [app.authenticate, app.authorizeAdminOrProfessor], ...coursePut}, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const body: courseAttrs = request.body;
@@ -135,7 +140,9 @@ const CourseRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
         }
     });
 
-    app.delete<{ Params: courseParams }>('/course/:id', courseDelete, async (request, response) => {
+    app.delete<{
+        Params: courseParams
+    }>('/course/:id', {preHandler: [app.authenticate, app.authorizeAdminOrProfessor], ...courseDelete}, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             if (!await courseService.get(id)) {

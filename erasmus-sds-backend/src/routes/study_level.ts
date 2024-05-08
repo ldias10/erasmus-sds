@@ -41,7 +41,9 @@ const StudyLevelRoutes: FastifyPluginAsync = async (app: FastifyInstance, option
         }
     });
 
-    app.post<{ Body: studyLevelAttrs }>('/studyLevel', studyLevelPost, async (request, response) => {
+    app.post<{
+        Body: studyLevelAttrs
+    }>('/studyLevel', {preHandler: [app.authenticate, app.authorizeAdmin], ...studyLevelPost}, async (request, response) => {
         try {
             const body: studyLevelAttrs = request.body;
             const name: string = body.name;
@@ -60,7 +62,7 @@ const StudyLevelRoutes: FastifyPluginAsync = async (app: FastifyInstance, option
     app.put<{
         Params: studyLevelParams,
         Body: studyLevelAttrs
-    }>('/studyLevel/:id', studyLevelPut, async (request, response) => {
+    }>('/studyLevel/:id', {preHandler: [app.authenticate, app.authorizeAdmin], ...studyLevelPut}, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const body: studyLevelAttrs = request.body;
@@ -81,7 +83,9 @@ const StudyLevelRoutes: FastifyPluginAsync = async (app: FastifyInstance, option
         }
     });
 
-    app.delete<{ Params: studyLevelParams }>('/studyLevel/:id', studyLevelDelete, async (request, response) => {
+    app.delete<{
+        Params: studyLevelParams
+    }>('/studyLevel/:id', {preHandler: [app.authenticate, app.authorizeAdmin], ...studyLevelDelete}, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             if (!await studyLevelService.get(id)) {

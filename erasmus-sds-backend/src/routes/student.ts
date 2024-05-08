@@ -69,7 +69,9 @@ const StudentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
         }
     });
 
-    app.post<{ Body: studentCreateAttrs }>('/student', studentPost, async (request, response) => {
+    app.post<{
+        Body: studentCreateAttrs
+    }>('/student', studentPost, async (request, response) => {
         try {
             const body: studentCreateAttrs = request.body;
             const {
@@ -105,7 +107,7 @@ const StudentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
     app.put<{
         Params: studentParams,
         Body: studentUpdateAttrs
-    }>('/student/:id', studentPut, async (request, response) => {
+    }>('/student/:id', {preHandler: [app.authenticate, app.authorizeAdminOrStudent], ...studentPut}, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const body: studentUpdateAttrs = request.body;
@@ -141,7 +143,7 @@ const StudentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
     app.put<{
         Params: studentParams,
         Body: studentUpdatePasswordAttrs
-    }>('/student/:id/updatePassword', studentPutPassword, async (request, response) => {
+    }>('/student/:id/updatePassword', {preHandler: [app.authenticate, app.authorizeAdminOrStudent], ...studentPutPassword}, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const body: studentUpdatePasswordAttrs = request.body;
@@ -169,7 +171,9 @@ const StudentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
         }
     });
 
-    app.delete<{ Params: studentParams }>('/student/:id', studentDelete, async (request, response) => {
+    app.delete<{
+        Params: studentParams
+    }>('/student/:id', {preHandler: [app.authenticate, app.authorizeAdminOrStudent], ...studentDelete}, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             if (!await studentService.get(id)) {

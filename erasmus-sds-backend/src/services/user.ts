@@ -1,13 +1,28 @@
 import {FastifyInstance} from "fastify";
-import {User} from "@prisma/client";
+import {Admin, Professor, Student, User} from "@prisma/client";
 import {isNull} from "../utils/utils";
+
+type UserIncludes = User & {
+    Admin?: Admin,
+    Professor?: Professor,
+    Student?: Student
+};
 
 export interface UserDTO {
     id: number,
     email: string,
     name: string,
     surname: string,
-    isVerified: boolean
+    isVerified: boolean,
+    Admin?: Admin,
+    Professor?: Professor,
+    Student?: Student
+}
+
+export interface UserGetInclude {
+    Admin?: boolean,
+    Professor?: boolean,
+    Student?: boolean
 }
 
 export class UserService {
@@ -19,15 +34,38 @@ export class UserService {
     }
 
     public async getAll(): Promise<UserDTO[]> {
-        return this.app.prisma.user.findMany();
+        const users: UserIncludes[] = await this.app.prisma.user.findMany();
+
+        const usersDTO: UserDTO[] = users.map(((user: UserIncludes) => this.userToUserDTO(user)));
+        return usersDTO;
     }
 
-    public async get(id: number): Promise<UserDTO | null> {
-        return this.app.prisma.user.findUnique({
+    public async get(id: number, getInclude?: UserGetInclude): Promise<UserDTO | null> {
+        const include: any = {};
+        if (getInclude) {
+            if (getInclude.Admin) include.Admin = Boolean(getInclude.Admin);
+            if (getInclude.Professor) include.Professor = Boolean(getInclude.Professor);
+            if (getInclude.Student) include.Student = Boolean(getInclude.Student);
+        }
+
+        const user: UserIncludes | null = await this.app.prisma.user.findUnique({
+            include,
             where: {
                 id: id,
             }
         });
+
+        return user ? this.userToUserDTO(user) : null;
+    }
+
+    public async getByEmail(email: string): Promise<UserDTO | null> {
+        const user: UserIncludes | null = await this.app.prisma.user.findUnique({
+            where: {
+                email: email
+            }
+        });
+
+        return user ? this.userToUserDTO(user) : null;
     }
 
     public async create(email: string, password: string, name: string, surname: string, isVerified: boolean): Promise<UserDTO> {
@@ -65,7 +103,7 @@ export class UserService {
             }
         });
 
-        if (!user || !(await this.app.bcrypt.compare(user.password, currentPassword))) {
+        if (!user || !(await this.app.bcrypt.compare(currentPassword, user.password))) {
             return false;
         }
 
@@ -116,4 +154,26 @@ export class UserService {
         return (!isNull(userById) && !isNull(userByEmail)) && userById?.id !== userByEmail?.id;
     }
 
+    public async login(email: string, password: string): Promise<boolean> {
+        const user: User | null = await this.app.prisma.user.findUnique({
+            where: {
+                email: email
+            }
+        });
+
+        return !(!user || !(await this.app.bcrypt.compare(password, user.password)));
+    }
+
+    private userToUserDTO(user: UserIncludes): UserDTO {
+        return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            surname: user.surname,
+            isVerified: user.isVerified,
+            Admin: user.Admin,
+            Professor: user.Professor,
+            Student: user.Student
+        }
+    }
 }

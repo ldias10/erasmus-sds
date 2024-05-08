@@ -47,7 +47,9 @@ const FieldOfStudyRoutes: FastifyPluginAsync = async (app: FastifyInstance, opti
         }
     });
 
-    app.post<{ Body: fieldOfStudyAttrs }>('/fieldOfStudy', fieldOfStudyPost, async (request, response) => {
+    app.post<{
+        Body: fieldOfStudyAttrs
+    }>('/fieldOfStudy', {preHandler: [app.authenticate, app.authorizeAdminOrProfessor], ...fieldOfStudyPost}, async (request, response) => {
         try {
             const body: fieldOfStudyAttrs = request.body;
             const name: string = body.name;
@@ -66,7 +68,7 @@ const FieldOfStudyRoutes: FastifyPluginAsync = async (app: FastifyInstance, opti
     app.put<{
         Params: fieldOfStudyParams,
         Body: fieldOfStudyAttrs
-    }>('/fieldOfStudy/:id', fieldOfStudyPut, async (request, response) => {
+    }>('/fieldOfStudy/:id', {preHandler: [app.authenticate, app.authorizeAdminOrProfessor], ...fieldOfStudyPut}, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const body: fieldOfStudyAttrs = request.body;
@@ -87,7 +89,9 @@ const FieldOfStudyRoutes: FastifyPluginAsync = async (app: FastifyInstance, opti
         }
     });
 
-    app.delete<{ Params: fieldOfStudyParams }>('/fieldOfStudy/:id', fieldOfStudyDelete, async (request, response) => {
+    app.delete<{
+        Params: fieldOfStudyParams
+    }>('/fieldOfStudy/:id', {preHandler: [app.authenticate, app.authorizeAdminOrProfessor], ...fieldOfStudyDelete}, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             if (!await fieldOfStudyService.get(id)) {

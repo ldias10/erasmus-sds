@@ -70,7 +70,7 @@ const UniversityRoutes: FastifyPluginAsync = async (app: FastifyInstance, option
     app.put<{
         Params: universityParams,
         Body: universityAttrs
-    }>('/university/:id', UniversityPut, async (request, response) => {
+    }>('/university/:id', {preHandler: [app.authenticate, app.authorizeAdmin], ...UniversityPut}, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const body: universityAttrs = request.body;
@@ -94,7 +94,9 @@ const UniversityRoutes: FastifyPluginAsync = async (app: FastifyInstance, option
         }
     });
 
-    app.delete<{ Params: universityParams }>('/university/:id', UniversityDelete, async (request, response) => {
+    app.delete<{
+        Params: universityParams
+    }>('/university/:id', {preHandler: [app.authenticate, app.authorizeAdmin], ...UniversityDelete}, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             if (!await universityService.get(id)) {

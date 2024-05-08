@@ -42,7 +42,9 @@ const AdminRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fa
         }
     });
 
-    app.get<{ Params: adminParams }>('/admin/:id', adminGet, async (request, response) => {
+    app.get<{
+        Params: adminParams
+    }>('/admin/:id', adminGet, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const admin: AdminDTO | null = await adminService.get(id);
@@ -57,7 +59,9 @@ const AdminRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fa
         }
     });
 
-    app.post<{ Body: adminCreateAttrs }>('/admin', adminPost, async (request, response) => {
+    app.post<{
+        Body: adminCreateAttrs
+    }>('/admin', {preHandler: [app.authenticate, app.authorizeAdmin], ...adminPost}, async (request, response) => {
         try {
             const body: adminCreateAttrs = request.body;
             const {
@@ -83,7 +87,10 @@ const AdminRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fa
         }
     });
 
-    app.put<{ Params: adminParams, Body: adminUpdateAttrs }>('/admin/:id', adminPut, async (request, response) => {
+    app.put<{
+        Params: adminParams,
+        Body: adminUpdateAttrs
+    }>('/admin/:id', {preHandler: [app.authenticate, app.authorizeAdmin], ...adminPut}, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const body: adminUpdateAttrs = request.body;
@@ -116,7 +123,7 @@ const AdminRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fa
     app.put<{
         Params: adminParams,
         Body: adminUpdatePasswordAttrs
-    }>('/admin/:id/updatePassword', adminPutPassword, async (request, response) => {
+    }>('/admin/:id/updatePassword', {preHandler: [app.authenticate, app.authorizeAdmin], ...adminPutPassword}, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const body: adminUpdatePasswordAttrs = request.body;
@@ -144,7 +151,9 @@ const AdminRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fa
         }
     });
 
-    app.delete<{ Params: adminParams }>('/admin/:id', adminDelete, async (request, response) => {
+    app.delete<{
+        Params: adminParams
+    }>('/admin/:id', {preHandler: [app.authenticate, app.authorizeAdmin], ...adminDelete}, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             if (!await adminService.get(id)) {

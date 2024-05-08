@@ -52,7 +52,7 @@ const RateRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fas
     app.post<{
         Params: rateParams,
         Body: rateAttrs
-    }>('/rate/:studentId/:courseId', ratePost, async (request, response) => {
+    }>('/rate/:studentId/:courseId', {preHandler: [app.authenticate, app.authorizeAdminOrVerifiedStudent], ...ratePost}, async (request, response) => {
         try {
             const {
                 studentId,
@@ -83,7 +83,7 @@ const RateRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fas
     app.put<{
         Params: rateParams,
         Body: rateAttrs
-    }>('/rate/:studentId/:courseId', ratePut, async (request, response) => {
+    }>('/rate/:studentId/:courseId', {preHandler: [app.authenticate, app.authorizeAdminOrVerifiedStudent], ...ratePut}, async (request, response) => {
         try {
             const {
                 studentId,
@@ -107,7 +107,9 @@ const RateRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fas
         }
     });
 
-    app.delete<{ Params: rateParams }>('/rate/:studentId/:courseId', rateDelete, async (request, response) => {
+    app.delete<{
+        Params: rateParams
+    }>('/rate/:studentId/:courseId', {preHandler: [app.authenticate, app.authorizeAdminOrVerifiedStudent], ...rateDelete}, async (request, response) => {
         try {
             const {
                 studentId,

@@ -48,7 +48,9 @@ const CommentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
         }
     });
 
-    app.post<{ Body: commentAttrs }>('/comment', commentPost, async (request, response) => {
+    app.post<{
+        Body: commentAttrs
+    }>('/comment', {preHandler: [app.authenticate, app.authorizeVerifiedUser], ...commentPost}, async (request, response) => {
         try {
             const body: commentAttrs = request.body;
             const {
@@ -73,7 +75,10 @@ const CommentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
         }
     });
 
-    app.put<{ Params: commentParams, Body: commentAttrs }>('/comment/:id', commentPut, async (request, response) => {
+    app.put<{
+        Params: commentParams,
+        Body: commentAttrs
+    }>('/comment/:id', {preHandler: [app.authenticate, app.authorizeVerifiedUser], ...commentPut}, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const body: commentAttrs = request.body;
@@ -99,7 +104,9 @@ const CommentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
         }
     });
 
-    app.delete<{ Params: commentParams }>('/comment/:id', commentDelete, async (request, response) => {
+    app.delete<{
+        Params: commentParams
+    }>('/comment/:id', {preHandler: [app.authenticate, app.authorizeVerifiedUser], ...commentDelete}, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             if (!await commentService.get(id)) {

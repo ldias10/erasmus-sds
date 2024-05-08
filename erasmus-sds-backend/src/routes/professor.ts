@@ -64,7 +64,9 @@ const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options
         }
     });
 
-    app.post<{ Body: professorCreateAttrs }>('/professor', professorPost, async (request, response) => {
+    app.post<{
+        Body: professorCreateAttrs
+    }>('/professor', {preHandler: [app.authenticate, app.authorizeAdminOrProfessor], ...professorPost}, async (request, response) => {
         try {
             const body: professorCreateAttrs = request.body;
             const {
@@ -93,7 +95,7 @@ const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options
     app.put<{
         Params: professorParams,
         Body: professorUpdateAttrs
-    }>('/professor/:id', professorPut, async (request, response) => {
+    }>('/professor/:id', {preHandler: [app.authenticate, app.authorizeAdminOrProfessor], ...professorPut}, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const body: professorUpdateAttrs = request.body;
@@ -126,7 +128,7 @@ const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options
     app.put<{
         Params: professorParams,
         Body: professorUpdatePasswordAttrs
-    }>('/professor/:id/updatePassword', professorPutPassword, async (request, response) => {
+    }>('/professor/:id/updatePassword', {preHandler: [app.authenticate, app.authorizeAdminOrProfessor], ...professorPutPassword}, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const body: professorUpdatePasswordAttrs = request.body;
@@ -154,7 +156,9 @@ const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options
         }
     });
 
-    app.delete<{ Params: professorParams }>('/professor/:id', professorDelete, async (request, response) => {
+    app.delete<{
+        Params: professorParams
+    }>('/professor/:id', {preHandler: [app.authenticate, app.authorizeAdminOrProfessor], ...professorDelete}, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             if (!await professorService.get(id)) {

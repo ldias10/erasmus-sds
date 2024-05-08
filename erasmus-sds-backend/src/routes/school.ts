@@ -44,7 +44,9 @@ const SchoolRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
         }
     });
 
-    app.post<{ Body: schoolAttrs }>('/school', schoolPost, async (request, response) => {
+    app.post<{
+        Body: schoolAttrs
+    }>('/school', {preHandler: [app.authenticate], ...schoolPost}, async (request, response) => {
         try {
             const body: schoolAttrs = request.body;
             const {
@@ -67,7 +69,10 @@ const SchoolRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
         }
     });
 
-    app.put<{ Params: schoolParams, Body: schoolAttrs }>('/school/:id', schoolPut, async (request, response) => {
+    app.put<{
+        Params: schoolParams,
+        Body: schoolAttrs
+    }>('/school/:id', {preHandler: [app.authenticate, app.authorizeAdmin], ...schoolPut}, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const body: schoolAttrs = request.body;
@@ -91,7 +96,9 @@ const SchoolRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
         }
     });
 
-    app.delete<{ Params: schoolParams }>('/school/:id', schoolDelete, async (request, response) => {
+    app.delete<{
+        Params: schoolParams
+    }>('/school/:id', {preHandler: [app.authenticate, app.authorizeAdmin], ...schoolDelete}, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             if (!await schoolService.get(id)) {

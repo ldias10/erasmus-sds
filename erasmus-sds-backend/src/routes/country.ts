@@ -42,7 +42,9 @@ const CountryRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
         }
     });
 
-    app.post<{ Body: countryAttrs }>('/country', countryPost, async (request, response) => {
+    app.post<{
+        Body: countryAttrs
+    }>('/country', {preHandler: [app.authenticate, app.authorizeAdmin], ...countryPost}, async (request, response) => {
         try {
             const body: countryAttrs = request.body;
             const {
@@ -61,7 +63,10 @@ const CountryRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
         }
     });
 
-    app.put<{ Params: countryParams, Body: countryAttrs }>('/country/:id', countryPut, async (request, response) => {
+    app.put<{
+        Params: countryParams,
+        Body: countryAttrs
+    }>('/country/:id', {preHandler: [app.authenticate, app.authorizeAdmin], ...countryPut}, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const body: countryAttrs = request.body;
@@ -85,7 +90,9 @@ const CountryRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
         }
     });
 
-    app.delete<{ Params: countryParams }>('/country/:id', countryDelete, async (request, response) => {
+    app.delete<{
+        Params: countryParams
+    }>('/country/:id', {preHandler: [app.authenticate, app.authorizeAdmin], ...countryDelete}, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             if (!await countryService.get(id)) {
