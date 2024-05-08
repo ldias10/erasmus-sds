@@ -36,3 +36,11 @@ For more critical meetings such as sprint plannings or milestone discussions, we
 For smaller tasks or routine updates, we will utilize online platforms like Discord or Google Meets. These virtual meetings will enable us to efficiently address smaller issues and keep the project moving forward.
 
 ## Installation manual
+### Backend
+You must have a PostgreSQL Database running and a .env file with APP_HOST, APP_PORT, DATABASE_URL, JWT_SECRET, COOKIES_SECRET variables set.
+```sh
+npm install
+npx prisma migrate dev --name init
+npm run build
+npm run start
+```
