@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { BiLoaderAlt } from "react-icons/bi";
+import { useTheme } from "next-themes";
 
 import SelectInput from '../../../layouts/components/SelectInput';
 
@@ -18,9 +19,20 @@ export interface FormData {
   studyLevelId?: number;
   password: string;
 }
-
 const SignUp = () => {
   const router = useRouter();
+  const { theme, setTheme } = useTheme() ; 
+  const [studentImagePath, setStudentImagePath] = useState({
+    light: "/images/student.png",
+    dark: "/images/student_dark.png",
+  });
+  const [teacherImagePath, setTeacherImagePath] = useState({
+    light: "/images/teacher.png",
+    dark: "/images/teacher_dark.png",
+  });
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+  };
   return (
     <>
       <section className="section">
@@ -31,31 +43,31 @@ const SignUp = () => {
                 <h2 className="max-md:h1 md:mb-2">Are you a student or a teacher?</h2>
                 <div className="flex flex-col items-center">
                   <div id="studentContainer" className="flex items-center border border-black rounded">
-                    
                     <Link
-                      className="underline font-medium text-dark dark:text-darkmode-dark flex items-center gap-x-2"
+                      className="underline font-medium flex items-center gap-x-2"
                       href={"/sign-up/studentSignUp"}
                     >
-                      <img
-                      src="/images/student.png"
-                      alt="student"
-                      className="max-w-xs mx-auto">
-                      </img>
+                         <img
+    src={(theme === "light" || theme === "dark") ? studentImagePath[theme] : studentImagePath.light}
+    alt="teacher"
+    className="max-w-xs mx-auto"
+/>
                       Student
                     </Link>
                   </div>
                   <br></br>
                   <div id="teacherContainer" className="flex items-center border border-black rounded">
                     <Link
-                      className="underline font-medium text-dark dark:text-darkmode-dark flex items-center gap-x-2"
+                      className="underline font-medium flex items-center gap-x-2"
                       href={"/sign-up/teacherSignUp"}
                     >
                       Teacher
                       <img
-                      src="/images/teacher.png"
-                      alt="teacher"
-                      className="max-w-xs mx-auto">
-                      </img>    
+    src={(theme === "light" || theme === "dark") ? teacherImagePath[theme] : teacherImagePath.light}
+    alt="teacher"
+    className="max-w-xs mx-auto"
+/>
+
                     </Link>
                   </div>
                 </div>
