@@ -50,6 +50,7 @@ const SignUpForm = ({ formData, onSubmit, setFormData, loading, buttonText, isSt
     
         const countries = await response.json();
         setCountries(countries);
+        console.log(countries);
         } catch (error) {
           console.error('Error fetching countries:', error);
           throw error;

@@ -1,53 +1,56 @@
-import AuthorCard from "@/components/AuthorCard";
-import { getListPage, getSinglePage } from "@/lib/contentParser";
+"use client";
+import { useState, useEffect, FormEvent } from "react";
+import CourseCard from "@/components/CourseCard";
+// import { getListPage, getSinglePage } from "@/lib/contentParser";
 import PageHeader from "@/partials/PageHeader";
-import SeoMeta from "@/partials/SeoMeta";
-import { FormEvent, useState } from "react";
-import { Author } from "@/types";
 
-const Authors = () => {
-  const authorIndex: Author = getListPage("courses/_index.md");
-  const authors: Author[] = getSinglePage("courses");
-  const { title, meta_title, description, image } = authorIndex.frontmatter;
+export interface Course {
+  name: string;
+  description: string;
+  ects: number;
+  hoursOfLecture?: number;
+  hoursOfLabs?: number;
+  numberOfExams: number;
+  isAvailable?: boolean;
+  fieldOfStudyId?: number;
+  studyLevelId?: number;
+  }
 
-  // const [loading, setLoading] = useState(false);
-  // const getCourses = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
-  //   e.preventDefault();
-
-  //   try {
-  //     setLoading(true);
-
-  //     const response = await fetch("/api/course", {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       }
-  //     });
-
-  //     const responseData = await response.json();
-  //     console.log(responseData);
-  //   } catch (error) {
-  //     console.error("Error during login:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
+const Course = () => {
+  const [courses, setCourses] = useState<any[]>([]);
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/courses", {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to fetch courses');
+        }
+    
+        const courses = await response.json();
+        setCourses(courses);
+        } catch (error) {
+          console.error('Error fetching courses:', error);
+          throw error;
+        }
+      };
+      fetchCourses();
+  },
+);
   return (
-    <>
-      <SeoMeta
-        title={title}
-        meta_title={meta_title}
-        description={description}
-        image={image}
-      />
-      <PageHeader title={title} />
+    <>  
+      <PageHeader/>
       <section className="section-sm pb-0">
         <div className="container">
           <div className="row justify-center">
-            {authors.map((author: Author, index: number) => (
+            {courses.map((course: Course, index: number) => (
               <div className="mb-14 md:col-6 lg:col-4" key={index}>
-                <AuthorCard data={author} />
+                <CourseCard data={course} />
               </div>
             ))}
           </div>
@@ -57,4 +60,4 @@ const Authors = () => {
   );
 };
 
-export default Authors;
+export default Course;

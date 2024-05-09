@@ -58,8 +58,7 @@ const AuthorSingle = ({ params }: { params: { single: string } }) => {
               <div className="content">
                 <MDXContent content={content} />
               </div>
-              <Social source={social} className="social-icons" />
-            </div>
+              </div>
           </div>
 
           <div className="row justify-center pb-16 pt-14">
