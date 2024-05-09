@@ -37,7 +37,7 @@ const FieldOfStudyRoutes: FastifyPluginAsync = async (app: FastifyInstance, opti
             const id: number = Number(request.params.id);
             const fieldOfStudy: FieldOfStudy | null = await fieldOfStudyService.get(id);
             if (!fieldOfStudy) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The field of study for the specified id was not found."});
             }
 
             return response.code(200).send(fieldOfStudy);
@@ -54,7 +54,7 @@ const FieldOfStudyRoutes: FastifyPluginAsync = async (app: FastifyInstance, opti
             const body: fieldOfStudyAttrs = request.body;
             const name: string = body.name;
             if (isStringEmpty(name)) {
-                return response.code(400).send({error: "Bad Request"});
+                return response.code(400).send({error: "Name must be specified."});
             }
 
             const fieldOfStudy: FieldOfStudy = await fieldOfStudyService.create(name);
@@ -74,11 +74,11 @@ const FieldOfStudyRoutes: FastifyPluginAsync = async (app: FastifyInstance, opti
             const body: fieldOfStudyAttrs = request.body;
             const name: string = body.name;
             if (isStringEmpty(name)) {
-                return response.code(400).send({error: "Bad Request"});
+                return response.code(400).send({error: "Name must be specified."});
             }
 
             if (!await fieldOfStudyService.get(id)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The field of study for the specified id was not found."});
             }
 
             const fieldOfStudy: FieldOfStudy = await fieldOfStudyService.update(id, name);
@@ -95,7 +95,7 @@ const FieldOfStudyRoutes: FastifyPluginAsync = async (app: FastifyInstance, opti
         try {
             const id: number = Number(request.params.id);
             if (!await fieldOfStudyService.get(id)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The field of study for the specified id was not found."});
             }
 
             const fieldOfStudy: FieldOfStudy = await fieldOfStudyService.delete(id);

@@ -34,7 +34,7 @@ const UniversityRoutes: FastifyPluginAsync = async (app: FastifyInstance, option
             const id: number = Number(request.params.id);
             const university: University | null = await universityService.get(id);
             if (!university) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The university for the specified id was not found."});
             }
 
             return response.code(200).send(university);
@@ -52,11 +52,11 @@ const UniversityRoutes: FastifyPluginAsync = async (app: FastifyInstance, option
                 countryId
             } = body;
             if (isStringEmpty(name) || isNull(countryId)) {
-                return response.code(400).send({error: "Bad Request"});
+                return response.code(400).send({error: "Name and countryId must be specified."});
             }
 
             if (!await countryService.get(countryId)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The country for the specified id was not found."});
             }
 
             const university: University = await universityService.create(name, Number(countryId));
@@ -79,11 +79,11 @@ const UniversityRoutes: FastifyPluginAsync = async (app: FastifyInstance, option
                 countryId
             } = body;
             if (isStringEmpty(name) || isNull(countryId)) {
-                return response.code(400).send({error: "Bad Request"});
+                return response.code(400).send({error: "Name and countryId must be specified."});
             }
 
             if (!await countryService.get(countryId) || !await universityService.get(id)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "University and/or country for specified id not found."});
             }
 
             const university: University = await universityService.update(id, name, Number(countryId));
@@ -100,7 +100,7 @@ const UniversityRoutes: FastifyPluginAsync = async (app: FastifyInstance, option
         try {
             const id: number = Number(request.params.id);
             if (!await universityService.get(id)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The university for the specified id was not found."});
             }
 
             const university: University = await universityService.delete(id);

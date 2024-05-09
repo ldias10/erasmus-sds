@@ -43,7 +43,7 @@ const CourseRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
             const id: number = Number(request.params.id);
             const course: Course | null = await courseService.get(id);
             if (!course) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The course for the specified id was not found."});
             }
 
             return response.code(200).send(course);
@@ -69,11 +69,11 @@ const CourseRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
                 studyLevelId
             } = body;
             if (isStringEmpty(name) || isStringEmpty(description) || isNull(ects) || isNull(hoursOfLecture) || isNull(hoursOfLabs) || isNull(numberOfExams) || isNull(fieldOfStudyId) || isNull(studyLevelId)) {
-                return response.code(400).send({error: "Bad Request"});
+                return response.code(400).send({error: "Name, description, ects, hoursOfLecture, hoursOfLabs, numberOfExams, fieldOfStudyId and studyLevelId must be specified."});
             }
 
             if (!await filedOfStudyService.get(fieldOfStudyId) || !await studyLevelService.get(studyLevelId)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "Field of study and/or study level for specified id not found."});
             }
 
             const course: Course = await courseService.create(
@@ -114,11 +114,11 @@ const CourseRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
             } = body;
 
             if (isStringEmpty(name) || isStringEmpty(description) || isNull(ects) || isNull(hoursOfLecture) || isNull(hoursOfLabs) || isNull(numberOfExams) || isNull(isAvailable) || isNull(fieldOfStudyId) || isNull(studyLevelId)) {
-                return response.code(400).send({error: "Bad Request"});
+                return response.code(400).send({error: "Name, description, ects, hoursOfLecture, hoursOfLabs, numberOfExams, isAvailable, fieldOfStudyId and studyLevelId must be specified."});
             }
 
             if (!await filedOfStudyService.get(fieldOfStudyId) || !await studyLevelService.get(studyLevelId) || !await courseService.get(id)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "Course, field of study and/or study level for specified id not found."});
             }
 
             const course: Course = await courseService.update(
@@ -146,7 +146,7 @@ const CourseRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
         try {
             const id: number = Number(request.params.id);
             if (!await courseService.get(id)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The course for the specified id was not found."});
             }
 
             const course: Course = await courseService.delete(id);

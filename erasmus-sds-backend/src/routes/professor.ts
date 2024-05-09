@@ -54,7 +54,7 @@ const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options
             const id: number = Number(request.params.id);
             const professor: ProfessorDTO | null = await professorService.get(id);
             if (!professor) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The professor for the specified id was not found."});
             }
 
             return response.code(200).send(professor);
@@ -77,7 +77,7 @@ const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options
                 isVerified
             } = body;
             if (isStringEmpty(email) || isStringEmpty(password) || isStringEmpty(name) || isStringEmpty(surname)) {
-                return response.code(400).send({error: "Bad Request"});
+                return response.code(400).send({error: "Email, password, name and surname must be specified."});
             }
 
             if (await professorService.isEmailAddressAlreadyUsed(email)) {
@@ -106,11 +106,11 @@ const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options
                 isVerified
             } = body;
             if (isStringEmpty(email) || isStringEmpty(name) || isStringEmpty(surname) || isNull(isVerified)) {
-                return response.code(400).send({error: "Bad Request"});
+                return response.code(400).send({error: "Email, isVerified, name and surname must be specified."});
             }
 
             if (!await professorService.get(id)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The professor for the specified id was not found."});
             }
 
             if (await professorService.isEmailAddressAlreadyUsedByAnotherUser(id, email)) {
@@ -137,16 +137,16 @@ const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options
                 newPassword,
             } = body;
             if (isStringEmpty(currentPassword) || isStringEmpty(newPassword)) {
-                return response.code(400).send({error: "Bad Request"});
+                return response.code(400).send({error: "Current and new password must be specified."});
             }
 
             if (!await professorService.get(id)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The professor for the specified id was not found."});
             }
 
             const isPasswordUpdated: boolean = await professorService.updatePassword(id, currentPassword, newPassword);
             if (!isPasswordUpdated) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(401).send({error: "Wrong password."});
             }
 
             return response.code(200);
@@ -162,7 +162,7 @@ const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options
         try {
             const id: number = Number(request.params.id);
             if (!await professorService.get(id)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The professor for the specified id was not found."});
             }
 
             const professor: UserDTO = await professorService.delete(id);

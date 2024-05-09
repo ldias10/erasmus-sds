@@ -15,12 +15,12 @@ const StudentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
         try {
             const {email, password} = request.body;
             if (!await userService.login(email, password)) {
-                return response.code(401).send({error: "Unauthorized"});
+                return response.code(401).send({error: "Wrong password."});
             }
 
             const user: UserDTO | null = await userService.getByEmail(email);
             if (!user) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The user for the specified email was not found."});
             }
 
             const payload = {

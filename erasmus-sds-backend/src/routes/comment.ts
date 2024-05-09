@@ -38,7 +38,7 @@ const CommentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
             const id: number = Number(request.params.id);
             const comment: Comment | null = await commentService.get(id);
             if (!comment) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The comment for the specified id was not found."});
             }
 
             return response.code(200).send(comment);
@@ -60,11 +60,11 @@ const CommentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
                 courseId
             } = body;
             if (isStringEmpty(content) || isNull(studentUserId) || isNull(courseId)) {
-                return response.code(400).send({error: "Bad Request"});
+                return response.code(400).send({error: "Content, studentUserId and courseId must be specified."});
             }
 
             if (!await studentService.get(studentUserId) || !await courseService.get(courseId)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "Student and/or course for specified id not found."});
             }
 
             const comment: Comment = await commentService.create(content, date || new Date(), Number(studentUserId), Number(courseId));
@@ -89,11 +89,11 @@ const CommentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
                 courseId
             } = body;
             if (isStringEmpty(content) || isNull(date) || isNull(studentUserId) || isNull(courseId)) {
-                return response.code(400).send({error: "Bad Request"});
+                return response.code(400).send({error: "Content, studentUserId and courseId must be specified."});
             }
 
             if (!await studentService.get(studentUserId) || !await courseService.get(courseId) || !await commentService.get(id)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "Student and/or course for specified id not found."});
             }
 
             const comment: Comment = await commentService.update(id, content, date, Number(studentUserId), Number(courseId));
@@ -110,7 +110,7 @@ const CommentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
         try {
             const id: number = Number(request.params.id);
             if (!await commentService.get(id)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The comment for the specified id was not found."});
             }
 
             const comment: Comment = await commentService.delete(id);

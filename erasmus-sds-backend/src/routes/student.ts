@@ -59,7 +59,7 @@ const StudentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
             const id: number = Number(request.params.id);
             const student: StudentDTO | null = await studentService.get(id);
             if (!student) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The student for the specified id was not found."});
             }
 
             return response.code(200).send(student);
@@ -85,11 +85,11 @@ const StudentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
                 studyLevelId
             } = body;
             if (isStringEmpty(email) || isStringEmpty(password) || isStringEmpty(name) || isStringEmpty(surname) || isNull(countryId) || isNull(schoolId) || isNull(studyLevelId)) {
-                return response.code(400).send({error: "Bad Request"});
+                return response.code(400).send({error: "Email, password, name, surname, countryId, schoolId and studyLevelId must be specified."});
             }
 
             if (!await countryService.get(countryId) || !await schoolService.get(schoolId) || !await studyLevelService.get(studyLevelId)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "Country, school and/or study level for specified id not found."});
             }
 
             if (await studentService.isEmailAddressAlreadyUsed(email)) {
@@ -121,11 +121,11 @@ const StudentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
                 studyLevelId
             } = body;
             if (isStringEmpty(email) || isStringEmpty(name) || isStringEmpty(surname) || isNull(isVerified) || isNull(countryId) || isNull(schoolId) || isNull(studyLevelId)) {
-                return response.code(400).send({error: "Bad Request"});
+                return response.code(400).send({error: "Email, isVerified, name, surname, countryId, schoolId and studyLevelId must be specified."});
             }
 
             if (!await countryService.get(countryId) || !await schoolService.get(schoolId) || !await studyLevelService.get(studyLevelId) || !await studentService.get(id)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "Student, country, school and/or study level for specified id not found."});
             }
 
             if (await studentService.isEmailAddressAlreadyUsedByAnotherUser(id, email)) {
@@ -152,16 +152,16 @@ const StudentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
                 newPassword,
             } = body;
             if (isStringEmpty(currentPassword) || isStringEmpty(newPassword)) {
-                return response.code(400).send({error: "Bad Request"});
+                return response.code(400).send({error: "Current and new password must be specified."});
             }
 
             if (!await studentService.get(id)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The student for the specified id was not found."});
             }
 
             const isPasswordUpdated: boolean = await studentService.updatePassword(id, currentPassword, newPassword);
             if (!isPasswordUpdated) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(401).send({error: "Wrong password."});
             }
 
             return response.code(200);
@@ -177,7 +177,7 @@ const StudentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
         try {
             const id: number = Number(request.params.id);
             if (!await studentService.get(id)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The student for the specified id was not found."});
             }
 
             const student: UserDTO = await studentService.delete(id);

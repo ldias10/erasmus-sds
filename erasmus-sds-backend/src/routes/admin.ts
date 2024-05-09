@@ -49,7 +49,7 @@ const AdminRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fa
             const id: number = Number(request.params.id);
             const admin: AdminDTO | null = await adminService.get(id);
             if (!admin) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The admin for the specified id was not found."});
             }
 
             return response.code(200).send(admin);
@@ -72,7 +72,7 @@ const AdminRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fa
                 isVerified
             } = body;
             if (isStringEmpty(email) || isStringEmpty(password) || isStringEmpty(name) || isStringEmpty(surname)) {
-                return response.code(400).send({error: "Bad Request"});
+                return response.code(400).send({error: "Email, password, name and surname must be specified."});
             }
 
             if (await adminService.isEmailAddressAlreadyUsed(email)) {
@@ -101,11 +101,11 @@ const AdminRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fa
                 isVerified
             } = body;
             if (isStringEmpty(email) || isStringEmpty(name) || isStringEmpty(surname) || isNull(isVerified)) {
-                return response.code(400).send({error: "Bad Request"});
+                return response.code(400).send({error: "Email, isVerified, name and surname must be specified."});
             }
 
             if (!await adminService.get(id)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The admin for the specified id was not found."});
             }
 
             if (await adminService.isEmailAddressAlreadyUsedByAnotherUser(id, email)) {
@@ -132,16 +132,16 @@ const AdminRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fa
                 newPassword,
             } = body;
             if (isStringEmpty(currentPassword) || isStringEmpty(newPassword)) {
-                return response.code(400).send({error: "Bad Request"});
+                return response.code(400).send({error: "Current and new password must be specified."});
             }
 
             if (!await adminService.get(id)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The admin for the specified id was not found."});
             }
 
             const isPasswordUpdated: boolean = await adminService.updatePassword(id, currentPassword, newPassword);
             if (!isPasswordUpdated) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(401).send({error: "Wrong password."});
             }
 
             return response.code(200).send(isPasswordUpdated);
@@ -157,7 +157,7 @@ const AdminRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fa
         try {
             const id: number = Number(request.params.id);
             if (!await adminService.get(id)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The admin for the specified id was not found."});
             }
 
             const admin: UserDTO = await adminService.delete(id);

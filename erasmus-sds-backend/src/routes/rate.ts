@@ -39,7 +39,7 @@ const RateRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fas
             } = request.params;
             const rate: Rate | null = await rateService.get(Number(studentId), Number(courseId));
             if (!rate) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The rate for specified id was not found."});
             }
 
             return response.code(200).send(rate);
@@ -61,11 +61,11 @@ const RateRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fas
             const body: rateAttrs = request.body;
             const rating: number = body.rate;
             if (isNull(rating)) {
-                return response.code(400).send({error: "Bad Request"});
+                return response.code(400).send({error: "Rate must be specified."});
             }
 
             if (!await studentService.get(studentId) || !await courseService.get(courseId)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "Student and/or course for specified id not found."});
             }
 
             if (await rateService.get(studentId, courseId)) {
@@ -92,11 +92,11 @@ const RateRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fas
             const body: rateAttrs = request.body;
             const rating: number = body.rate;
             if (isNull(rating)) {
-                return response.code(400).send({error: "Bad Request"});
+                return response.code(400).send({error: "Rate must be specified."});
             }
 
             if (!await studentService.get(studentId) || !await courseService.get(courseId) || !await rateService.get(studentId, courseId)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "Rate, student and/or course for specified id not found."});
             }
 
             const rate: Rate = await rateService.update(Number(studentId), Number(courseId), Number(rating));
@@ -117,7 +117,7 @@ const RateRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fas
             } = request.params;
 
             if (!await rateService.get(studentId, courseId)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The rate for specified id was not found."});
             }
 
             const rate: Rate = await rateService.delete(Number(studentId), Number(courseId));

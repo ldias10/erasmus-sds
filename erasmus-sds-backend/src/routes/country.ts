@@ -32,7 +32,7 @@ const CountryRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
             const id: number = Number(request.params.id);
             const country: Country | null = await countryService.get(id);
             if (!country) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The country for the specified id was not found."});
             }
 
             return response.code(200).send(country);
@@ -52,7 +52,7 @@ const CountryRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
                 tag
             } = body;
             if (isStringEmpty(name) || isStringEmpty(tag)) {
-                return response.code(400).send({error: "Bad Request"});
+                return response.code(400).send({error: "Name and tag must be specified."});
             }
 
             const country: Country = await countryService.create(name, tag);
@@ -75,11 +75,11 @@ const CountryRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
                 tag
             } = body;
             if (isStringEmpty(name) || isStringEmpty(tag)) {
-                return response.code(400).send({error: "Bad Request"});
+                return response.code(400).send({error: "Name and tag must be specified."});
             }
 
             if (!await countryService.get(id)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The country for the specified id was not found."});
             }
 
             const country: Country = await countryService.update(id, name, tag);
@@ -96,7 +96,7 @@ const CountryRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
         try {
             const id: number = Number(request.params.id);
             if (!await countryService.get(id)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The country for the specified id was not found."});
             }
 
             const country: Country = await countryService.delete(id);

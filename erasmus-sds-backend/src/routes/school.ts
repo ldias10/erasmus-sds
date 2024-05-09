@@ -34,7 +34,7 @@ const SchoolRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
             const id: number = Number(request.params.id);
             const school: School | null = await schoolService.get(id);
             if (!school) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The school for the specified id was not found."});
             }
 
             return response.code(200).send(school);
@@ -54,11 +54,11 @@ const SchoolRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
                 universityId,
             } = body;
             if (isStringEmpty(name) || isNull(universityId)) {
-                return response.code(400).send({error: "Bad Request"});
+                return response.code(400).send({error: "Name and universityId must be specified."});
             }
 
             if (!await universityService.get(universityId)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The university for the specified id was not found."});
             }
 
             const school: School = await schoolService.create(name, Number(universityId));
@@ -81,11 +81,11 @@ const SchoolRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
                 universityId,
             } = body;
             if (isStringEmpty(name) || isNull(universityId)) {
-                return response.code(400).send({error: "Bad Request"});
+                return response.code(400).send({error: "Name and universityId must be specified."});
             }
 
             if (!await universityService.get(universityId) || !await schoolService.get(id)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "School and/or university for specified id not found."});
             }
 
             const school: School = await schoolService.update(id, name, Number(universityId));
@@ -102,7 +102,7 @@ const SchoolRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
         try {
             const id: number = Number(request.params.id);
             if (!await schoolService.get(id)) {
-                return response.code(404).send({error: "Not found"});
+                return response.code(404).send({error: "The school for the specified id was not found."});
             }
 
             const school: School = await schoolService.delete(id);
