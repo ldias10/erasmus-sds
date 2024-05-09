@@ -66,7 +66,7 @@ const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options
 
     app.post<{
         Body: professorCreateAttrs
-    }>('/professor', {preHandler: [app.authenticate, app.authorizeAdminOrProfessor], ...professorPost}, async (request, response) => {
+    }>('/professor', professorPost, async (request, response) => {
         try {
             const body: professorCreateAttrs = request.body;
             const {

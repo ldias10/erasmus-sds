@@ -66,6 +66,7 @@ export const rateGet = {
 
 export const ratePost = {
     schema: {
+        description: "You must be logged in as admin or verified student.",
         tags: ["Rate"],
         params: {
             type: "object",
@@ -99,6 +100,20 @@ export const ratePost = {
                 },
                 description: "Bad Request"
             },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
             404: {
                 type: "object",
                 properties: {
@@ -111,7 +126,7 @@ export const ratePost = {
                 properties: {
                     error: {type: "string"}
                 },
-                description: "The resource already exists and cannot be created again."
+                description: "Conflict"
             },
             500: {
                 type: "object",
@@ -126,6 +141,7 @@ export const ratePost = {
 
 export const ratePut = {
     schema: {
+        description: "You must be logged in as admin or verified student.",
         tags: ["Rate"],
         params: {
             type: "object",
@@ -159,6 +175,20 @@ export const ratePut = {
                 },
                 description: "Bad Request"
             },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
             404: {
                 type: "object",
                 properties: {
@@ -179,6 +209,7 @@ export const ratePut = {
 
 export const rateDelete = {
     schema: {
+        description: "You must be logged in as admin or verified student.",
         tags: ["Rate"],
         params: {
             type: "object",
@@ -197,6 +228,20 @@ export const rateDelete = {
                     rate: {type: "integer"}
                 },
                 description: "No Content"
+            },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
             },
             404: {
                 type: "object",

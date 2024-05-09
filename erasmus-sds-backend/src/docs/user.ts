@@ -44,6 +44,7 @@ export const login = {
 
 export const logout = {
     schema: {
+        description: "You must be logged in.",
         tags: ["User"],
         response: {
             200: {

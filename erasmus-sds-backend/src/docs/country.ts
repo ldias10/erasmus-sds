@@ -65,6 +65,7 @@ export const countryGet = {
 
 export const countryPost = {
     schema: {
+        description: "You must be logged in as admin.",
         tags: ["Country"],
         body: {
             type: "object",
@@ -91,6 +92,27 @@ export const countryPost = {
                 },
                 description: "Bad Request"
             },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
+            404: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Not Found"
+            },
             500: {
                 type: "object",
                 properties: {
@@ -104,6 +126,7 @@ export const countryPost = {
 
 export const countryPut = {
     schema: {
+        description: "You must be logged in as admin.",
         tags: ["Country"],
         params: {
             type: "object",
@@ -137,6 +160,20 @@ export const countryPut = {
                 },
                 description: "Bad Request"
             },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
             404: {
                 type: "object",
                 properties: {
@@ -157,6 +194,7 @@ export const countryPut = {
 
 export const countryDelete = {
     schema: {
+        description: "You must be logged in as admin.",
         tags: ["Country"],
         params: {
             type: "object",
@@ -174,6 +212,20 @@ export const countryDelete = {
                     tag: {type: "string"},
                 },
                 description: "No Content"
+            },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
             },
             404: {
                 type: "object",

@@ -111,6 +111,7 @@ export const schoolPost = {
 
 export const schoolPut = {
     schema: {
+        description: "You must be logged in as admin.",
         tags: ["School"],
         params: {
             type: "object",
@@ -144,6 +145,20 @@ export const schoolPut = {
                 },
                 description: "Bad Request"
             },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
             404: {
                 type: "object",
                 properties: {
@@ -164,6 +179,7 @@ export const schoolPut = {
 
 export const schoolDelete = {
     schema: {
+        description: "You must be logged in as admin.",
         tags: ["School"],
         params: {
             type: "object",
@@ -181,6 +197,20 @@ export const schoolDelete = {
                     universityId: {type: "integer"},
                 },
                 description: "No Content"
+            },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
             },
             404: {
                 type: "object",

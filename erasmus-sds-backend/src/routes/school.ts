@@ -46,7 +46,7 @@ const SchoolRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
 
     app.post<{
         Body: schoolAttrs
-    }>('/school', {preHandler: [app.authenticate], ...schoolPost}, async (request, response) => {
+    }>('/school', schoolPost, async (request, response) => {
         try {
             const body: schoolAttrs = request.body;
             const {

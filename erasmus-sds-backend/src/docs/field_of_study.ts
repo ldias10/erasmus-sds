@@ -63,6 +63,7 @@ export const fieldOfStudyGet = {
 
 export const fieldOfStudyPost = {
     schema: {
+        description: "You must be logged in as admin or professor.",
         tags: ["Field Of Study"],
         body: {
             type: "object",
@@ -87,6 +88,27 @@ export const fieldOfStudyPost = {
                 },
                 description: "Bad Request"
             },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
+            404: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Not Found"
+            },
             500: {
                 type: "object",
                 properties: {
@@ -100,6 +122,7 @@ export const fieldOfStudyPost = {
 
 export const fieldOfStudyPut = {
     schema: {
+        description: "You must be logged in as admin or professor.",
         tags: ["Field Of Study"],
         params: {
             type: "object",
@@ -131,6 +154,20 @@ export const fieldOfStudyPut = {
                 },
                 description: "Bad Request"
             },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
             404: {
                 type: "object",
                 properties: {
@@ -151,6 +188,7 @@ export const fieldOfStudyPut = {
 
 export const fieldOfStudyDelete = {
     schema: {
+        description: "You must be logged in as admin or professor.",
         tags: ["Field Of Study"],
         params: {
             type: "object",
@@ -167,6 +205,20 @@ export const fieldOfStudyDelete = {
                     name: {type: "string"},
                 },
                 description: "No Content"
+            },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
             },
             404: {
                 type: "object",

@@ -79,6 +79,7 @@ export const courseGet = {
 
 export const coursePost = {
     schema: {
+        description: "You must be logged in as admin or professor.",
         tags: ["Course"],
         body: {
             type: "object",
@@ -119,6 +120,20 @@ export const coursePost = {
                 },
                 description: "Bad Request"
             },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
             404: {
                 type: "object",
                 properties: {
@@ -139,6 +154,7 @@ export const coursePost = {
 
 export const coursePut = {
     schema: {
+        description: "You must be logged in as admin or professor.",
         tags: ["Course"],
         params: {
             type: "object",
@@ -186,6 +202,20 @@ export const coursePut = {
                 },
                 description: "Bad Request"
             },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
             404: {
                 type: "object",
                 properties: {
@@ -206,6 +236,7 @@ export const coursePut = {
 
 export const courseDelete = {
     schema: {
+        description: "You must be logged in as admin or professor.",
         tags: ["Course"],
         params: {
             type: "object",
@@ -230,6 +261,20 @@ export const courseDelete = {
                     studyLevelId: {type: "integer"}
                 },
                 description: "No Content"
+            },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
             },
             404: {
                 type: "object",

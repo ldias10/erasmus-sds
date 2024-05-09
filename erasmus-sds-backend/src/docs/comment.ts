@@ -69,6 +69,7 @@ export const commentGet = {
 
 export const commentPost = {
     schema: {
+        description: "You must be logged in as a verified user.",
         tags: ["Comment"],
         body: {
             type: "object",
@@ -102,6 +103,20 @@ export const commentPost = {
                 },
                 description: "Bad Request"
             },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
             404: {
                 type: "object",
                 properties: {
@@ -122,6 +137,7 @@ export const commentPost = {
 
 export const commentPut = {
     schema: {
+        description: "You must be logged in as a verified user.",
         tags: ["Comment"],
         params: {
             type: "object",
@@ -159,6 +175,20 @@ export const commentPut = {
                 },
                 description: "Bad Request"
             },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
             404: {
                 type: "object",
                 properties: {
@@ -179,6 +209,7 @@ export const commentPut = {
 
 export const commentDelete = {
     schema: {
+        description: "You must be logged in as a verified user.",
         tags: ["Comment"],
         params: {
             type: "object",
@@ -198,6 +229,20 @@ export const commentDelete = {
                     courseId: {type: "integer"},
                 },
                 description: "No Content"
+            },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
             },
             404: {
                 type: "object",

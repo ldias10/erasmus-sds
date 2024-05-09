@@ -105,7 +105,7 @@ export const professorPost = {
                 properties: {
                     error: {type: "string"}
                 },
-                description: "Email address already in use."
+                description: "Conflict"
             },
             500: {
                 type: "object",
@@ -120,6 +120,7 @@ export const professorPost = {
 
 export const professorPut = {
     schema: {
+        description: "You must be logged in as admin or professor.",
         tags: ["Professor"],
         params: {
             type: "object",
@@ -157,6 +158,20 @@ export const professorPut = {
                 },
                 description: "Bad Request"
             },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
             404: {
                 type: "object",
                 properties: {
@@ -169,7 +184,7 @@ export const professorPut = {
                 properties: {
                     error: {type: "string"}
                 },
-                description: "Email address already in use."
+                description: "Conflict"
             },
             500: {
                 type: "object",
@@ -184,6 +199,7 @@ export const professorPut = {
 
 export const professorPutPassword = {
     schema: {
+        description: "You must be logged in as admin or professor.",
         tags: ["Professor"],
         params: {
             type: "object",
@@ -212,6 +228,20 @@ export const professorPutPassword = {
                 },
                 description: "Bad Request"
             },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
             404: {
                 type: "object",
                 properties: {
@@ -232,6 +262,7 @@ export const professorPutPassword = {
 
 export const professorDelete = {
     schema: {
+        description: "You must be logged in as admin or professor.",
         tags: ["Professor"],
         params: {
             type: "object",
@@ -251,6 +282,20 @@ export const professorDelete = {
                     isVerified: {type: "boolean"}
                 },
                 description: "No Content"
+            },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
             },
             404: {
                 type: "object",

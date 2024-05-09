@@ -69,6 +69,7 @@ export const adminGet = {
 
 export const adminPost = {
     schema: {
+        description: "You must be logged in as admin.",
         tags: ["Admin"],
         body: {
             type: "object",
@@ -100,12 +101,33 @@ export const adminPost = {
                 },
                 description: "Bad Request"
             },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
+            404: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Not Found"
+            },
             409: {
                 type: "object",
                 properties: {
                     error: {type: "string"}
                 },
-                description: "Email address already in use."
+                description: "Conflict"
             },
             500: {
                 type: "object",
@@ -120,6 +142,7 @@ export const adminPost = {
 
 export const adminPut = {
     schema: {
+        description: "You must be logged in as admin.",
         tags: ["Admin"],
         params: {
             type: "object",
@@ -157,6 +180,20 @@ export const adminPut = {
                 },
                 description: "Bad Request"
             },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
             404: {
                 type: "object",
                 properties: {
@@ -169,7 +206,7 @@ export const adminPut = {
                 properties: {
                     error: {type: "string"}
                 },
-                description: "Email address already in use."
+                description: "Conflict"
             },
             500: {
                 type: "object",
@@ -184,6 +221,7 @@ export const adminPut = {
 
 export const adminPutPassword = {
     schema: {
+        description: "You must be logged in as admin.",
         tags: ["Admin"],
         params: {
             type: "object",
@@ -212,6 +250,20 @@ export const adminPutPassword = {
                 },
                 description: "Bad Request"
             },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
             404: {
                 type: "object",
                 properties: {
@@ -232,6 +284,7 @@ export const adminPutPassword = {
 
 export const adminDelete = {
     schema: {
+        description: "You must be logged in as admin.",
         tags: ["Admin"],
         params: {
             type: "object",
@@ -251,6 +304,20 @@ export const adminDelete = {
                     isVerified: {type: "boolean"}
                 },
                 description: "No Content"
+            },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
             },
             404: {
                 type: "object",

@@ -124,7 +124,7 @@ export const studentPost = {
                 properties: {
                     error: {type: "string"}
                 },
-                description: "Email address already in use."
+                description: "Conflict"
             },
             500: {
                 type: "object",
@@ -139,6 +139,7 @@ export const studentPost = {
 
 export const studentPut = {
     schema: {
+        description: "You must be logged in as admin or student.",
         tags: ["Student"],
         params: {
             type: "object",
@@ -182,6 +183,20 @@ export const studentPut = {
                 },
                 description: "Bad Request"
             },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
             404: {
                 type: "object",
                 properties: {
@@ -194,7 +209,7 @@ export const studentPut = {
                 properties: {
                     error: {type: "string"}
                 },
-                description: "Email address already in use."
+                description: "Conflict"
             },
             500: {
                 type: "object",
@@ -209,6 +224,7 @@ export const studentPut = {
 
 export const studentPutPassword = {
     schema: {
+        description: "You must be logged in as admin or student.",
         tags: ["Student"],
         params: {
             type: "object",
@@ -237,6 +253,20 @@ export const studentPutPassword = {
                 },
                 description: "Bad Request"
             },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
             404: {
                 type: "object",
                 properties: {
@@ -257,6 +287,7 @@ export const studentPutPassword = {
 
 export const studentDelete = {
     schema: {
+        description: "You must be logged in as admin or student.",
         tags: ["Student"],
         params: {
             type: "object",
@@ -276,6 +307,20 @@ export const studentDelete = {
                     isVerified: {type: "boolean"}
                 },
                 description: "No Content"
+            },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
             },
             404: {
                 type: "object",

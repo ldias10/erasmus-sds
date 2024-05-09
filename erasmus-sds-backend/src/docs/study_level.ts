@@ -63,6 +63,7 @@ export const studyLevelGet = {
 
 export const studyLevelPost = {
     schema: {
+        description: "You must be logged in as admin.",
         tags: ["Study Level"],
         body: {
             type: "object",
@@ -87,6 +88,27 @@ export const studyLevelPost = {
                 },
                 description: "Bad Request"
             },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
+            404: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Not Found"
+            },
             500: {
                 type: "object",
                 properties: {
@@ -100,6 +122,7 @@ export const studyLevelPost = {
 
 export const studyLevelPut = {
     schema: {
+        description: "You must be logged in as admin.",
         tags: ["Study Level"],
         params: {
             type: "object",
@@ -131,6 +154,20 @@ export const studyLevelPut = {
                 },
                 description: "Bad Request"
             },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
             404: {
                 type: "object",
                 properties: {
@@ -151,6 +188,7 @@ export const studyLevelPut = {
 
 export const studyLevelDelete = {
     schema: {
+        description: "You must be logged in as admin.",
         tags: ["Study Level"],
         params: {
             type: "object",
@@ -167,6 +205,20 @@ export const studyLevelDelete = {
                     name: {type: "string"},
                 },
                 description: "No Content"
+            },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
             },
             404: {
                 type: "object",
