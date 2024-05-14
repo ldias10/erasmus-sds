@@ -425,9 +425,10 @@ export const professorLeaveFieldOfStudy = {
         params: {
             type: "object",
             properties: {
-                id: {type: "integer"}
+                id: {type: "integer"},
+                fieldOfStudyId: {type: "integer"}
             },
-            required: ["id"]
+            required: ["id", "fieldOfStudyId"]
         },
         response: {
             204: {

@@ -29,14 +29,16 @@ export class ProfessorOnFieldOfStudyService {
     }
 
     public async delete(professorId: number, fieldOfStudyId: number): Promise<boolean> {
-        if (!(await this.app.prisma.professorOnFieldOfStudy.delete({
+        const professorOnFieldOfStudy: ProfessorOnFieldOfStudy = await this.app.prisma.professorOnFieldOfStudy.delete({
             where: {
                 fieldOfStudyId_professorUserId: {
                     professorUserId: professorId,
                     fieldOfStudyId: fieldOfStudyId
                 }
             }
-        }))) {
+        });
+
+        if (!professorOnFieldOfStudy) {
             return false;
         }
 

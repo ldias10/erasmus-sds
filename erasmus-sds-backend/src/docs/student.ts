@@ -496,3 +496,227 @@ export const studentDelete = {
         }
     }
 };
+
+export const studentJoinFieldOfStudy = {
+    schema: {
+        description: "You must be logged in as admin or student.",
+        tags: ["Student"],
+        body: {
+            type: "object",
+            required: ["id", "fieldOfStudyId"],
+            properties: {
+                id: {type: "integer"},
+                fieldOfStudyId: {type: "integer"},
+            }
+        },
+        response: {
+            201: {
+                type: "boolean",
+                description: "Joined"
+            },
+            400: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Bad Request"
+            },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
+            404: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Not Found"
+            },
+            409: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Conflict"
+            },
+            500: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Internal Server Error"
+            }
+        }
+    }
+}
+
+export const studentLeaveFieldOfStudy = {
+    schema: {
+        description: "You must be logged in as admin or student.",
+        tags: ["Student"],
+        params: {
+            type: "object",
+            properties: {
+                id: {type: "integer"},
+                fieldOfStudyId: {type: "integer"}
+            },
+            required: ["id", "fieldOfStudyId"]
+        },
+        response: {
+            204: {
+                type: "boolean",
+                description: "No Content"
+            },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
+            404: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Not Found"
+            },
+            500: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Internal Server Error"
+            }
+        }
+    }
+};
+
+export const studentJoinCourse = {
+    schema: {
+        description: "You must be logged in as admin or student.",
+        tags: ["Student"],
+        body: {
+            type: "object",
+            required: ["id", "courseId"],
+            properties: {
+                id: {type: "integer"},
+                courseId: {type: "integer"},
+            }
+        },
+        response: {
+            201: {
+                type: "boolean",
+                description: "Joined"
+            },
+            400: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Bad Request"
+            },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
+            404: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Not Found"
+            },
+            409: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Conflict"
+            },
+            500: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Internal Server Error"
+            }
+        }
+    }
+}
+
+export const studentLeaveCourse = {
+    schema: {
+        description: "You must be logged in as admin or student.",
+        tags: ["Student"],
+        params: {
+            type: "object",
+            properties: {
+                id: {type: "integer"},
+                courseId: {type: "integer"}
+            },
+            required: ["id", "courseId"]
+        },
+        response: {
+            204: {
+                type: "boolean",
+                description: "No Content"
+            },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
+            404: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Not Found"
+            },
+            500: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Internal Server Error"
+            }
+        }
+    }
+};

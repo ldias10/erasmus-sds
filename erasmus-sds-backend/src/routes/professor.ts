@@ -5,7 +5,8 @@ import {ProfessorDTO, ProfessorService} from "../services/professor";
 import {
     professorDelete,
     professorGet,
-    professorJoinFieldOfStudy, professorLeaveFieldOfStudy,
+    professorJoinFieldOfStudy,
+    professorLeaveFieldOfStudy,
     professorPost,
     professorPut,
     professorPutPassword,
@@ -208,7 +209,7 @@ const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options
 
     app.post<{
         Body: professorJoinAttrs
-    }>('/professor/join', {preHandler: [app.authenticate, app.authorizeAdminOrProfessor], ...professorJoinFieldOfStudy}, async (request, response) => {
+    }>('/professor/fieldOfStudy/join', {preHandler: [app.authenticate, app.authorizeAdminOrProfessor], ...professorJoinFieldOfStudy}, async (request, response) => {
         try {
             const body: professorJoinAttrs = request.body;
             const {
@@ -233,7 +234,7 @@ const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options
 
     app.delete<{
         Params: professorLeaveParams
-    }>('/professor/leave/:id/:fieldOfStudyId', {preHandler: [app.authenticate, app.authorizeAdminOrProfessor], ...professorLeaveFieldOfStudy}, async (request, response) => {
+    }>('/professor/fieldOfStudy/leave/:id/:fieldOfStudyId', {preHandler: [app.authenticate, app.authorizeAdminOrProfessor], ...professorLeaveFieldOfStudy}, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
             const fieldOfStudyId: number = Number(request.params.fieldOfStudyId);

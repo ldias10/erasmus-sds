@@ -3,6 +3,8 @@ import {Comment, Country, Course, FieldOfStudy, School, Student, StudyLevel, Use
 import {UserDTO, UserService} from "./user";
 import {isNull} from "../utils/utils";
 import {professorGetWhere} from "./professor";
+import {StudentOnFieldOfStudyService} from "./studentOnFieldOfStudy";
+import {StudentOnCourseService} from "./studentOnCourse";
 
 export type StudentIncludes = Student & { User: User } & {
     Country?: Country,
@@ -53,10 +55,14 @@ export class StudentService {
 
     private app: FastifyInstance;
     private userService: UserService;
+    private studentOnFieldOfStudyService: StudentOnFieldOfStudyService;
+    private studentOnCourseService: StudentOnCourseService;
 
     constructor(app: FastifyInstance) {
         this.app = app;
         this.userService = new UserService(app);
+        this.studentOnFieldOfStudyService = new StudentOnFieldOfStudyService(app);
+        this.studentOnCourseService = new StudentOnCourseService(app);
     }
 
     public async getAll(getInclude?: StudentGetInclude, getWhere?: StudentGetWhere): Promise<StudentDTO[]> {
@@ -167,8 +173,44 @@ export class StudentService {
         return await this.userService.isEmailAddressAlreadyUsedByAnotherUser(id, email);
     }
 
-    public async login(email: string, password: string): Promise<boolean> {
-        return await this.userService.login(email, password);
+    public async isStudentAlreadyJoinedFieldOfStudy(studentId: number, fieldOfStudyId: number): Promise<boolean> {
+        if (!(await this.studentOnFieldOfStudyService.get(studentId, fieldOfStudyId))) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public async joinFieldOfStudy(studentId: number, fieldOfStudyId: number): Promise<boolean> {
+        if (!await this.studentOnFieldOfStudyService.create(studentId, fieldOfStudyId)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public async leaveFieldOfStudy(studentId: number, fieldOfStudyId: number): Promise<boolean> {
+        return await this.studentOnFieldOfStudyService.delete(studentId, fieldOfStudyId);
+    }
+
+    public async isStudentAlreadyJoinedCourse(studentId: number, courseId: number): Promise<boolean> {
+        if (!(await this.studentOnCourseService.get(studentId, courseId))) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public async joinCourse(studentId: number, courseId: number): Promise<boolean> {
+        if (!await this.studentOnCourseService.create(studentId, courseId)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public async leaveCourse(studentId: number, courseId: number): Promise<boolean> {
+        return await this.studentOnCourseService.delete(studentId, courseId);
     }
 
     private studentToStudentDTO(student: StudentIncludes): StudentDTO {

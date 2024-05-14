@@ -2,7 +2,18 @@ import {FastifyInstance, FastifyPluginAsync, FastifyPluginOptions} from "fastify
 import fp from "fastify-plugin";
 import {UserDTO} from "../services/user";
 import {StudentDTO, StudentService} from "../services/student";
-import {studentDelete, studentGet, studentPost, studentPut, studentPutPassword, studentsGet} from "../docs/student";
+import {
+    studentDelete,
+    studentGet,
+    studentJoinCourse,
+    studentJoinFieldOfStudy,
+    studentLeaveCourse,
+    studentLeaveFieldOfStudy,
+    studentPost,
+    studentPut,
+    studentPutPassword,
+    studentsGet
+} from "../docs/student";
 import {CountryService} from "../services/country";
 import {SchoolService} from "../services/school";
 import {StudyLevelService} from "../services/study_level";
@@ -10,6 +21,16 @@ import {isNull, isStringEmpty} from "../utils/utils";
 
 interface studentParams {
     id: number;
+}
+
+interface studentLeaveFieldOfStudyParams {
+    id: number,
+    fieldOfStudyId: number
+}
+
+interface studentLeaveCourseParams {
+    id: number,
+    courseId: number
 }
 
 interface studentCreateAttrs {
@@ -36,6 +57,16 @@ interface studentUpdateAttrs {
 interface studentUpdatePasswordAttrs {
     currentPassword: string,
     newPassword: string,
+}
+
+interface studentJoinFieldOfStudyAttrs {
+    id: number,
+    fieldOfStudyId: number
+}
+
+interface studentJoinCourseAttrs {
+    id: number,
+    courseId: number
 }
 
 interface studentsGetQuery {
@@ -247,6 +278,92 @@ const StudentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
 
             const student: UserDTO = await studentService.delete(id);
             return response.code(204).send(student);
+        } catch (error) {
+            request.log.error(error);
+            return response.code(500).send({error: "Internal Server Error"});
+        }
+    });
+
+    app.post<{
+        Body: studentJoinFieldOfStudyAttrs
+    }>('/student/fieldOfStudy/join', {preHandler: [app.authenticate, app.authorizeAdminOrStudent], ...studentJoinFieldOfStudy}, async (request, response) => {
+        try {
+            const body: studentJoinFieldOfStudyAttrs = request.body;
+            const {
+                id,
+                fieldOfStudyId
+            } = body;
+            if (isNull(id) || isNull(fieldOfStudyId)) {
+                return response.code(400).send({error: "Id and fieldOfStudyId must be specified."});
+            }
+
+            if (await studentService.isStudentAlreadyJoinedFieldOfStudy(Number(id), Number(fieldOfStudyId))) {
+                return response.code(409).send({error: "The student has already join the filed of study."});
+            }
+
+            const result: boolean = await studentService.joinFieldOfStudy(Number(id), Number(fieldOfStudyId));
+            return response.code(201).send(result);
+        } catch (error) {
+            request.log.error(error);
+            return response.code(500).send({error: "Internal Server Error"});
+        }
+    });
+
+    app.delete<{
+        Params: studentLeaveFieldOfStudyParams
+    }>('/student/fieldOfStudy/leave/:id/:fieldOfStudyId', {preHandler: [app.authenticate, app.authorizeAdminOrStudent], ...studentLeaveFieldOfStudy}, async (request, response) => {
+        try {
+            const id: number = Number(request.params.id);
+            const fieldOfStudyId: number = Number(request.params.fieldOfStudyId);
+            if (!await studentService.isStudentAlreadyJoinedFieldOfStudy(Number(id), Number(fieldOfStudyId))) {
+                return response.code(404).send({error: "The student has not join the field of study."});
+            }
+
+            const result: boolean = await studentService.leaveFieldOfStudy(Number(id), Number(fieldOfStudyId));
+            return response.code(204).send(result);
+        } catch (error) {
+            request.log.error(error);
+            return response.code(500).send({error: "Internal Server Error"});
+        }
+    });
+
+    app.post<{
+        Body: studentJoinCourseAttrs
+    }>('/student/course/join', {preHandler: [app.authenticate, app.authorizeAdminOrStudent], ...studentJoinCourse}, async (request, response) => {
+        try {
+            const body: studentJoinCourseAttrs = request.body;
+            const {
+                id,
+                courseId
+            } = body;
+            if (isNull(id) || isNull(courseId)) {
+                return response.code(400).send({error: "Id and courseId must be specified."});
+            }
+
+            if (await studentService.isStudentAlreadyJoinedCourse(Number(id), Number(courseId))) {
+                return response.code(409).send({error: "The student has already join the course."});
+            }
+
+            const result: boolean = await studentService.joinCourse(Number(id), Number(courseId));
+            return response.code(201).send(result);
+        } catch (error) {
+            request.log.error(error);
+            return response.code(500).send({error: "Internal Server Error"});
+        }
+    });
+
+    app.delete<{
+        Params: studentLeaveCourseParams
+    }>('/student/course/leave/:id/:courseId', {preHandler: [app.authenticate, app.authorizeAdminOrStudent], ...studentLeaveCourse}, async (request, response) => {
+        try {
+            const id: number = Number(request.params.id);
+            const courseId: number = Number(request.params.courseId);
+            if (!await studentService.isStudentAlreadyJoinedCourse(Number(id), Number(courseId))) {
+                return response.code(404).send({error: "The student has not join the course."});
+            }
+
+            const result: boolean = await studentService.leaveCourse(Number(id), Number(courseId));
+            return response.code(204).send(result);
         } catch (error) {
             request.log.error(error);
             return response.code(500).send({error: "Internal Server Error"});
