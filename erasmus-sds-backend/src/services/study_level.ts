@@ -1,5 +1,15 @@
 import {FastifyInstance} from "fastify";
 import {StudyLevel} from "@prisma/client";
+import {isNull} from "../utils/utils";
+
+export interface StudyLevelGetInclude {
+    Students?: boolean,
+    Courses?: boolean,
+}
+
+export interface StudyLevelGetWhere {
+    name?: string,
+}
 
 export class StudyLevelService {
     private app: FastifyInstance;
@@ -8,12 +18,18 @@ export class StudyLevelService {
         this.app = app;
     }
 
-    public async getAll(): Promise<StudyLevel[]> {
-        return this.app.prisma.studyLevel.findMany();
+    public async getAll(getInclude?: StudyLevelGetInclude, getWhere?: StudyLevelGetWhere): Promise<StudyLevel[]> {
+        const include: any = this.generateGetInclude(getInclude);
+        const where: any = this.generateGetWhere(getWhere);
+
+        return this.app.prisma.studyLevel.findMany({include, where});
     }
 
-    public async get(id: number): Promise<StudyLevel | null> {
+    public async get(id: number, getInclude?: StudyLevelGetInclude): Promise<StudyLevel | null> {
+        const include: any = this.generateGetInclude(getInclude);
+
         return this.app.prisma.studyLevel.findUnique({
+            include,
             where: {
                 id: id,
             }
@@ -45,5 +61,24 @@ export class StudyLevelService {
                 id: id
             }
         });
+    }
+
+    private generateGetInclude(getInclude?: StudyLevelGetInclude): any {
+        const include: any = {};
+        if (getInclude) {
+            if (!isNull(getInclude.Students)) include.Students = Boolean(getInclude.Students);
+            if (!isNull(getInclude.Courses)) include.Courses = Boolean(getInclude.Courses);
+        }
+
+        return include;
+    }
+
+    private generateGetWhere(getWhere?: StudyLevelGetWhere): any {
+        const where: any = {};
+        if (getWhere) {
+            if (getWhere.name) where.name = getWhere.name;
+        }
+
+        return where;
     }
 }

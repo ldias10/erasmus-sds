@@ -29,12 +29,22 @@ interface adminUpdatePasswordAttrs {
     newPassword: string,
 }
 
+interface adminGetQuery {
+    email?: string,
+    name?: string,
+    surname?: string,
+    isVerified?: boolean,
+}
+
 const AdminRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: FastifyPluginOptions) => {
     const adminService: AdminService = new AdminService(app);
 
-    app.get('/admins', adminsGet, async (request, response) => {
+    app.get<{
+        Querystring: adminGetQuery
+    }>('/admins', adminsGet, async (request, response) => {
         try {
-            const admins: AdminDTO[] = await adminService.getAll();
+            const {email, name, surname, isVerified} = request.query;
+            const admins: AdminDTO[] = await adminService.getAll({email, name, surname, isVerified});
             return response.code(200).send(admins);
         } catch (error) {
             request.log.error(error);

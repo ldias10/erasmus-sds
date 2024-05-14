@@ -23,14 +23,62 @@ interface courseAttrs {
     studyLevelId: number;
 }
 
+interface coursesGetQuery {
+    FieldOfStudy?: boolean,
+    StudyLevel?: boolean,
+    Students?: boolean,
+    Comments?: boolean,
+    name?: string,
+    description?: string,
+    ects?: number,
+    hoursOfLecture?: number,
+    hoursOfLabs?: number,
+    numberOfExams?: number,
+    isAvailable?: boolean,
+    fieldOfStudyId?: number,
+    studyLevelId?: number
+}
+
+interface courseGetQuery {
+    FieldOfStudy?: boolean,
+    StudyLevel?: boolean,
+    Students?: boolean,
+    Comments?: boolean,
+}
+
 const CourseRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: FastifyPluginOptions) => {
     const courseService: CourseService = new CourseService(app);
     const filedOfStudyService: FieldOfStudyService = new FieldOfStudyService(app);
     const studyLevelService: StudyLevelService = new StudyLevelService(app);
 
-    app.get('/courses', coursesGet, async (request, response) => {
+    app.get<{ Querystring: coursesGetQuery }>('/courses', coursesGet, async (request, response) => {
         try {
-            const courses: Course[] = await courseService.getAll();
+            const {
+                FieldOfStudy,
+                StudyLevel,
+                Students,
+                Comments,
+                name,
+                description,
+                ects,
+                hoursOfLecture,
+                hoursOfLabs,
+                numberOfExams,
+                isAvailable,
+                fieldOfStudyId,
+                studyLevelId
+            } = request.query;
+            const courses: Course[] = await courseService.getAll({FieldOfStudy, StudyLevel, Students, Comments}, {
+                name,
+                description,
+                ects,
+                hoursOfLecture,
+                hoursOfLabs,
+                numberOfExams,
+                isAvailable,
+                fieldOfStudyId,
+                studyLevelId
+            });
             return response.code(200).send(courses);
         } catch (error) {
             request.log.error(error);
@@ -38,10 +86,14 @@ const CourseRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: F
         }
     });
 
-    app.get<{ Params: courseParams }>('/course/:id', courseGet, async (request, response) => {
+    app.get<{
+        Params: courseParams,
+        Querystring: courseGetQuery
+    }>('/course/:id', courseGet, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
-            const course: Course | null = await courseService.get(id);
+            const {FieldOfStudy, StudyLevel, Students, Comments} = request.query;
+            const course: Course | null = await courseService.get(id, {FieldOfStudy, StudyLevel, Students, Comments});
             if (!course) {
                 return response.code(404).send({error: "The course for the specified id was not found."});
             }

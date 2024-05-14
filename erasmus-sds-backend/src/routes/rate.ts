@@ -16,14 +16,29 @@ interface rateAttrs {
     rate: number;
 }
 
+interface ratesGetQuery {
+    Student?: boolean,
+    Course?: boolean,
+    studentId?: number,
+    courseId?: number,
+    rate?: number,
+
+}
+
+interface rateGetQuery {
+    Student?: boolean,
+    Course?: boolean,
+}
+
 const RateRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: FastifyPluginOptions) => {
     const rateService: RateService = new RateService(app);
     const studentService: StudentService = new StudentService(app);
     const courseService: CourseService = new CourseService(app);
 
-    app.get('/rates', ratesGet, async (request, response) => {
+    app.get<{ Querystring: ratesGetQuery }>('/rates', ratesGet, async (request, response) => {
         try {
-            const rates: Rate[] = await rateService.getAll();
+            const {Student, Course, studentId, courseId, rate} = request.query;
+            const rates: Rate[] = await rateService.getAll({Student, Course}, {studentId, courseId, rate});
             return response.code(200).send(rates);
         } catch (error) {
             request.log.error(error);
@@ -31,13 +46,17 @@ const RateRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fas
         }
     });
 
-    app.get<{ Params: rateParams }>('/rate/:studentId/:courseId', rateGet, async (request, response) => {
+    app.get<{
+        Params: rateParams,
+        Querystring: rateGetQuery
+    }>('/rate/:studentId/:courseId', rateGet, async (request, response) => {
         try {
             const {
                 studentId,
                 courseId
             } = request.params;
-            const rate: Rate | null = await rateService.get(Number(studentId), Number(courseId));
+            const {Student, Course} = request.query;
+            const rate: Rate | null = await rateService.get(Number(studentId), Number(courseId), {Student, Course});
             if (!rate) {
                 return response.code(404).send({error: "The rate for specified id was not found."});
             }

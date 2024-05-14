@@ -1,6 +1,24 @@
 export const coursesGet = {
     schema: {
         tags: ["Course"],
+        querystring: {
+            type: 'object',
+            properties: {
+                name: {type: 'string', description: "Condition"},
+                description: {type: 'string', description: "Condition"},
+                ects: {type: 'integer', description: "Condition"},
+                hoursOfLecture: {type: 'number', description: "Condition"},
+                hoursOfLabs: {type: 'number', description: "Condition"},
+                numberOfExams: {type: 'integer', description: "Condition"},
+                isAvailable: {type: 'boolean', description: "Condition"},
+                fieldOfStudyId: {type: 'integer', description: "Condition"},
+                studyLevelId: {type: 'integer', description: "Condition"},
+                FieldOfStudy: {type: 'boolean', description: "Include"},
+                StudyLevel: {type: 'boolean', description: "Include"},
+                Students: {type: 'boolean', description: "Include"},
+                Comments: {type: 'boolean', description: "Include"},
+            },
+        },
         response: {
             200: {
                 type: "array",
@@ -16,7 +34,46 @@ export const coursesGet = {
                         numberOfExams: {type: "integer"},
                         isAvailable: {type: "boolean"},
                         fieldOfStudyId: {type: "integer"},
-                        studyLevelId: {type: "integer"}
+                        studyLevelId: {type: "integer"},
+                        FieldOfStudy: {
+                            type: "object",
+                            properties: {
+                                id: {type: "integer"},
+                                name: {type: "string"},
+                            }
+                        },
+                        StudyLevel: {
+                            type: "object",
+                            properties: {
+                                id: {type: "integer"},
+                                name: {type: "string"},
+                            }
+                        },
+                        Students: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    userId: {type: "integer"},
+                                    countryId: {type: "integer"},
+                                    schoolId: {type: "integer"},
+                                    studyLevelId: {type: "integer"},
+                                }
+                            }
+                        },
+                        Comments: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    id: {type: "integer"},
+                                    content: {type: "string"},
+                                    date: {type: "string", format: "date-time"},
+                                    studentUserId: {type: "integer"},
+                                    courseId: {type: "integer"},
+                                }
+                            }
+                        }
                     },
                 },
                 description: "OK"
@@ -42,6 +99,15 @@ export const courseGet = {
             },
             required: ["id"]
         },
+        querystring: {
+            type: 'object',
+            properties: {
+                FieldOfStudy: {type: 'boolean', description: "Include"},
+                StudyLevel: {type: 'boolean', description: "Include"},
+                Students: {type: 'boolean', description: "Include"},
+                Comments: {type: 'boolean', description: "Include"},
+            },
+        },
         response: {
             200: {
                 type: "object",
@@ -55,7 +121,46 @@ export const courseGet = {
                     numberOfExams: {type: "integer"},
                     isAvailable: {type: "boolean"},
                     fieldOfStudyId: {type: "integer"},
-                    studyLevelId: {type: "integer"}
+                    studyLevelId: {type: "integer"},
+                    FieldOfStudy: {
+                        type: "object",
+                        properties: {
+                            id: {type: "integer"},
+                            name: {type: "string"},
+                        }
+                    },
+                    StudyLevel: {
+                        type: "object",
+                        properties: {
+                            id: {type: "integer"},
+                            name: {type: "string"},
+                        }
+                    },
+                    Students: {
+                        type: "array",
+                        items: {
+                            type: "object",
+                            properties: {
+                                userId: {type: "integer"},
+                                countryId: {type: "integer"},
+                                schoolId: {type: "integer"},
+                                studyLevelId: {type: "integer"},
+                            }
+                        }
+                    },
+                    Comments: {
+                        type: "array",
+                        items: {
+                            type: "object",
+                            properties: {
+                                id: {type: "integer"},
+                                content: {type: "string"},
+                                date: {type: "string", format: "date-time"},
+                                studentUserId: {type: "integer"},
+                                courseId: {type: "integer"},
+                            }
+                        }
+                    }
                 },
                 description: "OK",
             },

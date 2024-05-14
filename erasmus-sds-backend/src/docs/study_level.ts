@@ -1,6 +1,14 @@
 export const studiesLevelGet = {
     schema: {
         tags: ["Study Level"],
+        querystring: {
+            type: 'object',
+            properties: {
+                name: {type: 'string', description: "Condition"},
+                Students: {type: 'boolean', description: "Include"},
+                Courses: {type: 'boolean', description: "Include"},
+            },
+        },
         response: {
             200: {
                 type: "array",
@@ -9,6 +17,36 @@ export const studiesLevelGet = {
                     properties: {
                         id: {type: "integer"},
                         name: {type: "string"},
+                        Students: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    userId: {type: "integer"},
+                                    countryId: {type: "integer"},
+                                    schoolId: {type: "integer"},
+                                    studyLevelId: {type: "integer"},
+                                }
+                            }
+                        },
+                        Courses: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    id: {type: "integer"},
+                                    name: {type: "string"},
+                                    description: {type: "string"},
+                                    ects: {type: "integer"},
+                                    hoursOfLecture: {type: "number"},
+                                    hoursOfLabs: {type: "number"},
+                                    numberOfExams: {type: "integer"},
+                                    isAvailable: {type: "boolean"},
+                                    fieldOfStudyId: {type: "integer"},
+                                    studyLevelId: {type: "integer"},
+                                }
+                            }
+                        }
                     },
                 },
                 description: "OK"
@@ -34,12 +72,49 @@ export const studyLevelGet = {
             },
             required: ["id"]
         },
+        querystring: {
+            type: 'object',
+            properties: {
+                Students: {type: 'boolean', description: "Include"},
+                Courses: {type: 'boolean', description: "Include"},
+            },
+        },
         response: {
             200: {
                 type: "object",
                 properties: {
                     id: {type: "integer"},
                     name: {type: "string"},
+                    Students: {
+                        type: "array",
+                        items: {
+                            type: "object",
+                            properties: {
+                                userId: {type: "integer"},
+                                countryId: {type: "integer"},
+                                schoolId: {type: "integer"},
+                                studyLevelId: {type: "integer"},
+                            }
+                        }
+                    },
+                    Courses: {
+                        type: "array",
+                        items: {
+                            type: "object",
+                            properties: {
+                                id: {type: "integer"},
+                                name: {type: "string"},
+                                description: {type: "string"},
+                                ects: {type: "integer"},
+                                hoursOfLecture: {type: "number"},
+                                hoursOfLabs: {type: "number"},
+                                numberOfExams: {type: "integer"},
+                                isAvailable: {type: "boolean"},
+                                fieldOfStudyId: {type: "integer"},
+                                studyLevelId: {type: "integer"},
+                            }
+                        }
+                    }
                 },
                 description: "OK",
             },

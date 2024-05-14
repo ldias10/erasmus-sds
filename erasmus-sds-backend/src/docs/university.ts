@@ -1,6 +1,15 @@
 export const UniversitiesGet = {
     schema: {
         tags: ["University"],
+        querystring: {
+            type: 'object',
+            properties: {
+                name: {type: 'string', description: "Condition"},
+                countryId: {type: 'integer', description: "Condition"},
+                Country: {type: 'boolean', description: "Include"},
+                Schools: {type: 'boolean', description: "Include"},
+            },
+        },
         response: {
             200: {
                 type: "array",
@@ -10,6 +19,25 @@ export const UniversitiesGet = {
                         id: {type: "integer"},
                         name: {type: "string"},
                         countryId: {type: "integer"},
+                        Country: {
+                            type: "object",
+                            properties: {
+                                id: {type: "integer"},
+                                name: {type: "string"},
+                                tag: {type: "string"},
+                            }
+                        },
+                        Schools: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    id: {type: "integer"},
+                                    name: {type: "string"},
+                                    universityId: {type: "integer"},
+                                }
+                            }
+                        }
                     },
                 },
                 description: "OK"
@@ -35,6 +63,13 @@ export const UniversityGet = {
             },
             required: ["id"]
         },
+        querystring: {
+            type: 'object',
+            properties: {
+                Country: {type: 'boolean', description: "Include"},
+                Schools: {type: 'boolean', description: "Include"},
+            },
+        },
         response: {
             200: {
                 type: "object",
@@ -42,6 +77,25 @@ export const UniversityGet = {
                     id: {type: "integer"},
                     name: {type: "string"},
                     countryId: {type: "integer"},
+                    Country: {
+                        type: "object",
+                        properties: {
+                            id: {type: "integer"},
+                            name: {type: "string"},
+                            tag: {type: "string"},
+                        }
+                    },
+                    Schools: {
+                        type: "array",
+                        items: {
+                            type: "object",
+                            properties: {
+                                id: {type: "integer"},
+                                name: {type: "string"},
+                                universityId: {type: "integer"},
+                            }
+                        }
+                    }
                 },
                 description: "OK",
             },

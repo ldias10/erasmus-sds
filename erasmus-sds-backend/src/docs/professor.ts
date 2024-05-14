@@ -1,6 +1,16 @@
 export const professorsGet = {
     schema: {
         tags: ["Professor"],
+        querystring: {
+            type: 'object',
+            properties: {
+                email: {type: 'string', description: "Condition"},
+                name: {type: 'string', description: "Condition"},
+                surname: {type: 'string', description: "Condition"},
+                isVerified: {type: 'boolean', description: "Condition"},
+                FieldsOfStudy: {type: 'boolean', description: "Include"},
+            },
+        },
         response: {
             200: {
                 type: "array",
@@ -11,7 +21,17 @@ export const professorsGet = {
                         email: {type: "string"},
                         name: {type: "string"},
                         surname: {type: "string"},
-                        isVerified: {type: "boolean"}
+                        isVerified: {type: "boolean"},
+                        FieldsOfStudy: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    id: {type: "integer"},
+                                    name: {type: "string"},
+                                }
+                            }
+                        }
                     },
                 },
                 description: "OK"
@@ -37,6 +57,16 @@ export const professorGet = {
             },
             required: ["id"]
         },
+        querystring: {
+            type: 'object',
+            properties: {
+                email: {type: 'string', description: "Condition"},
+                name: {type: 'string', description: "Condition"},
+                surname: {type: 'string', description: "Condition"},
+                isVerified: {type: 'boolean', description: "Condition"},
+                FieldsOfStudy: {type: 'boolean', description: "Include"},
+            },
+        },
         response: {
             200: {
                 type: "object",
@@ -45,7 +75,17 @@ export const professorGet = {
                     email: {type: "string"},
                     name: {type: "string"},
                     surname: {type: "string"},
-                    isVerified: {type: "boolean"}
+                    isVerified: {type: "boolean"},
+                    FieldsOfStudy: {
+                        type: "array",
+                        items: {
+                            type: "object",
+                            properties: {
+                                id: {type: "integer"},
+                                name: {type: "string"},
+                            }
+                        }
+                    }
                 },
                 description: "OK",
             },
@@ -281,6 +321,117 @@ export const professorDelete = {
                     surname: {type: "string"},
                     isVerified: {type: "boolean"}
                 },
+                description: "No Content"
+            },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
+            404: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Not Found"
+            },
+            500: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Internal Server Error"
+            }
+        }
+    }
+};
+
+export const professorJoinFieldOfStudy = {
+    schema: {
+        description: "You must be logged in as admin or professor.",
+        tags: ["Professor"],
+        body: {
+            type: "object",
+            required: ["id", "fieldOfStudyId"],
+            properties: {
+                id: {type: "integer"},
+                fieldOfStudyId: {type: "integer"},
+            }
+        },
+        response: {
+            201: {
+                type: "boolean",
+                description: "Joined"
+            },
+            400: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Bad Request"
+            },
+            401: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Unauthorized"
+            },
+            403: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Forbidden"
+            },
+            404: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Not Found"
+            },
+            409: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Conflict"
+            },
+            500: {
+                type: "object",
+                properties: {
+                    error: {type: "string"}
+                },
+                description: "Internal Server Error"
+            }
+        }
+    }
+}
+
+export const professorLeaveFieldOfStudy = {
+    schema: {
+        description: "You must be logged in as admin or professor.",
+        tags: ["Professor"],
+        params: {
+            type: "object",
+            properties: {
+                id: {type: "integer"}
+            },
+            required: ["id"]
+        },
+        response: {
+            204: {
+                type: "boolean",
                 description: "No Content"
             },
             401: {

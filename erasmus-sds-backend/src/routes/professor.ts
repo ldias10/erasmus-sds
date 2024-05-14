@@ -5,6 +5,7 @@ import {ProfessorDTO, ProfessorService} from "../services/professor";
 import {
     professorDelete,
     professorGet,
+    professorJoinFieldOfStudy, professorLeaveFieldOfStudy,
     professorPost,
     professorPut,
     professorPutPassword,
@@ -14,6 +15,11 @@ import {isNull, isStringEmpty} from "../utils/utils";
 
 interface professorParams {
     id: number;
+}
+
+interface professorLeaveParams {
+    id: number,
+    fieldOfStudyId: number,
 }
 
 interface professorCreateAttrs {
@@ -31,17 +37,40 @@ interface professorUpdateAttrs {
     isVerified: boolean,
 }
 
+interface professorJoinAttrs {
+    id: number,
+    fieldOfStudyId: number,
+}
+
 interface professorUpdatePasswordAttrs {
     currentPassword: string,
     newPassword: string,
 }
 
+interface professorsGetQuery {
+    FieldsOfStudy?: boolean,
+    email?: string,
+    name?: string,
+    surname?: string,
+    isVerified?: boolean,
+}
+
+interface professorGetQuery {
+    FieldsOfStudy?: boolean,
+}
+
 const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: FastifyPluginOptions) => {
     const professorService: ProfessorService = new ProfessorService(app);
 
-    app.get('/professors', professorsGet, async (request, response) => {
+    app.get<{ Querystring: professorsGetQuery }>('/professors', professorsGet, async (request, response) => {
         try {
-            const professors: ProfessorDTO[] = await professorService.getAll();
+            const {FieldsOfStudy, email, name, surname, isVerified} = request.query;
+            const professors: ProfessorDTO[] = await professorService.getAll({FieldsOfStudy}, {
+                email,
+                name,
+                surname,
+                isVerified
+            });
             return response.code(200).send(professors);
         } catch (error) {
             request.log.error(error);
@@ -49,10 +78,14 @@ const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options
         }
     });
 
-    app.get<{ Params: professorParams }>('/professor/:id', professorGet, async (request, response) => {
+    app.get<{
+        Params: professorParams,
+        Querystring: professorGetQuery
+    }>('/professor/:id', professorGet, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
-            const professor: ProfessorDTO | null = await professorService.get(id);
+            const {FieldsOfStudy} = request.query;
+            const professor: ProfessorDTO | null = await professorService.get(id, {FieldsOfStudy});
             if (!professor) {
                 return response.code(404).send({error: "The professor for the specified id was not found."});
             }
@@ -167,6 +200,49 @@ const ProfessorRoutes: FastifyPluginAsync = async (app: FastifyInstance, options
 
             const professor: UserDTO = await professorService.delete(id);
             return response.code(204).send(professor);
+        } catch (error) {
+            request.log.error(error);
+            return response.code(500).send({error: "Internal Server Error"});
+        }
+    });
+
+    app.post<{
+        Body: professorJoinAttrs
+    }>('/professor/join', {preHandler: [app.authenticate, app.authorizeAdminOrProfessor], ...professorJoinFieldOfStudy}, async (request, response) => {
+        try {
+            const body: professorJoinAttrs = request.body;
+            const {
+                id,
+                fieldOfStudyId
+            } = body;
+            if (isNull(id) || isNull(fieldOfStudyId)) {
+                return response.code(400).send({error: "Id and fieldOfStudyId must be specified."});
+            }
+
+            if (await professorService.isProfessorAlreadyJoinedFieldOfStudy(Number(id), Number(fieldOfStudyId))) {
+                return response.code(409).send({error: "The professor has already join the filed of study."});
+            }
+
+            const result: boolean = await professorService.joinFieldOfStudy(Number(id), Number(fieldOfStudyId));
+            return response.code(201).send(result);
+        } catch (error) {
+            request.log.error(error);
+            return response.code(500).send({error: "Internal Server Error"});
+        }
+    });
+
+    app.delete<{
+        Params: professorLeaveParams
+    }>('/professor/leave/:id/:fieldOfStudyId', {preHandler: [app.authenticate, app.authorizeAdminOrProfessor], ...professorLeaveFieldOfStudy}, async (request, response) => {
+        try {
+            const id: number = Number(request.params.id);
+            const fieldOfStudyId: number = Number(request.params.fieldOfStudyId);
+            if (!await professorService.isProfessorAlreadyJoinedFieldOfStudy(Number(id), Number(fieldOfStudyId))) {
+                return response.code(404).send({error: "The professor has not join the field of study."});
+            }
+
+            const result: boolean = await professorService.leaveFieldOfStudy(Number(id), Number(fieldOfStudyId));
+            return response.code(204).send(result);
         } catch (error) {
             request.log.error(error);
             return response.code(500).send({error: "Internal Server Error"});

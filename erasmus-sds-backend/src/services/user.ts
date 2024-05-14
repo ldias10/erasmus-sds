@@ -25,6 +25,13 @@ export interface UserGetInclude {
     Student?: boolean
 }
 
+export interface UserGetWhere {
+    email?: string,
+    name?: string,
+    surname?: string,
+    isVerified?: boolean,
+}
+
 export class UserService {
 
     private app: FastifyInstance;
@@ -33,20 +40,17 @@ export class UserService {
         this.app = app;
     }
 
-    public async getAll(): Promise<UserDTO[]> {
-        const users: UserIncludes[] = await this.app.prisma.user.findMany();
+    public async getAll(getInclude?: UserGetInclude, getWhere?: UserGetWhere): Promise<UserDTO[]> {
+        const include: any = this.generateGetInclude(getInclude);
+        const where: any = this.generateGetWhere(getWhere);
 
+        const users: UserIncludes[] = await this.app.prisma.user.findMany({include, where});
         const usersDTO: UserDTO[] = users.map(((user: UserIncludes) => this.userToUserDTO(user)));
         return usersDTO;
     }
 
     public async get(id: number, getInclude?: UserGetInclude): Promise<UserDTO | null> {
-        const include: any = {};
-        if (getInclude) {
-            if (getInclude.Admin) include.Admin = Boolean(getInclude.Admin);
-            if (getInclude.Professor) include.Professor = Boolean(getInclude.Professor);
-            if (getInclude.Student) include.Student = Boolean(getInclude.Student);
-        }
+        const include: any = this.generateGetInclude(getInclude);
 
         const user: UserIncludes | null = await this.app.prisma.user.findUnique({
             include,
@@ -175,5 +179,28 @@ export class UserService {
             Professor: user.Professor,
             Student: user.Student
         }
+    }
+
+    private generateGetInclude(getInclude?: UserGetInclude): any {
+        const include: any = {};
+        if (getInclude) {
+            if (!isNull(getInclude.Admin)) include.Admin = Boolean(getInclude.Admin);
+            if (!isNull(getInclude.Professor)) include.Professor = Boolean(getInclude.Professor);
+            if (!isNull(getInclude.Student)) include.Student = Boolean(getInclude.Student);
+        }
+
+        return include;
+    }
+
+    private generateGetWhere(getWhere?: UserGetWhere): any {
+        const where: any = {};
+        if (getWhere) {
+            if (getWhere.email) where.email = getWhere.email;
+            if (getWhere.name) where.name = getWhere.name;
+            if (getWhere.surname) where.surname = getWhere.surname;
+            if (!isNull(getWhere.isVerified)) where.isVerified = Boolean(getWhere.isVerified);
+        }
+
+        return where;
     }
 }

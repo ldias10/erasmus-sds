@@ -1,6 +1,16 @@
 export const ratesGet = {
     schema: {
         tags: ["Rate"],
+        querystring: {
+            type: 'object',
+            properties: {
+                studentId: {type: 'integer', description: "Condition"},
+                courseId: {type: 'integer', description: "Condition"},
+                rate: {type: 'integer', description: "Condition"},
+                Student: {type: 'boolean', description: "Include"},
+                Course: {type: 'boolean', description: "Include"},
+            },
+        },
         response: {
             200: {
                 type: "array",
@@ -9,7 +19,31 @@ export const ratesGet = {
                     properties: {
                         studentId: {type: "integer"},
                         courseId: {type: "integer"},
-                        rate: {type: "integer"}
+                        rate: {type: "integer"},
+                        Student: {
+                            type: "object",
+                            properties: {
+                                userId: {type: "integer"},
+                                countryId: {type: "integer"},
+                                schoolId: {type: "integer"},
+                                studyLevelId: {type: "integer"},
+                            }
+                        },
+                        Course: {
+                            type: "object",
+                            properties: {
+                                id: {type: "integer"},
+                                name: {type: "string"},
+                                description: {type: "string"},
+                                ects: {type: "integer"},
+                                hoursOfLecture: {type: "number"},
+                                hoursOfLabs: {type: "number"},
+                                numberOfExams: {type: "integer"},
+                                isAvailable: {type: "boolean"},
+                                fieldOfStudyId: {type: "integer"},
+                                studyLevelId: {type: "integer"},
+                            }
+                        }
                     },
                 },
                 description: "OK"
@@ -36,13 +70,44 @@ export const rateGet = {
             },
             required: ["studentId", "courseId"]
         },
+        querystring: {
+            type: 'object',
+            properties: {
+                Student: {type: 'boolean', description: "Include"},
+                Course: {type: 'boolean', description: "Include"},
+            },
+        },
         response: {
             200: {
                 type: "object",
                 properties: {
                     studentId: {type: "integer"},
                     courseId: {type: "integer"},
-                    rate: {type: "integer"}
+                    rate: {type: "integer"},
+                    Student: {
+                        type: "object",
+                        properties: {
+                            userId: {type: "integer"},
+                            countryId: {type: "integer"},
+                            schoolId: {type: "integer"},
+                            studyLevelId: {type: "integer"},
+                        }
+                    },
+                    Course: {
+                        type: "object",
+                        properties: {
+                            id: {type: "integer"},
+                            name: {type: "string"},
+                            description: {type: "string"},
+                            ects: {type: "integer"},
+                            hoursOfLecture: {type: "number"},
+                            hoursOfLabs: {type: "number"},
+                            numberOfExams: {type: "integer"},
+                            isAvailable: {type: "boolean"},
+                            fieldOfStudyId: {type: "integer"},
+                            studyLevelId: {type: "integer"},
+                        }
+                    }
                 },
                 description: "OK",
             },

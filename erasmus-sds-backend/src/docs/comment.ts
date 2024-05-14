@@ -1,6 +1,17 @@
 export const commentsGet = {
     schema: {
         tags: ["Comment"],
+        querystring: {
+            type: 'object',
+            properties: {
+                content: {type: 'string', description: "Condition"},
+                date: {type: "string", format: "date-time", description: "Condition"},
+                studentUserId: {type: 'integer', description: "Condition"},
+                courseId: {type: 'integer', description: "Condition"},
+                Student: {type: 'boolean', description: "Include"},
+                Course: {type: 'boolean', description: "Include"},
+            },
+        },
         response: {
             200: {
                 type: "array",
@@ -12,6 +23,29 @@ export const commentsGet = {
                         date: {type: "string", format: "date-time"},
                         studentUserId: {type: "integer"},
                         courseId: {type: "integer"},
+                        Student: {
+                            type: "object",
+                            properties: {
+                                "countryId": {type: "integer"},
+                                "schoolId": {type: "integer"},
+                                "studyLevelId": {type: "integer"},
+                            }
+                        },
+                        Course: {
+                            type: "object",
+                            properties: {
+                                id: {type: "integer"},
+                                name: {type: "string"},
+                                description: {type: "string"},
+                                ects: {type: "integer"},
+                                hoursOfLecture: {type: "number"},
+                                hoursOfLabs: {type: "number"},
+                                numberOfExams: {type: "integer"},
+                                isAvailable: {type: "boolean"},
+                                fieldOfStudyId: {type: "integer"},
+                                studyLevelId: {type: "integer"}
+                            }
+                        }
                     },
                 },
                 description: "OK"
@@ -37,6 +71,13 @@ export const commentGet = {
             },
             required: ["id"]
         },
+        querystring: {
+            type: 'object',
+            properties: {
+                Student: {type: 'boolean', description: "Include"},
+                Course: {type: 'boolean', description: "Include"},
+            },
+        },
         response: {
             200: {
                 type: "object",
@@ -46,6 +87,29 @@ export const commentGet = {
                     date: {type: "string", format: "date-time"},
                     studentUserId: {type: "integer"},
                     courseId: {type: "integer"},
+                    Student: {
+                        type: "object",
+                        properties: {
+                            "countryId": {type: "integer"},
+                            "schoolId": {type: "integer"},
+                            "studyLevelId": {type: "integer"},
+                        }
+                    },
+                    Course: {
+                        type: "object",
+                        properties: {
+                            id: {type: "integer"},
+                            name: {type: "string"},
+                            description: {type: "string"},
+                            ects: {type: "integer"},
+                            hoursOfLecture: {type: "number"},
+                            hoursOfLabs: {type: "number"},
+                            numberOfExams: {type: "integer"},
+                            isAvailable: {type: "boolean"},
+                            fieldOfStudyId: {type: "integer"},
+                            studyLevelId: {type: "integer"}
+                        }
+                    }
                 },
                 description: "OK",
             },

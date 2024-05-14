@@ -8,7 +8,7 @@ interface loginAttrs {
     password: string,
 }
 
-const StudentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: FastifyPluginOptions) => {
+const UserRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: FastifyPluginOptions) => {
     const userService: UserService = new UserService(app);
 
     app.post<{ Body: loginAttrs }>('/login', login, async (request, response) => {
@@ -55,4 +55,4 @@ const StudentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
         }
     });
 }
-export default fp(StudentRoutes);
+export default fp(UserRoutes);

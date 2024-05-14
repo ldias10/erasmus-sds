@@ -7,7 +7,7 @@ export const authentification = (app: FastifyInstance) => async (request: Fastif
     try {
         const token: string | undefined = request.cookies.access_token;
         if (!token) {
-            return response.status(401).send({error: "Unauthorized"});
+            return response.status(401).send({error: "You must be logged in."});
         }
 
         const decoded: UserPayload = request.jwt.verify<FastifyJWT['user']>(token);
@@ -28,7 +28,7 @@ export const authorizeAdmin = (app: FastifyInstance) => async (request: FastifyR
 
         const user: UserDTO | null = await userService.get(Number(request.user.id), {Admin: true});
         if (!user) {
-            return response.code(404).send({error: "Not found"});
+            return response.code(404).send({error: "User not found."});
         }
 
         if (!user.Admin) {
@@ -54,7 +54,7 @@ export const authorizeProfessor = (app: FastifyInstance) => async (request: Fast
 
         const user: UserDTO | null = await userService.get(Number(request.user.id), {Professor: true});
         if (!user) {
-            return response.code(404).send({error: "Not found"});
+            return response.code(404).send({error: "User not found."});
         }
 
         if (!user.Professor) {
@@ -80,7 +80,7 @@ export const authorizeStudent = (app: FastifyInstance) => async (request: Fastif
 
         const user: UserDTO | null = await userService.get(Number(request.user.id), {Student: true});
         if (!user) {
-            return response.code(404).send({error: "Not found"});
+            return response.code(404).send({error: "User not found."});
         }
 
         if (!user.Student) {
@@ -102,7 +102,7 @@ export const authorizeVerifiedStudent = (app: FastifyInstance) => async (request
 
         const user: UserDTO | null = await userService.get(Number(request.user.id), {Student: true});
         if (!user) {
-            return response.code(404).send({error: "Not found"});
+            return response.code(404).send({error: "User not found."});
         }
 
         if (!user.Student) {
@@ -126,12 +126,12 @@ export const authorizeAdminOrProfessor = (app: FastifyInstance) => async (reques
             return response.code(401).send({error: "You must be logged in."});
         }
 
-        const user: UserDTO | null = await userService.get(Number(request.user.id), {Student: true});
+        const user: UserDTO | null = await userService.get(Number(request.user.id), {Admin: true, Professor: true});
         if (!user) {
-            return response.code(404).send({error: "Not found"});
+            return response.code(404).send({error: "User not found."});
         }
 
-        if (!user.Admin || !user.Professor) {
+        if (!user.Admin && !user.Professor) {
             return response.code(403).send({error: "You must be admin or professor."});
         }
 
@@ -152,12 +152,12 @@ export const authorizeAdminOrStudent = (app: FastifyInstance) => async (request:
             return response.code(401).send({error: "You must be logged in."});
         }
 
-        const user: UserDTO | null = await userService.get(Number(request.user.id), {Student: true});
+        const user: UserDTO | null = await userService.get(Number(request.user.id), {Admin: true, Student: true});
         if (!user) {
-            return response.code(404).send({error: "Not found"});
+            return response.code(404).send({error: "User not found."});
         }
 
-        if (!user.Admin || !user.Student) {
+        if (!user.Admin && !user.Student) {
             return response.code(403).send({error: "You must be admin or student."});
         }
 
@@ -178,12 +178,12 @@ export const authorizeAdminOrVerifiedStudent = (app: FastifyInstance) => async (
             return response.code(401).send({error: "You must be logged in."});
         }
 
-        const user: UserDTO | null = await userService.get(Number(request.user.id), {Student: true});
+        const user: UserDTO | null = await userService.get(Number(request.user.id), {Admin: true, Student: true});
         if (!user) {
-            return response.code(404).send({error: "Not found"});
+            return response.code(404).send({error: "User not found."});
         }
 
-        if (!user.Admin || !user.Student) {
+        if (!user.Admin && !user.Student) {
             return response.code(403).send({error: "You must be admin or student."});
         }
 
@@ -204,9 +204,9 @@ export const authorizeVerifiedUser = (app: FastifyInstance) => async (request: F
             return response.code(401).send({error: "You must be logged in."});
         }
 
-        const user: UserDTO | null = await userService.get(Number(request.user.id), {Student: true});
+        const user: UserDTO | null = await userService.get(Number(request.user.id));
         if (!user) {
-            return response.code(404).send({error: "Not found"});
+            return response.code(404).send({error: "User not found."});
         }
 
         if (!user.isVerified) {

@@ -14,12 +14,25 @@ interface countryAttrs {
     tag: string;
 }
 
+interface countriesGetQuery {
+    Students?: boolean,
+    Universities?: boolean,
+    name?: string,
+    tag?: string,
+}
+
+interface countryGetQuery {
+    Students?: boolean,
+    Universities?: boolean,
+}
+
 const CountryRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: FastifyPluginOptions) => {
     const countryService: CountryService = new CountryService(app);
 
-    app.get('/countries', countriesGet, async (request, response) => {
+    app.get<{ Querystring: countriesGetQuery }>('/countries', countriesGet, async (request, response) => {
         try {
-            const countries: Country[] = await countryService.getAll();
+            const {Students, Universities, name, tag} = request.query;
+            const countries: Country[] = await countryService.getAll({Students, Universities}, {name, tag});
             return response.code(200).send(countries);
         } catch (error) {
             request.log.error(error);
@@ -27,10 +40,14 @@ const CountryRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
         }
     });
 
-    app.get<{ Params: countryParams }>('/country/:id', countryGet, async (request, response) => {
+    app.get<{
+        Params: countryParams,
+        Querystring: countryGetQuery
+    }>('/country/:id', countryGet, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
-            const country: Country | null = await countryService.get(id);
+            const {Students, Universities} = request.query;
+            const country: Country | null = await countryService.get(id, {Students, Universities});
             if (!country) {
                 return response.code(404).send({error: "The country for the specified id was not found."});
             }

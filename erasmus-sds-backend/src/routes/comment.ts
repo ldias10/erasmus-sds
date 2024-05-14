@@ -18,14 +18,34 @@ interface commentAttrs {
     courseId: number;
 }
 
+interface commentsGetQuery {
+    Student?: boolean,
+    Course?: boolean
+    content?: string,
+    date?: Date,
+    studentUserId?: number,
+    courseId?: number,
+}
+
+interface commentGetQuery {
+    Student?: boolean,
+    Course?: boolean
+}
+
 const CommentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: FastifyPluginOptions) => {
     const commentService: CommentService = new CommentService(app);
     const studentService: StudentService = new StudentService(app);
     const courseService: CourseService = new CourseService(app);
 
-    app.get('/comments', commentsGet, async (request, response) => {
+    app.get<{ Querystring: commentsGetQuery }>('/comments', commentsGet, async (request, response) => {
         try {
-            const comments: Comment[] = await commentService.getAll();
+            const {Student, Course, content, date, studentUserId, courseId} = request.query;
+            const comments: Comment[] = await commentService.getAll({Student, Course}, {
+                content,
+                date,
+                studentUserId,
+                courseId
+            });
             return response.code(200).send(comments);
         } catch (error) {
             request.log.error(error);
@@ -33,10 +53,14 @@ const CommentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
         }
     });
 
-    app.get<{ Params: commentParams }>('/comment/:id', commentGet, async (request, response) => {
+    app.get<{
+        Params: commentParams,
+        Querystring: commentGetQuery
+    }>('/comment/:id', commentGet, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
-            const comment: Comment | null = await commentService.get(id);
+            const {Student, Course} = request.query;
+            const comment: Comment | null = await commentService.get(id, {Student, Course});
             if (!comment) {
                 return response.code(404).send({error: "The comment for the specified id was not found."});
             }

@@ -1,5 +1,25 @@
 import {Course} from "@prisma/client";
 import {FastifyInstance} from "fastify";
+import {isNull} from "../utils/utils";
+
+export interface CourseGetInclude {
+    FieldOfStudy?: boolean,
+    StudyLevel?: boolean,
+    Students?: boolean,
+    Comments?: boolean,
+}
+
+export interface CourseGetWhere {
+    name?: string,
+    description?: string,
+    ects?: number,
+    hoursOfLecture?: number,
+    hoursOfLabs?: number,
+    numberOfExams?: number,
+    isAvailable?: boolean,
+    fieldOfStudyId?: number,
+    studyLevelId?: number
+}
 
 export class CourseService {
 
@@ -9,12 +29,18 @@ export class CourseService {
         this.app = app;
     }
 
-    public async getAll(): Promise<Course[]> {
-        return this.app.prisma.course.findMany();
+    public async getAll(getInclude?: CourseGetInclude, getWhere?: CourseGetWhere): Promise<Course[]> {
+        const include: any = this.generateGetInclude(getInclude);
+        const where: any = this.generateGetWhere(getWhere);
+
+        return this.app.prisma.course.findMany({include, where});
     }
 
-    public async get(id: number): Promise<Course | null> {
+    public async get(id: number, getInclude?: CourseGetInclude): Promise<Course | null> {
+        const include: any = this.generateGetInclude(getInclude);
+
         return this.app.prisma.course.findUnique({
+            include,
             where: {
                 id: id,
             }
@@ -62,5 +88,34 @@ export class CourseService {
                 id: id
             }
         });
+    }
+
+    private generateGetInclude(getInclude?: CourseGetInclude): any {
+        const include: any = {};
+        if (getInclude) {
+            if (!isNull(getInclude.FieldOfStudy)) include.FieldOfStudy = Boolean(getInclude.FieldOfStudy);
+            if (!isNull(getInclude.StudyLevel)) include.StudyLevel = Boolean(getInclude.StudyLevel);
+            if (!isNull(getInclude.Students)) include.Students = Boolean(getInclude.Students);
+            if (!isNull(getInclude.Comments)) include.Comments = Boolean(getInclude.Comments);
+        }
+
+        return include;
+    }
+
+    private generateGetWhere(getWhere?: CourseGetWhere): any {
+        const where: any = {};
+        if (getWhere) {
+            if (getWhere.name) where.name = getWhere.name;
+            if (getWhere.description) where.description = getWhere.description;
+            if (getWhere.ects) where.ects = Number(getWhere.ects);
+            if (getWhere.hoursOfLecture) where.hoursOfLecture = Number(getWhere.hoursOfLecture);
+            if (getWhere.hoursOfLabs) where.hoursOfLabs = Number(getWhere.hoursOfLabs);
+            if (getWhere.numberOfExams) where.numberOfExams = Number(getWhere.numberOfExams);
+            if (!isNull(getWhere.isAvailable)) where.isAvailable = Boolean(getWhere.isAvailable);
+            if (getWhere.fieldOfStudyId) where.fieldOfStudyId = Number(getWhere.fieldOfStudyId);
+            if (getWhere.studyLevelId) where.studyLevelId = Number(getWhere.studyLevelId);
+        }
+
+        return where;
     }
 }

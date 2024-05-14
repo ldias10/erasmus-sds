@@ -38,15 +38,62 @@ interface studentUpdatePasswordAttrs {
     newPassword: string,
 }
 
+interface studentsGetQuery {
+    Country?: boolean,
+    School?: boolean,
+    StudyLevel?: boolean,
+    FieldsOfStudy?: boolean,
+    Courses?: boolean,
+    Comments?: boolean,
+    email?: string,
+    name?: string,
+    surname?: string,
+    isVerified?: boolean,
+    countryId?: number,
+    schoolId?: number,
+    studyLevelId?: number,
+}
+
+interface studentGetQuery {
+    Country?: boolean,
+    School?: boolean,
+    StudyLevel?: boolean,
+    FieldsOfStudy?: boolean,
+    Courses?: boolean,
+    Comments?: boolean,
+}
+
 const StudentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: FastifyPluginOptions) => {
     const studentService: StudentService = new StudentService(app);
     const countryService: CountryService = new CountryService(app);
     const schoolService: SchoolService = new SchoolService(app);
     const studyLevelService: StudyLevelService = new StudyLevelService(app);
 
-    app.get('/students', studentsGet, async (request, response) => {
+    app.get<{ Querystring: studentsGetQuery }>('/students', studentsGet, async (request, response) => {
         try {
-            const students: StudentDTO[] = await studentService.getAll();
+            const {
+                Country,
+                School,
+                StudyLevel,
+                FieldsOfStudy,
+                Courses,
+                Comments,
+                email,
+                name,
+                surname,
+                isVerified,
+                countryId,
+                schoolId,
+                studyLevelId
+            } = request.query;
+            const students: StudentDTO[] = await studentService.getAll({
+                Country,
+                School,
+                StudyLevel,
+                FieldsOfStudy,
+                Courses,
+                Comments
+            }, {email, name, surname, isVerified, countryId, schoolId, studyLevelId});
             return response.code(200).send(students);
         } catch (error) {
             request.log.error(error);
@@ -54,10 +101,28 @@ const StudentRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: 
         }
     });
 
-    app.get<{ Params: studentParams }>('/student/:id', studentGet, async (request, response) => {
+    app.get<{
+        Params: studentParams,
+        Querystring: studentGetQuery
+    }>('/student/:id', studentGet, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
-            const student: StudentDTO | null = await studentService.get(id);
+            const {
+                Country,
+                School,
+                StudyLevel,
+                FieldsOfStudy,
+                Courses,
+                Comments,
+            } = request.query;
+            const student: StudentDTO | null = await studentService.get(id, {
+                Country,
+                School,
+                StudyLevel,
+                FieldsOfStudy,
+                Courses,
+                Comments
+            });
             if (!student) {
                 return response.code(404).send({error: "The student for the specified id was not found."});
             }

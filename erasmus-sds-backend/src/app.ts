@@ -18,6 +18,7 @@ import ProfessorRoutes from "./routes/professor";
 import StudentRoutes from "./routes/student";
 import CommentRoutes from "./routes/comment";
 import RateRoutes from "./routes/rate";
+import UserRoutes from "./routes/user"
 import {
     authentification,
     authorizeAdmin,
@@ -26,7 +27,8 @@ import {
     authorizeAdminOrVerifiedStudent,
     authorizeProfessor,
     authorizeStudent,
-    authorizeVerifiedStudent, authorizeVerifiedUser
+    authorizeVerifiedStudent,
+    authorizeVerifiedUser
 } from "./plugins/middleware";
 
 dotenv.config();
@@ -95,6 +97,7 @@ app.register(SchoolRoutes);
 app.register(StudentRoutes);
 app.register(StudyLevelRoutes);
 app.register(UniversityRoutes);
+app.register(UserRoutes);
 
 app.register((app, options, done) => {
     app.get('/', {schema: {hide: true}}, (request, response) => {

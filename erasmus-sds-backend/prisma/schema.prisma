@@ -27,35 +27,35 @@ model User {
 
 model Admin {
   userId Int  @unique
-  user   User @relation(fields: [userId], references: [id])
+  User   User @relation(fields: [userId], references: [id])
 }
 
 model Professor {
   userId        Int                       @unique
-  user          User                      @relation(fields: [userId], references: [id])
-  fieldsOfStudy ProfessorOnFieldOfStudy[]
+  User          User                      @relation(fields: [userId], references: [id])
+  FieldsOfStudy ProfessorOnFieldOfStudy[]
 }
 
 model Student {
   userId        Int                     @unique
-  user          User                    @relation(fields: [userId], references: [id])
+  User          User                    @relation(fields: [userId], references: [id])
   countryId     Int
-  country       Country                 @relation(fields: [countryId], references: [id])
+  Country       Country                 @relation(fields: [countryId], references: [id])
   schoolId      Int
   School        School                  @relation(fields: [schoolId], references: [id])
   studyLevelId  Int
   StudyLevel    StudyLevel              @relation(fields: [studyLevelId], references: [id])
-  fieldsOfStudy StudentOnFieldOfStudy[]
-  courses       StudentOnCourse[]
-  comments      Comment[]
+  FieldsOfStudy StudentOnFieldOfStudy[]
+  Courses       StudentOnCourse[]
+  Comments      Comment[]
 }
 
 model Country {
   id           Int          @id @default(autoincrement())
   name         String       @db.VarChar()
   tag          String       @db.VarChar(5)
-  students     Student[]
-  universities University[]
+  Students     Student[]
+  Universities University[]
 }
 
 model University {
@@ -63,7 +63,7 @@ model University {
   name      String   @db.VarChar()
   countryId Int
   Country   Country  @relation(fields: [countryId], references: [id])
-  schools   School[]
+  Schools   School[]
 }
 
 model School {
@@ -71,15 +71,15 @@ model School {
   name         String     @db.VarChar()
   universityId Int
   University   University @relation(fields: [universityId], references: [id])
-  students     Student[]
+  Students     Student[]
 }
 
 model FieldOfStudy {
   id         Int                       @id @default(autoincrement())
   name       String                    @db.VarChar()
-  professors ProfessorOnFieldOfStudy[]
-  students   StudentOnFieldOfStudy[]
-  courses    Course[]
+  Professors ProfessorOnFieldOfStudy[]
+  Students   StudentOnFieldOfStudy[]
+  Courses    Course[]
 }
 
 model ProfessorOnFieldOfStudy {
@@ -149,6 +149,6 @@ model Rate {
 model StudyLevel {
   id       Int       @id @default(autoincrement())
   name     String    @db.VarChar()
-  students Student[]
-  courses  Course[]
+  Students Student[]
+  Courses  Course[]
 }

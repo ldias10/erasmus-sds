@@ -1,6 +1,17 @@
 import {FastifyInstance} from "fastify";
-import {Student, User} from "@prisma/client";
+import {Comment, Country, Course, FieldOfStudy, School, Student, StudyLevel, User} from "@prisma/client";
 import {UserDTO, UserService} from "./user";
+import {isNull} from "../utils/utils";
+import {professorGetWhere} from "./professor";
+
+export type StudentIncludes = Student & { User: User } & {
+    Country?: Country,
+    School?: School,
+    StudyLevel?: StudyLevel,
+    FieldsOfStudy?: FieldOfStudy[],
+    Courses?: Course[],
+    Comments?: Comment[],
+};
 
 export interface StudentDTO {
     userId: number,
@@ -10,7 +21,32 @@ export interface StudentDTO {
     isVerified: boolean,
     countryId: number,
     schoolId: number,
-    studyLevelId: number
+    studyLevelId: number,
+    Country?: Country,
+    School?: School,
+    StudyLevel?: StudyLevel,
+    FieldsOfStudy?: FieldOfStudy[],
+    Courses?: Course[],
+    Comments?: Comment[],
+}
+
+export interface StudentGetInclude {
+    Country?: boolean,
+    School?: boolean,
+    StudyLevel?: boolean,
+    FieldsOfStudy?: boolean,
+    Courses?: boolean,
+    Comments?: boolean,
+}
+
+export interface StudentGetWhere {
+    email?: string,
+    name?: string,
+    surname?: string,
+    isVerified?: boolean,
+    countryId?: number,
+    schoolId?: number,
+    studyLevelId?: number,
 }
 
 export class StudentService {
@@ -23,26 +59,41 @@ export class StudentService {
         this.userService = new UserService(app);
     }
 
-    public async getAll(): Promise<StudentDTO[]> {
-        const students: (Student & { user: User })[] = await this.app.prisma.student.findMany({
+    public async getAll(getInclude?: StudentGetInclude, getWhere?: StudentGetWhere): Promise<StudentDTO[]> {
+        const include: any = this.generateGetInclude(getInclude);
+        const where: any = this.generateGetWhere(getWhere);
+        const whereUser: any = this.generateGetWhereUser(getWhere);
+
+        const users: UserDTO[] = await this.userService.getAll({}, whereUser);
+        const usersId: number[] = users.map((user: UserDTO) => user.id);
+
+        // @ts-ignore
+        const students: StudentIncludes[] = await this.app.prisma.student.findMany({
             include: {
-                user: true,
-            }
+                User: true,
+                ...include
+            },
+            where: {
+                userId: {in: usersId},
+                ...where
+            },
         });
 
-        const studentsDTO: StudentDTO[] = students.map((student: (Student & {
-            user: User
-        })) => this.studentToStudentDTO(student));
+        const studentsDTO: StudentDTO[] = students.map((student: StudentIncludes) => this.studentToStudentDTO(student));
         return studentsDTO;
     }
 
-    public async get(id: number): Promise<StudentDTO | null> {
-        const student: (Student & { user: User }) | null = await this.app.prisma.student.findUnique({
+    public async get(id: number, getInclude?: StudentGetInclude): Promise<StudentDTO | null> {
+        const include: any = this.generateGetInclude(getInclude);
+
+        //@ts-ignore
+        const student: StudentIncludes | null = await this.app.prisma.student.findUnique({
             where: {
                 userId: id
             },
             include: {
-                user: true,
+                User: true,
+                ...include
             }
         });
 
@@ -61,7 +112,7 @@ export class StudentService {
     public async create(email: string, password: string, name: string, surname: string, isVerified: boolean, countryId: number, schoolId: number, studyLevelId: number): Promise<StudentDTO> {
         const user: UserDTO = await this.userService.create(email, password, name, surname, isVerified);
 
-        const student: Student & { user: User } = await this.app.prisma.student.create({
+        const student: StudentIncludes = await this.app.prisma.student.create({
             data: {
                 userId: user.id,
                 countryId: countryId,
@@ -69,7 +120,7 @@ export class StudentService {
                 studyLevelId: studyLevelId
             },
             include: {
-                user: true
+                User: true
             }
         });
         return this.studentToStudentDTO(student);
@@ -77,7 +128,7 @@ export class StudentService {
 
     public async update(id: number, email: string, name: string, surname: string, isVerified: boolean, countryId: number, schoolId: number, studyLevelId: number): Promise<StudentDTO> {
         const user: UserDTO = await this.userService.update(id, email, name, surname, isVerified);
-        const student: Student & { user: User } = await this.app.prisma.student.update({
+        const student: StudentIncludes = await this.app.prisma.student.update({
             where: {
                 userId: id
             },
@@ -87,7 +138,7 @@ export class StudentService {
                 studyLevelId: studyLevelId
             },
             include: {
-                user: true
+                User: true
             }
         });
 
@@ -120,16 +171,63 @@ export class StudentService {
         return await this.userService.login(email, password);
     }
 
-    private studentToStudentDTO(student: Student & { user: User }): StudentDTO {
-        return {
+    private studentToStudentDTO(student: StudentIncludes): StudentDTO {
+        const studentDTO: StudentDTO = {
             userId: student.userId,
-            email: student.user.email,
-            name: student.user.name,
-            surname: student.user.surname,
-            isVerified: student.user.isVerified,
+            email: student.User.email,
+            name: student.User.name,
+            surname: student.User.surname,
+            isVerified: student.User.isVerified,
             countryId: student.countryId,
             schoolId: student.schoolId,
             studyLevelId: student.studyLevelId
         }
+
+        if (!isNull(student.Country)) studentDTO.Country = student.Country;
+        if (!isNull(student.School)) studentDTO.School = student.School;
+        if (!isNull(student.StudyLevel)) studentDTO.StudyLevel = student.StudyLevel;
+        if (!isNull(student.FieldsOfStudy)) studentDTO.FieldsOfStudy = student.FieldsOfStudy;
+        if (!isNull(student.Courses)) studentDTO.Courses = student.Courses;
+        if (!isNull(student.Comments)) studentDTO.Comments = student.Comments;
+
+
+        return studentDTO;
+    }
+
+    private generateGetInclude(getInclude?: StudentGetInclude): any {
+        const include: any = {};
+        if (getInclude) {
+            if (!isNull(getInclude.Country)) include.Country = Boolean(getInclude.Country);
+            if (!isNull(getInclude.School)) include.School = Boolean(getInclude.School);
+            if (!isNull(getInclude.StudyLevel)) include.StudyLevel = Boolean(getInclude.StudyLevel);
+            if (!isNull(getInclude.FieldsOfStudy)) include.FieldsOfStudy = Boolean(getInclude.FieldsOfStudy);
+            if (!isNull(getInclude.Courses)) include.Courses = Boolean(getInclude.Courses);
+            if (!isNull(getInclude.Comments)) include.Comments = Boolean(getInclude.Comments);
+        }
+
+        return include;
+    }
+
+    private generateGetWhere(getWhere?: StudentGetWhere): any {
+        const where: any = {};
+        if (getWhere) {
+            if (getWhere.countryId) where.countryId = Number(getWhere.countryId);
+            if (getWhere.schoolId) where.schoolId = Number(getWhere.schoolId);
+            if (getWhere.studyLevelId) where.studyLevelId = Number(getWhere.studyLevelId);
+        }
+
+        return where;
+    }
+
+    private generateGetWhereUser(getWhere?: professorGetWhere): any {
+        const where: any = {};
+        if (getWhere) {
+            if (getWhere.email) where.email = getWhere.email;
+            if (getWhere.name) where.name = getWhere.name;
+            if (getWhere.surname) where.surname = getWhere.surname;
+            if (!isNull(getWhere.isVerified)) where.isVerified = Boolean(getWhere.isVerified);
+        }
+
+        return where;
     }
 }

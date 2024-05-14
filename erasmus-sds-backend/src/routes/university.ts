@@ -15,13 +15,27 @@ interface universityAttrs {
     countryId: number;
 }
 
+interface universitiesGetQuery {
+    Country?: boolean,
+    Schools?: boolean,
+    name?: string,
+    countryId?: number
+
+}
+
+interface universityGetQuery {
+    Country?: boolean,
+    Schools?: boolean,
+}
+
 const UniversityRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: FastifyPluginOptions) => {
     const universityService: UniversityService = new UniversityService(app);
     const countryService: CountryService = new CountryService(app);
 
-    app.get('/universities', UniversitiesGet, async (request, response) => {
+    app.get<{ Querystring: universitiesGetQuery }>('/universities', UniversitiesGet, async (request, response) => {
         try {
-            const universities: University[] = await universityService.getAll();
+            const {Country, Schools, name, countryId} = request.query;
+            const universities: University[] = await universityService.getAll({Country, Schools}, {name, countryId});
             return response.code(200).send(universities);
         } catch (error) {
             request.log.error(error);
@@ -29,10 +43,14 @@ const UniversityRoutes: FastifyPluginAsync = async (app: FastifyInstance, option
         }
     });
 
-    app.get<{ Params: universityParams }>('/university/:id', UniversityGet, async (request, response) => {
+    app.get<{
+        Params: universityParams,
+        Querystring: universityGetQuery
+    }>('/university/:id', UniversityGet, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
-            const university: University | null = await universityService.get(id);
+            const {Country, Schools} = request.query;
+            const university: University | null = await universityService.get(id, {Country, Schools});
             if (!university) {
                 return response.code(404).send({error: "The university for the specified id was not found."});
             }

@@ -19,12 +19,30 @@ interface fieldOfStudyAttrs {
     name: string;
 }
 
+interface fieldOfStudiesGetQuery {
+    Professors?: boolean,
+    Students?: boolean
+    Courses?: boolean
+    name?: string,
+}
+
+interface fieldOfStudyGetQuery {
+    Professors?: boolean,
+    Students?: boolean
+    Courses?: boolean
+}
+
 const FieldOfStudyRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: FastifyPluginOptions) => {
     const fieldOfStudyService: FieldOfStudyService = new FieldOfStudyService(app);
 
-    app.get('/fieldsOfStudy', fieldsOfStudyGet, async (request, response) => {
+    app.get<{ Querystring: fieldOfStudiesGetQuery }>('/fieldsOfStudy', fieldsOfStudyGet, async (request, response) => {
         try {
-            const fieldsOfStudy: FieldOfStudy[] = await fieldOfStudyService.getAll();
+            const {Professors, Students, Courses, name} = request.query;
+            const fieldsOfStudy: FieldOfStudy[] = await fieldOfStudyService.getAll({
+                Professors,
+                Students,
+                Courses
+            }, {name});
             return response.code(200).send(fieldsOfStudy);
         } catch (error) {
             request.log.error(error);
@@ -32,10 +50,18 @@ const FieldOfStudyRoutes: FastifyPluginAsync = async (app: FastifyInstance, opti
         }
     });
 
-    app.get<{ Params: fieldOfStudyParams }>('/fieldOfStudy/:id', fieldOfStudyGet, async (request, response) => {
+    app.get<{
+        Params: fieldOfStudyParams,
+        Querystring: fieldOfStudyGetQuery
+    }>('/fieldOfStudy/:id', fieldOfStudyGet, async (request, response) => {
         try {
             const id: number = Number(request.params.id);
-            const fieldOfStudy: FieldOfStudy | null = await fieldOfStudyService.get(id);
+            const {Professors, Students, Courses} = request.query;
+            const fieldOfStudy: FieldOfStudy | null = await fieldOfStudyService.get(id, {
+                Professors,
+                Students,
+                Courses
+            });
             if (!fieldOfStudy) {
                 return response.code(404).send({error: "The field of study for the specified id was not found."});
             }

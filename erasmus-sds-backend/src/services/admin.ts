@@ -1,6 +1,9 @@
 import {FastifyInstance} from "fastify";
 import {Admin, User} from "@prisma/client";
 import {UserDTO, UserService} from "./user";
+import {isNull} from "../utils/utils";
+
+type AdminIncludes = Admin & { User: User };
 
 export interface AdminDTO {
     userId: number,
@@ -8,6 +11,13 @@ export interface AdminDTO {
     name: string,
     surname: string,
     isVerified: boolean,
+}
+
+export interface AdminGetWhere {
+    email?: string,
+    name?: string,
+    surname?: string,
+    isVerified?: boolean,
 }
 
 export class AdminService {
@@ -20,24 +30,32 @@ export class AdminService {
         this.userService = new UserService(app);
     }
 
-    public async getAll(): Promise<AdminDTO[]> {
-        const admins: (Admin & { user: User })[] = await this.app.prisma.admin.findMany({
+    public async getAll(getWhere?: AdminGetWhere): Promise<AdminDTO[]> {
+        const where: any = this.generateGetWhere(getWhere);
+
+        const users: UserDTO[] = await this.userService.getAll({}, where);
+        const usersId: number[] = users.map((user: UserDTO) => user.id);
+
+        const admins: AdminIncludes[] = await this.app.prisma.admin.findMany({
+            where: {
+                userId: {in: usersId}
+            },
             include: {
-                user: true,
+                User: true
             }
         });
 
-        const adminsDTO: AdminDTO[] = admins.map((admin: (Admin & { user: User })) => this.adminToAdminDTO(admin));
+        const adminsDTO: AdminDTO[] = admins.map((admin: AdminIncludes) => this.adminToAdminDTO(admin));
         return adminsDTO;
     }
 
     public async get(id: number): Promise<AdminDTO | null> {
-        const admin: (Admin & { user: User }) | null = await this.app.prisma.admin.findUnique({
+        const admin: AdminIncludes | null = await this.app.prisma.admin.findUnique({
             where: {
                 userId: id
             },
             include: {
-                user: true,
+                User: true,
             }
         });
 
@@ -47,12 +65,12 @@ export class AdminService {
     public async create(email: string, password: string, name: string, surname: string, isVerified: boolean): Promise<AdminDTO> {
         const user: UserDTO = await this.userService.create(email, password, name, surname, isVerified);
 
-        const admin: Admin & { user: User } = await this.app.prisma.admin.create({
+        const admin: AdminIncludes = await this.app.prisma.admin.create({
             data: {
                 userId: user.id
             },
             include: {
-                user: true
+                User: true
             }
         });
         return this.adminToAdminDTO(admin);
@@ -85,13 +103,25 @@ export class AdminService {
         return await this.userService.isEmailAddressAlreadyUsedByAnotherUser(id, email);
     }
 
-    private adminToAdminDTO(admin: Admin & { user: User }): AdminDTO {
+    private adminToAdminDTO(admin: AdminIncludes): AdminDTO {
         return {
             userId: admin.userId,
-            email: admin.user.email,
-            name: admin.user.name,
-            surname: admin.user.surname,
-            isVerified: admin.user.isVerified,
+            email: admin.User.email,
+            name: admin.User.name,
+            surname: admin.User.surname,
+            isVerified: admin.User.isVerified,
         }
+    }
+
+    private generateGetWhere(getWhere?: AdminGetWhere): any {
+        const where: any = {};
+        if (getWhere) {
+            if (getWhere.email) where.email = getWhere.email;
+            if (getWhere.name) where.name = getWhere.name;
+            if (getWhere.surname) where.surname = getWhere.surname;
+            if (!isNull(getWhere.isVerified)) where.isVerified = Boolean(getWhere.isVerified);
+        }
+
+        return where;
     }
 }

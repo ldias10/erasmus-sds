@@ -1,6 +1,15 @@
 export const adminsGet = {
     schema: {
         tags: ["Admin"],
+        querystring: {
+            type: 'object',
+            properties: {
+                email: {type: 'string', description: "Condition"},
+                name: {type: 'string', description: "Condition"},
+                surname: {type: 'string', description: "Condition"},
+                isVerified: {type: 'boolean', description: "Condition"},
+            },
+        },
         response: {
             200: {
                 type: "array",

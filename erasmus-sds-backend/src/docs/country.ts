@@ -1,6 +1,15 @@
 export const countriesGet = {
     schema: {
         tags: ["Country"],
+        querystring: {
+            type: 'object',
+            properties: {
+                name: {type: 'string', description: "Condition"},
+                tag: {type: 'string', description: "Condition"},
+                Students: {type: 'boolean', description: "Include"},
+                Universities: {type: 'boolean', description: "Include"},
+            },
+        },
         response: {
             200: {
                 type: "array",
@@ -10,6 +19,27 @@ export const countriesGet = {
                         id: {type: "integer"},
                         name: {type: "string"},
                         tag: {type: "string"},
+                        Students: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    "userId": {type: "integer"},
+                                    "schoolId": {type: "integer"},
+                                    "studyLevelId": {type: "integer"},
+                                }
+                            }
+                        },
+                        Universities: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    "id": {type: "integer"},
+                                    "name": {type: "string"}
+                                }
+                            }
+                        },
                     },
                 },
                 description: "OK"
@@ -35,6 +65,13 @@ export const countryGet = {
             },
             required: ["id"]
         },
+        querystring: {
+            type: 'object',
+            properties: {
+                Students: {type: 'boolean', description: "Include"},
+                Universities: {type: 'boolean', description: "Include"},
+            },
+        },
         response: {
             200: {
                 type: "object",
@@ -42,6 +79,27 @@ export const countryGet = {
                     id: {type: "integer"},
                     name: {type: "string"},
                     tag: {type: "string"},
+                    Students: {
+                        type: "array",
+                        items: {
+                            type: "object",
+                            properties: {
+                                "userId": {type: "integer"},
+                                "schoolId": {type: "integer"},
+                                "studyLevelId": {type: "integer"},
+                            }
+                        }
+                    },
+                    Universities: {
+                        type: "array",
+                        items: {
+                            type: "object",
+                            properties: {
+                                "id": {type: "integer"},
+                                "name": {type: "string"}
+                            }
+                        }
+                    },
                 },
                 description: "OK",
             },
