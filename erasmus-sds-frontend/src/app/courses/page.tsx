@@ -33,6 +33,7 @@ const Course = () => {
         }
     
         const courses = await response.json();
+        console.log("The courses are: ",courses);
         setCourses(courses);
         } catch (error) {
           console.error('Error fetching courses:', error);
@@ -40,7 +41,7 @@ const Course = () => {
         }
       };
       fetchCourses();
-  },
+  },[]
 );
   return (
     <>  
