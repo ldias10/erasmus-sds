@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import SignupForm from "@/components/SignUpForm";
 import { FormData } from "@/components/SignUpForm";
+import {loginRequest} from "@/requests/loginRequest";
 
 const TeacherSignUp = () => {
 
@@ -15,7 +16,7 @@ const TeacherSignUp = () => {
     surname: "",
     name: "",
     email: "",
-    isVerified: false,
+    isVerified: true,
     password: "",
     countryId: 0,
     schoolId: 0,
@@ -46,10 +47,22 @@ const TeacherSignUp = () => {
 
       if (response.ok) {
         setErrorMessages([]);
+        try {
+          const loginResponse = await loginRequest(formData.email, formData.password);
+          const loginResponseData = await loginResponse;
+          console.log("The login response is: ",loginResponseData);
+          if (!loginResponse.ok) {
+            const errors = loginResponseData.error || [];
+            console.log("Error:",errors);
+          }
+        }
+        catch (error) {
+          console.error("Error during login:", error);
+        }
 
         sessionStorage.setItem("userData", JSON.stringify(responseData));
         console.log("The User data is: ",sessionStorage.getItem("userData"));
-
+        console.log("the full response is: ",response);
         sessionStorage.setItem("userState", "teacher");
         window.dispatchEvent(new Event("storage"));
         console.log(sessionStorage.getItem("userState"));

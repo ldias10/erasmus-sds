@@ -8,13 +8,15 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import SignupForm from "@/components/SignUpForm";
 import { FormData } from "@/components/SignUpForm";
 
+import {loginRequest} from "@/requests/loginRequest";
+
 const StudentSignUp = () => {
   const router = useRouter();
   const [formData, setFormData] = useState<FormData>({
     surname: "",
     name: "",
     email: "",
-    isVerified: false,
+    isVerified: true,
     countryId: 0,
     schoolId: 0,
     studyLevelId: 0,
@@ -46,6 +48,20 @@ const StudentSignUp = () => {
 
       if (response.ok) {
         setErrorMessages([]);
+
+        try {
+          const loginResponse = await loginRequest(formData.email, formData.password);
+          const loginResponseData = await loginResponse;
+          console.log("The login response is: ",loginResponseData);
+          if (!loginResponse.ok) {
+            const errors = loginResponseData.error || [];
+            console.log("Error:",errors);
+          }
+        }
+        catch (error) {
+          console.error("Error during login:", error);
+        }
+
         const data = responseData;
         sessionStorage.setItem("userData", JSON.stringify(responseData));
         console.log("The User data is: ",sessionStorage.getItem("userData"));
