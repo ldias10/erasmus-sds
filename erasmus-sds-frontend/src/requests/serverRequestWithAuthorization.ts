@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 
-const useServerFetch = async (request: string, body: string) => {
+const requestWithAutorization = async (request: string, body: string) => {
   console.log("trying a request to the server");
   try {
     const response = await fetch(request, {
@@ -30,4 +30,4 @@ const useServerFetch = async (request: string, body: string) => {
   }
 };
 
-export default useServerFetch;
+export default requestWithAutorization;

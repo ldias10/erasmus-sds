@@ -5,7 +5,7 @@ import { FormEvent, useState, useEffect } from "react";
 import SignupForm from "@/components/SignUpForm";
 import { FormData } from "@/components/SignUpForm";
 import { set } from "date-fns";
-import useServerFetch from "../../requests/serverRequestWithAuthorization";
+import requestWithAuthorization from "../../requests/serverRequestWithAuthorization";
 
   const EditProfile = () => {
     const router = useRouter();
@@ -55,7 +55,7 @@ import useServerFetch from "../../requests/serverRequestWithAuthorization";
     try {
       setLoading(true);
       console.log("The form data is:----------------dckgfthj-gfnbhgfrbf-------- ",formData);
-      const editResponse = await useServerFetch(request, raw);
+      const editResponse = await requestWithAuthorization(request, raw);
       const response2 = await editResponse;
       console.log("the edit response is: ",response2);
       if (response2.ok) {
