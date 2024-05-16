@@ -13,6 +13,14 @@ export const login = {
             200: {
                 type: "object",
                 properties: {
+                    id: {type: "number"},
+                    email: {type: "string"},
+                    name: {type: "string"},
+                    surname: {type: "string"},
+                    isVerified: {type: "boolean"},
+                    Admin: {type: "boolean"},
+                    Professor: {type: "boolean"},
+                    Student: {type: "boolean"},
                     access_token: {type: "string"},
                 },
                 description: "OK"

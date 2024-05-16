@@ -2,6 +2,7 @@ import {FastifyInstance, FastifyPluginAsync, FastifyPluginOptions} from "fastify
 import fp from "fastify-plugin";
 import {UserDTO, UserService} from "../services/user";
 import {login, logout} from "../docs/user";
+import {isNull} from "../utils/utils";
 
 interface loginAttrs {
     email: string,
@@ -18,7 +19,11 @@ const UserRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fas
                 return response.code(401).send({error: "Wrong password."});
             }
 
-            const user: UserDTO | null = await userService.getByEmail(email);
+            const user: UserDTO | null = await userService.getByEmail(email, {
+                Admin: true,
+                Professor: true,
+                Student: true
+            });
             if (!user) {
                 return response.code(404).send({error: "The user for the specified email was not found."});
             }
@@ -38,7 +43,13 @@ const UserRoutes: FastifyPluginAsync = async (app: FastifyInstance, options: Fas
                 secure: true,
             });
 
-            return {access_token: token};
+            const roles = {
+                Admin: !isNull(user.Admin),
+                Professor: !isNull(user.Professor),
+                Student: !isNull(user.Student),
+            }
+
+            return {...payload, ...roles, access_token: token};
         } catch (error) {
             request.log.error(error);
             return response.code(500).send({error: "Internal Server Error"});

@@ -62,8 +62,11 @@ export class UserService {
         return user ? this.userToUserDTO(user) : null;
     }
 
-    public async getByEmail(email: string): Promise<UserDTO | null> {
+    public async getByEmail(email: string, getInclude?: UserGetInclude): Promise<UserDTO | null> {
+        const include: any = this.generateGetInclude(getInclude);
+
         const user: UserIncludes | null = await this.app.prisma.user.findUnique({
+            include,
             where: {
                 email: email
             }
