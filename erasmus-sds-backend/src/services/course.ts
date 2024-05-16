@@ -33,18 +33,38 @@ export class CourseService {
         const include: any = this.generateGetInclude(getInclude);
         const where: any = this.generateGetWhere(getWhere);
 
-        return this.app.prisma.course.findMany({include, where});
+        const courses = await this.app.prisma.course.findMany({include, where});
+
+        courses.forEach(course => {
+            if (course.Students) {
+                //@ts-ignore
+                const students = course.Students.map(student => student.Student);
+                course.Students = students;
+            }
+        });
+
+        return courses;
     }
 
     public async get(id: number, getInclude?: CourseGetInclude): Promise<Course | null> {
         const include: any = this.generateGetInclude(getInclude);
 
-        return this.app.prisma.course.findUnique({
+        const course = await this.app.prisma.course.findUnique({
             include,
             where: {
                 id: id,
             }
         });
+
+        if (course && course.Students) {
+            //@ts-ignore
+            const students = course.Students.map(student => student.Student);
+            //@ts-ignore
+            course.Students = students;
+
+        }
+
+        return course;
     }
 
     public async create(name: string, description: string, ects: number, hoursOfLecture: number, hoursOfLabs: number, numberOfExams: number, isAvailable: boolean, fieldOfStudyId: number, studyLevelId: number): Promise<Course> {
@@ -95,7 +115,11 @@ export class CourseService {
         if (getInclude) {
             if (!isNull(getInclude.FieldOfStudy)) include.FieldOfStudy = Boolean(getInclude.FieldOfStudy);
             if (!isNull(getInclude.StudyLevel)) include.StudyLevel = Boolean(getInclude.StudyLevel);
-            if (!isNull(getInclude.Students)) include.Students = Boolean(getInclude.Students);
+            if (!isNull(getInclude.Students) && Boolean(getInclude.Students)) include.Students = {
+                include: {
+                    Student: Boolean(getInclude.Students),
+                }
+            };
             if (!isNull(getInclude.Comments)) include.Comments = Boolean(getInclude.Comments);
         }
 

@@ -85,6 +85,20 @@ export class StudentService {
             },
         });
 
+        students.forEach(student => {
+            if (student.FieldsOfStudy) {
+                //@ts-ignore
+                const fieldsOfStudy = student.FieldsOfStudy.map(fieldOfStudy => fieldOfStudy.FieldOfStudy);
+                student.FieldsOfStudy = fieldsOfStudy;
+            }
+
+            if (student.Courses) {
+                //@ts-ignore
+                const courses = student.Courses.map(course => course.Course);
+                student.Courses = courses;
+            }
+        });
+
         const studentsDTO: StudentDTO[] = students.map((student: StudentIncludes) => this.studentToStudentDTO(student));
         return studentsDTO;
     }
@@ -102,6 +116,18 @@ export class StudentService {
                 ...include
             }
         });
+
+        if (student && student.FieldsOfStudy) {
+            //@ts-ignore
+            const fieldsOfStudy = student.FieldsOfStudy.map(fieldOfStudy => fieldOfStudy.FieldOfStudy);
+            student.FieldsOfStudy = fieldsOfStudy;
+        }
+
+        if (student && student.Courses) {
+            //@ts-ignore
+            const courses = student.Courses.map(course => course.Course);
+            student.Courses = courses;
+        }
 
         return student ? this.studentToStudentDTO(student) : null;
     }
@@ -242,8 +268,12 @@ export class StudentService {
             if (!isNull(getInclude.Country)) include.Country = Boolean(getInclude.Country);
             if (!isNull(getInclude.School)) include.School = Boolean(getInclude.School);
             if (!isNull(getInclude.StudyLevel)) include.StudyLevel = Boolean(getInclude.StudyLevel);
-            if (!isNull(getInclude.FieldsOfStudy)) include.FieldsOfStudy = Boolean(getInclude.FieldsOfStudy);
-            if (!isNull(getInclude.Courses)) include.Courses = Boolean(getInclude.Courses);
+            if (!isNull(getInclude.FieldsOfStudy) && Boolean(getInclude.FieldsOfStudy)) include.FieldsOfStudy = {
+                include: {FieldOfStudy: Boolean(getInclude.FieldsOfStudy)}
+            }
+            if (!isNull(getInclude.Courses) && Boolean(getInclude.Courses)) include.Courses = {
+                include: {Course: Boolean(getInclude.Courses)}
+            };
             if (!isNull(getInclude.Comments)) include.Comments = Boolean(getInclude.Comments);
         }
 

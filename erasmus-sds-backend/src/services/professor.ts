@@ -56,6 +56,14 @@ export class ProfessorService {
             },
         });
 
+        professors.forEach(professor => {
+            if (professor.FieldsOfStudy) {
+                //@ts-ignore
+                const fieldsOfStudy = professor.FieldsOfStudy.map(fieldOfStudy => fieldOfStudy.FieldOfStudy);
+                professor.FieldsOfStudy = fieldsOfStudy;
+            }
+        });
+
         const professorDTOS: ProfessorDTO[] = professors.map((professor: ProfessorIncludes) => this.professorToProfessorDTO(professor));
         return professorDTOS;
     }
@@ -73,6 +81,12 @@ export class ProfessorService {
                 ...include
             }
         });
+
+        if (professor && professor.FieldsOfStudy) {
+            //@ts-ignore
+            const fieldsOfStudy = professor.FieldsOfStudy.map(fieldOfStudy => fieldOfStudy.FieldOfStudy);
+            professor.FieldsOfStudy = fieldsOfStudy;
+        }
 
         return professor ? this.professorToProfessorDTO(professor) : null;
     }
@@ -157,7 +171,9 @@ export class ProfessorService {
     private generateGetInclude(getInclude?: professorGetInclude): any {
         const include: any = {};
         if (getInclude) {
-            if (!isNull(getInclude.FieldsOfStudy)) include.FieldsOfStudy = Boolean(getInclude.FieldsOfStudy);
+            if (!isNull(getInclude.FieldsOfStudy) && Boolean(getInclude.FieldsOfStudy)) include.FieldsOfStudy = {
+                include: {FieldOfStudy: Boolean(getInclude.FieldsOfStudy)}
+            }
         }
 
         return include;
