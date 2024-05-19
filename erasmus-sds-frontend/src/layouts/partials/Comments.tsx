@@ -1,39 +1,55 @@
 "use client";
-
+import { useState, useEffect } from "react";
 import ImageFallback from "@/helpers/ImageFallback";
 import { markdownify } from "@/lib/utils/textConverter";
-import { Testimonial } from "@/types";
 import "swiper/css";
 import { Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { BiAlignMiddle } from "react-icons/bi";
 
-interface PageData {
-  notFound?: boolean;
-  content?: string;
-  frontmatter: {
-    enable?: boolean;
-    title: string;
-    description?: string;
-    testimonials: Array<Testimonial>;
-  };
+interface Comment {
+  id: number;
+  content: string;
+  date: string;
+  studentUserId: number;
+  courseId: number
 }
 
-const Testimonials = ({ data }: { data: PageData }) => {
+const Comments = ({ id }: { id: any }) => {
+  const [comments, setComments] = useState<any[]>([]);
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/comment/${id}`, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to fetch comments');
+        }
+    
+        const comments = await response.json();
+        console.log("The comments are: ", comments);
+        setComments(comments);
+        } catch (error) {
+          console.error('Error fetching comments:', error);
+        }
+      };
+      fetchComments();
+    },[]
+  );
   return (
     <>
-      {data.frontmatter.enable && (
-        <section className="section">
+      { <section className="section">
           <div className="container">
             <div className="row">
               <div className="mx-auto mb-12 text-center md:col-10 lg:col-8 xl:col-6">
                 <h2
-                  dangerouslySetInnerHTML={markdownify(data.frontmatter.title)}
+                  dangerouslySetInnerHTML={markdownify("Comments")}
                   className="mb-4"
-                />
-                <p
-                  dangerouslySetInnerHTML={markdownify(
-                    data.frontmatter.description!,
-                  )}
                 />
               </div>
               <div className="col-12">
@@ -56,8 +72,8 @@ const Testimonials = ({ data }: { data: PageData }) => {
                     },
                   }}
                 >
-                  {data.frontmatter.testimonials.map(
-                    (item: Testimonial, index: number) => (
+                  {comments.length > 0  && comments.map(
+                    (item: Comment, index: number) => (
                       <SwiperSlide key={index}>
                         <div className="rounded-lg bg-theme-light px-7 py-10 dark:bg-darkmode-theme-light">
                           <div className="text-dark dark:text-white">
@@ -84,11 +100,11 @@ const Testimonials = ({ data }: { data: PageData }) => {
                                 height={50}
                                 width={50}
                                 className="rounded-full"
-                                src={item.avatar}
-                                alt={item.name}
+                                src="/images/avatar-sm.png"
+                                alt= "avatar"
                               />
                             </div>
-                            <div className="ml-4">
+                            {/* <div className="ml-4">
                               <h3
                                 dangerouslySetInnerHTML={markdownify(item.name)}
                                 className="h5 font-primary font-semibold"
@@ -99,20 +115,21 @@ const Testimonials = ({ data }: { data: PageData }) => {
                                 )}
                                 className="text-dark dark:text-white"
                               />
-                            </div>
+                            </div> */}
                           </div>
                         </div>
                       </SwiperSlide>
                     ),
                   )}
+                  {comments.length == 0 && <div className="form-label" style={{textAlign: 'center'}}>There are no comments for this course.</div>}
                 </Swiper>
               </div>
             </div>
           </div>
         </section>
-      )}
+      }
     </>
   );
 };
 
-export default Testimonials;
+export default Comments;

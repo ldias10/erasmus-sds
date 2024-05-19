@@ -1,10 +1,11 @@
 "use client";
-import { useState, useEffect, FormEvent } from "react";
+import { useState, useEffect } from "react";
 import CourseCard from "@/components/CourseCard";
 // import { getListPage, getSinglePage } from "@/lib/contentParser";
 import PageHeader from "@/partials/PageHeader";
 
 export interface Course {
+  id: number;
   name: string;
   description: string;
   ects: number;

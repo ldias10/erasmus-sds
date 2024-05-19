@@ -1,26 +1,26 @@
+"use client";
+import { useEffect, useState } from 'react';
 import config from "@/config/config.json";
-import { getListPage } from "@/lib/contentParser";
 import PageHeader from "@/partials/PageHeader";
-import SeoMeta from "@/partials/SeoMeta";
-import { RegularPage } from "@/types";
-import Testimonials from "@/partials/Testimonials";
+import Comments from "@/partials/Comments";
 
-const Contact = async () => {
-  const data: RegularPage = getListPage("contact/_index.md");
-  const { frontmatter } = data;
-  const { title, description, meta_title, image } = frontmatter;
+const Contact = () => {
   const { contact_form_action } = config.params;
-  const testimonial = getListPage("sections/testimonial.md");
+  const [id, setId] = useState<string>('');
+  useEffect(() => {
+    // Function to extract id from URL
+    const getIdFromURL = () => {
+      const queryParams = new URLSearchParams(window.location.search);
+      const idParam = queryParams.get('id');
+      if (idParam) {
+        setId(idParam);
+      }
+    };
 
+    getIdFromURL(); });
   return (
     <>
-      <SeoMeta
-        title={title}
-        meta_title={meta_title}
-        description={description}
-        image={image}
-      />
-      <PageHeader title={title} />
+      <PageHeader />
       <section className="section-sm">
         <div className="container">
           <div className="row">
@@ -70,7 +70,7 @@ const Contact = async () => {
           </div>
         </div>
       </section>
-      <Testimonials data={testimonial} />
+      <Comments id = {id} />
 
     </>
   );
