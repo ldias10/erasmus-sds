@@ -12,6 +12,7 @@ export interface FormData {
   studyLevelId?: number;
   password: string;
   userId?: number;
+  access_token?: string;
   }
 
 interface SignUpFormProps {
