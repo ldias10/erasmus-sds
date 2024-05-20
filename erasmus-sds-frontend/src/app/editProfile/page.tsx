@@ -44,7 +44,6 @@ import requestWithAuthorization from "../../requests/serverRequestWithAuthorizat
     if (path === "teacher") {
       path = "professor";
     }
-    const access_token = sessionStorage.getItem("access_token") as string;
     
     const request: string = `http://127.0.0.1:8080/${path}/${formData.userId}`;
     const raw = JSON.stringify(formData);
