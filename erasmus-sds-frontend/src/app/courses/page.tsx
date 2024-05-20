@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import CourseCard from "@/components/CourseCard";
 // import { getListPage, getSinglePage } from "@/lib/contentParser";
-import PageHeader from "@/partials/PageHeader";
+import { IoMdAddCircleOutline } from "react-icons/io";
 
 export interface Course {
   id: number;
@@ -19,6 +19,18 @@ export interface Course {
 
 const Course = () => {
   const [courses, setCourses] = useState<any[]>([]);
+
+  const [isTeacher, setIsTeacher] = useState<boolean>(true); //["student" | "teacher"]
+
+  useEffect(() => {
+    // Check if window is defined (browser environment)
+    if (typeof window !== 'undefined') {
+      const storedUserState = sessionStorage.getItem("userState");
+      setIsTeacher(storedUserState === "teacher");
+      console.log("isTeacher is!!!!!",isTeacher)
+    }
+  }, []);
+
   useEffect(() => {
     const fetchCourses = async () => {
       try {
@@ -46,7 +58,24 @@ const Course = () => {
 );
   return (
     <>  
-      <PageHeader/>
+      <div className="flex justify-between items-center">
+        {isTeacher && (
+          <div className="flex items-center mr-auto ml-2" style={{ visibility: "hidden" }}> {/* Use ml-auto to push this div to the right */}
+            <IoMdAddCircleOutline className="mr-2 text-xl" />
+            <span><p>Add a course</p></span>
+          </div>
+        )}
+
+        <div className="text-center flex-grow">
+          <h2 className="max-md:h1 md:mb-2">Available Courses</h2>
+        </div>
+        {isTeacher && (
+          <div className="flex items-center ml-auto mr-2"> {/* Use ml-auto to push this div to the right */}
+            <IoMdAddCircleOutline className="mr-2 text-xl" />
+            <span><p>Add a course</p></span>
+          </div>
+        )}
+      </div>
       <section className="section-sm pb-0">
         <div className="container">
           <div className="row justify-center">

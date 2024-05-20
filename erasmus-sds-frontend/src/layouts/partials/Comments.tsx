@@ -20,7 +20,7 @@ const Comments = ({ id }: { id: any }) => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/comment/${id}`, {
+        const response = await fetch(`http://localhost:8080/comments?courseId=${id}`, {
           method: 'GET',
           headers: {
             'Accept': 'application/json'
@@ -33,6 +33,14 @@ const Comments = ({ id }: { id: any }) => {
     
         const comments = await response.json();
         console.log("The comments are: ", comments);
+        if (comments.length ===1) {
+          comments.push(comments[0])
+          comments.push(comments[0])
+        }
+        if (comments.length ===2) {
+          comments.push(comments[0])
+          comments.push(comments[1])
+        }
         setComments(comments);
         } catch (error) {
           console.error('Error fetching comments:', error);
