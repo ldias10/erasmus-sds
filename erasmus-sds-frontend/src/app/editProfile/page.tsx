@@ -54,7 +54,7 @@ import requestWithAuthorization from "@/requests/serverRequestWithAuthorization"
     try {
       setLoading(true);
       console.log("The form data is:----------------dckgfthj-gfnbhgfrbf-------- ",formData);
-      const editResponse = await requestWithAuthorization(request, raw);
+      const editResponse = await requestWithAuthorization(request, raw, "PUT");
       const response2 = await editResponse;
       console.log("the edit response is: ",response2);
       if (response2.ok) {

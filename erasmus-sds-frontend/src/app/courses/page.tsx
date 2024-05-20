@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import CourseCard from "@/components/CourseCard";
 // import { getListPage, getSinglePage } from "@/lib/contentParser";
 import { IoMdAddCircleOutline } from "react-icons/io";
+import Link from "next/link";
 
 export interface Course {
   id: number;
@@ -60,20 +61,22 @@ const Course = () => {
     <>  
       <div className="flex justify-between items-center">
         {isTeacher && (
-          <div className="flex items-center mr-auto ml-2" style={{ visibility: "hidden" }}> {/* Use ml-auto to push this div to the right */}
-            <IoMdAddCircleOutline className="mr-2 text-xl" />
-            <span><p>Add a course</p></span>
-          </div>
+            <div className="flex items-center mr-auto ml-2" style={{ visibility: "hidden" }}> {/* Use ml-auto to push this div to the right */}
+              <IoMdAddCircleOutline className="mr-2 text-xl" />
+              <span><p>Add a course</p></span>
+            </div>
         )}
 
         <div className="text-center flex-grow">
           <h2 className="max-md:h1 md:mb-2">Available Courses</h2>
         </div>
         {isTeacher && (
-          <div className="flex items-center ml-auto mr-2"> {/* Use ml-auto to push this div to the right */}
-            <IoMdAddCircleOutline className="mr-2 text-xl" />
-            <span><p>Add a course</p></span>
-          </div>
+          <Link href={"/courses/addCourse"}>
+            <div className="flex items-center ml-auto mr-2"> {/* Use ml-auto to push this div to the right */}
+              <IoMdAddCircleOutline className="mr-2 text-xl" />
+              <span><p>Add a course</p></span>
+            </div>
+          </Link>
         )}
       </div>
       <section className="section-sm pb-0">

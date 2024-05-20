@@ -2,11 +2,12 @@
 
 import { cookies } from "next/headers";
 
-const requestWithAutorization = async (request: string, body: string) => {
+
+const requestWithAutorization = async (request: string, body: string, method:string) => {
   console.log("trying a request to the server");
   try {
     const response = await fetch(request, {
-      method: "PUT",
+      method: method,
       headers: {
         "Content-Type": "application/json",
         // Assuming cookies is a function that returns cookies from the request headers
