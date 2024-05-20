@@ -14,7 +14,7 @@ export class StudentOnFieldOfStudyService {
                 fieldOfStudyId_studentUserId: {
                     studentUserId: studentId,
                     fieldOfStudyId: fieldOfStudyId
-                },
+                }
             }
         });
     }
