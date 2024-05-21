@@ -1,7 +1,7 @@
 "use client"
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Course } from "@/app/courses2/page";
+import { Course } from "@/app/courses/page";
 import Comments from "@/partials/Comments";
 
 const CourseDetail = () => {
@@ -15,7 +15,7 @@ const CourseDetail = () => {
     if (id) {
       // Fetch course data based on id
       // Replace this with your actual data fetching logic
-      const fetchCourses = async () => {
+      const fetchCourse = async () => {
         try {
             const response = await fetch(`http://localhost:8080/course/${id}?StudyLevel=true&FieldOfStudy=true`, {
                 method: 'GET',
@@ -29,14 +29,14 @@ const CourseDetail = () => {
           }
       
           const course = await response.json();
-          console.log("The courses are: ",course);
+          console.log("The course is: ",course);
           setCourse(course);
           } catch (error) {
             console.error(`Error fetching course with id ${id}:`, error);
             throw error;
           }
         };
-        fetchCourses();
+        fetchCourse();
     }
   }, [id]);
 

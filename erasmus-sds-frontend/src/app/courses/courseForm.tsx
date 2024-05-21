@@ -224,7 +224,7 @@ return  (
         {loading ? (
           <BiLoaderAlt className={`animate-spin mx-auto`} size={26} />
         ) : (
-          "Upload"
+          buttonText
         )}
       </button>
     </form>

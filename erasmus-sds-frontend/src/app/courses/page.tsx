@@ -16,6 +16,14 @@ export interface Course {
   isAvailable?: boolean;
   fieldOfStudyId?: number;
   studyLevelId?: number;
+  FieldOfStudy?:{
+    fieldOfStudyId:number;
+    name:string
+  }
+  StudyLevel?:{
+    studyLevelId:number;
+    name:string
+  }
   }
 
 const Course = () => {

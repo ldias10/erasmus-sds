@@ -38,7 +38,7 @@ const AddCourse = () => {
             setUploadSucceeded(0);
           }
         } catch (error) {
-          console.error("Error during edit profile:", error);
+          console.error("Error during the upload of the new course:", error);
           setUploadSucceeded(0);
         } finally {
           setLoading(false);
@@ -52,9 +52,6 @@ return  (
             <div className="col-11 sm:col-9 md:col-7 mx-auto">
               <div className="mb-14 text-center">
                 <h2 className="max-md:h1 md:mb-2">Create a Course</h2>
-                <p className="md:text-lg">
-                  Create an account and start using...
-                </p>
               </div>
 
               <CourseForm
