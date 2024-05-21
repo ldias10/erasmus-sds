@@ -4,7 +4,8 @@ import Link from "next/link";
 import { Course } from "@/app/courses/page";
 import { IoIosMore } from "react-icons/io";
 
-const CourseCard = ({ data }: { data: Course }) => {
+const CourseCard = ({ data, isTeacher }: { data: Course , isTeacher:boolean}) => {
+  console.log(isTeacher)
   const { name } = data;
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -32,6 +33,7 @@ const CourseCard = ({ data }: { data: Course }) => {
         <h4 className="mb-3">
           <Link href={`/courses/${data.id}`}>{name}</Link>
         </h4>
+        {isTeacher && (
         <div className="absolute top-0 right-0 mt-2 mr-2" ref={menuRef}>
           <button onClick={handleMenuToggle} className="focus:outline-none">
             <IoIosMore className="text-xl" />
@@ -43,7 +45,6 @@ const CourseCard = ({ data }: { data: Course }) => {
                     href={`/courses/edit/${data.id}`}
                       >
                   <li>
-
                     <button
                       className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left"
                       onClick={() => console.log('Edit clicked')}
@@ -64,6 +65,7 @@ const CourseCard = ({ data }: { data: Course }) => {
             </div>
           )}
         </div>
+        )}
       </div>
       <p className="mb-4">{plainify(data.description.slice(0, 100))}</p>
     </div>

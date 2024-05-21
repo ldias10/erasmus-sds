@@ -92,7 +92,7 @@ const Course = () => {
           <div className="row justify-center">
             {courses.map((course: Course, index: number) => (
               <div className="mb-14 md:col-6 lg:col-4" key={index}>
-                <CourseCard data={course} />
+                <CourseCard data={course} isTeacher={isTeacher} />
               </div>
             ))}
           </div>
