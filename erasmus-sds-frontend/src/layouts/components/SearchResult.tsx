@@ -1,33 +1,19 @@
 "use client";
 
 import { plainify, titleify } from "@/lib/utils/textConverter";
-import Image from "next/image";
+import { Course } from "@/app/courses/page";
 
-export interface ISearchItem {
+export interface ISearchCourseItem {
   group: string;
   slug: string;
-  frontmatter: {
-    title: string;
-    image?: string;
-    description?: string;
-    categories?: string[];
-    tags?: string[];
-  };
-  content: string;
-}
+  course:Course;
+  }
 
 export interface ISearchGroup {
   group: string;
   groupItems: {
     slug: string;
-    frontmatter: {
-      title: string;
-      image?: string;
-      description?: string;
-      categories?: string[];
-      tags?: string[];
-    };
-    content: string;
+    course:Course;
   }[];
 }
 
@@ -36,32 +22,35 @@ const SearchResult = ({
   searchResult,
   searchString,
 }: {
-  searchResult: ISearchItem[];
+  searchResult: ISearchCourseItem[];
   searchString: string;
 }) => {
   // generate search result group
-  const generateSearchGroup = (searchResult: ISearchItem[]) => {
+  const generateSearchGroup = (searchResult: ISearchCourseItem[]) => {
+    console.log("searchResult", searchResult);
     const joinDataByGroup: ISearchGroup[] = searchResult.reduce(
-      (groupItems: ISearchGroup[], item: ISearchItem) => {
+      (groupItems: ISearchGroup[], item: ISearchCourseItem) => {
         const groupIndex = groupItems.findIndex(
           (group) => group.group === item.group,
         );
+        
         if (groupIndex === -1) {
+          console.log("groupIndex", groupIndex);
+          console.log("groupItems", groupItems);
+          console.log("item", item);
           groupItems.push({
             group: item.group,
             groupItems: [
               {
-                frontmatter: { ...item.frontmatter },
+                course: { ...item.course },
                 slug: item.slug,
-                content: item.content,
               },
             ],
           });
         } else {
           groupItems[groupIndex].groupItems.push({
-            frontmatter: { ...item.frontmatter },
+            course: { ...item.course },
             slug: item.slug,
-            content: item.content,
           });
         }
 
@@ -145,79 +134,57 @@ const SearchResult = ({
                     id="searchItem"
                     className="search-result-item"
                   >
-                    {item.frontmatter.image && (
+                    {/* {item.image && (
                       <div className="search-result-item-image">
                         <Image
-                          src={item.frontmatter.image}
-                          alt={item.frontmatter.title}
+                          src={item.image}
+                          alt={items.name}
                           width={100}
                           height={100}
                         />
                       </div>
-                    )}
+                    )} */}
                     <div className="search-result-item-body">
                       <a
                         href={`/${item.slug}`}
                         className="search-result-item-title search-result-item-link"
                       >
-                        {matchUnderline(item.frontmatter.title, searchString)}
+                        {matchUnderline(item.course.name, searchString)}
                       </a>
-                      {item.frontmatter.description && (
+                      {/* {item.frontmatter.description && (
                         <p className="search-result-item-description">
                           {matchUnderline(
                             item.frontmatter.description,
                             searchString,
                           )}
                         </p>
-                      )}
-                      {item.content && (
+                      )} */}
+                      {item.course.description && (
                         <p className="search-result-item-content">
-                          {matchContent(item.content, searchString)}
+                          {matchContent(item.course.description, searchString)}
                         </p>
                       )}
                       <div className="search-result-item-taxonomies">
-                        {item.frontmatter.categories && (
+                        {item.course.FieldOfStudy?.name && (
                           <div className="mr-2">
-                            <svg
-                              width="14"
-                              height="14"
-                              fill="currentColor"
-                              viewBox="0 0 16 16"
-                            >
-                              <path d="M11 0H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2 2 2 0 0 0 2-2V4a2 2 0 0 0-2-2 2 2 0 0 0-2-2zm2 3a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1V3zM2 2a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V2z"></path>
-                            </svg>
-                            {item.frontmatter.categories.map(
-                              (category, index) => (
-                                <span key={category}>
-                                  {matchUnderline(category, searchString)}
-                                  {item.frontmatter.categories &&
-                                    index !==
-                                      item.frontmatter.categories.length -
-                                        1 && <>, </>}
-                                </span>
-                              ),
-                            )}
+                            <span><b>Field of Study: </b></span>
+                            <span>
+                              {matchUnderline(
+                                item.course.FieldOfStudy?.name,
+                                searchString,
+                              )}
+                            </span>,
                           </div>
                         )}
-                        {item.frontmatter.tags && (
+                        {item.course.StudyLevel?.name && (
                           <div className="mr-2">
-                            <svg
-                              width="14"
-                              height="14"
-                              fill="currentColor"
-                              viewBox="0 0 16 16"
-                            >
-                              <path d="M3 2v4.586l7 7L14.586 9l-7-7H3zM2 2a1 1 0 0 1 1-1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 2 6.586V2z"></path>
-                              <path d="M5.5 5a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1zm0 1a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM1 7.086a1 1 0 0 0 .293.707L8.75 15.25l-.043.043a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 0 7.586V3a1 1 0 0 1 1-1v5.086z"></path>
-                            </svg>
-                            {item.frontmatter.tags.map((tag, index) => (
-                              <span key={tag}>
-                                {matchUnderline(tag, searchString)}
-                                {item.frontmatter.tags &&
-                                  index !==
-                                    item.frontmatter.tags.length - 1 && <>, </>}
-                              </span>
-                            ))}
+                            <span><b>Study Level: </b></span>
+                            <span>
+                              {matchUnderline(
+                                item.course.StudyLevel?.name,
+                                searchString,
+                              )}
+                            </span>
                           </div>
                         )}
                       </div>
