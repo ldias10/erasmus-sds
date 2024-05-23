@@ -187,16 +187,4 @@ const Header = () => {
   );
 };
 
-
-// export async function getServerSideProps(context: any) {
-//   // Fetch session storage value or any other initial data
-//   const initialVisibility:boolean = false;
-
-//   return {
-//     props: {
-//       initialVisibility: initialVisibility, // or simply initialVisibility
-//     },
-//   };
-// }
-
 export default Header;
