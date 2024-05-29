@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState, useEffect } from "react";
 import SignupForm from "@/components/SignUpForm";
 import { FormData } from "@/components/SignUpForm";
+import requestWithAuthorization from "@/requests/serverRequestWithAuthorization";
 
   const EditProfile = () => {
     const router = useRouter();
@@ -38,34 +39,35 @@ import { FormData } from "@/components/SignUpForm";
 
   const handleSave = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-    const request: string = `http://127.0.0.1:8080/${userState}/${formData.userId}`;
+    var path = userState;
+    if (path === "teacher") {
+      path = "professor";
+    }
+    
+    const request: string = `http://127.0.0.1:8080/${path}/${formData.userId}`;
+    const raw = JSON.stringify(formData);
+
+    console.log("The request is: ",request);
+    console.log("The raw data is: ",raw);
+    
     try {
       setLoading(true);
-        
-      const response = await fetch(request, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const responseData = await response.json();
-      console.log("The Response is---------------------------:",response
-        ,"And response.ok is: ",response.ok
-      );
-
-      if (response.ok) {
+      console.log("The form data is:----------------dckgfthj-gfnbhgfrbf-------- ",formData);
+      const editResponse = await requestWithAuthorization(request, raw, "PUT");
+      const response2 = await editResponse;
+      console.log("the edit response is: ",response2);
+      if (response2.ok) {
         setErrorMessages([]);
-        const data = responseData;
+        const data = response2.responseData;
         
-        sessionStorage.setItem("userData", JSON.stringify(responseData));
+        sessionStorage.setItem("userData", JSON.stringify(response2.responseData));
         console.log("The User data is: ",sessionStorage.getItem("userData"));
         
         setSaveSucceeded(1);
       } else {
-        const errors = responseData.errors || [];
+        const errors = response2.responseData.error || [];
         setErrorMessages(errors);
+        console.log("The errors are: ",errors);
 
         setSaveSucceeded(0);
       }

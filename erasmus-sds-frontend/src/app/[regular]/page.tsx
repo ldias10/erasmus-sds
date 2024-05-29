@@ -35,7 +35,7 @@ const RegularPages = ({ params }: { params: { regular: string } }) => {
         description={description}
         image={image}
       />
-      <PageHeader title={title} />
+      <PageHeader/>
       <section className="section">
         <div className="container">
           <div className="content">

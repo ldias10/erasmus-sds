@@ -1,10 +1,39 @@
 "use client";
 
-import searchData from ".json/search.json" assert { type: "json" };
 import React, { useEffect, useState } from "react";
-import SearchResult, { type ISearchItem } from "./SearchResult";
+import SearchResult, { type ISearchCourseItem } from "./SearchResult";
+import config from "@/config/config.json";
+import { Course } from "@/app/courses/page";
 
 const SearchModal = () => {
+  
+  const { API_URL } = config.site;
+  const [searchData, setSearchData] = useState<ISearchCourseItem[]>([]);
+
+  // Fetch data from server on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(API_URL+"/courses?StudyLevel=true&FieldOfStudy=true"); // Adjust the URL to your endpoint
+        const data: Course[] = await response.json();
+        const courseSearchItem: ISearchCourseItem[] = data.map(course => ({
+          group: "Courses",
+          slug: `courses/${course.id}`,
+          course: course
+        }));
+        setSearchData(courseSearchItem);
+        console.log("Search data fetched after reorganizing:", courseSearchItem);
+      } catch (error) {
+        console.error("Error fetching search data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+
+
+
   const [searchString, setSearchString] = useState("");
 
   // handle input change
@@ -13,27 +42,22 @@ const SearchModal = () => {
   };
 
   // generate search result
-  const doSearch = (searchData: ISearchItem[]) => {
+  const doSearch = (searchData: ISearchCourseItem[]) => {
     const regex = new RegExp(`${searchString}`, "gi");
     if (searchString === "") {
       return [];
     } else {
       const searchResult = searchData.filter((item) => {
-        const title = item.frontmatter.title.toLowerCase().match(regex);
-        const description = item.frontmatter.description
-          ?.toLowerCase()
-          .match(regex);
-        const categories = item.frontmatter.categories
-          ?.join(" ")
-          .toLowerCase()
-          .match(regex);
-        const tags = item.frontmatter.tags
-          ?.join(" ")
-          .toLowerCase()
-          .match(regex);
-        const content = item.content.toLowerCase().match(regex);
+        const name = item.course.name.toLowerCase().match(regex);
+        const FieldOfStudy = item.course.FieldOfStudy?.name.toLowerCase().match(regex);
+        const StudyLevel = item.course.StudyLevel?.name.toLowerCase().match(regex);
+        // const tags = item.frontmatter.tags
+        //   ?.join(" ")
+        //   .toLowerCase()
+        //   .match(regex);
+        const description = item.course.description.toLowerCase().match(regex);
 
-        if (title || content || description || categories || tags) {
+        if (name || FieldOfStudy || StudyLevel || description) {
           return item;
         }
       });

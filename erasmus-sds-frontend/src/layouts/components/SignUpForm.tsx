@@ -12,6 +12,7 @@ export interface FormData {
   studyLevelId?: number;
   password: string;
   userId?: number;
+  access_token?: string;
   }
 
 interface SignUpFormProps {
@@ -50,6 +51,7 @@ const SignUpForm = ({ formData, onSubmit, setFormData, loading, buttonText, isSt
     
         const countries = await response.json();
         setCountries(countries);
+        console.log(countries);
         } catch (error) {
           console.error('Error fetching countries:', error);
           throw error;
