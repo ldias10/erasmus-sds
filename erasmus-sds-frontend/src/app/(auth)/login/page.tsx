@@ -1,22 +1,25 @@
 "use client";
 
-
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { BiLoaderAlt } from "react-icons/bi";
-import { FormData } from "../sign-up/page";
+
+interface FormData {
+  email: string;
+  password: string;
+  isVerified?: boolean; // This field might not be needed here
+}
 
 const Login = () => {
   const router = useRouter();
   const [formData, setFormData] = useState<FormData>({
     email: "",
     password: "",
-    isVerified: false,
   });
 
   const [loading, setLoading] = useState(false);
-  const [errorMessages, setErrorMessages] = useState([]);
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     setFormData({
@@ -27,11 +30,11 @@ const Login = () => {
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
+    setLoading(true);
+    setErrorMessages([]);
 
     try {
-      setLoading(true);
-
-      const response = await fetch("/api/customer/login", {
+      const response = await fetch("http://127.0.0.1:8080/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -42,16 +45,21 @@ const Login = () => {
       const responseData = await response.json();
 
       if (response.ok) {
-        setErrorMessages([]);
-        const data = responseData;
-        localStorage.setItem("user", JSON.stringify(data));
-        router.push("/");
+        localStorage.setItem("user", JSON.stringify(responseData));
+        localStorage.setItem("email", formData.email);
+        
+          router.push("/");
+        
+      } else if (response.status === 401 || response.status === 404) {
+        setErrorMessages([responseData.error || "Invalid email or password."]);
+      } else if (response.status === 500) {
+        setErrorMessages(["Server error, please try again later."]);
       } else {
-        const errors = responseData.errors || [];
-        setErrorMessages(errors);
+        setErrorMessages(["An unexpected error occurred."]);
       }
     } catch (error) {
       console.error("Error during login:", error);
+      setErrorMessages(["An unexpected error occurred."]);
     } finally {
       setLoading(false);
     }
@@ -66,9 +74,7 @@ const Login = () => {
             <div className="col-11 sm:col-9 md:col-7 mx-auto">
               <div className="mb-14 text-center">
                 <h2 className="max-md:h1 md:mb-2">Login</h2>
-                <p className="md:text-lg">
-                  Please fill your email and password to login
-                </p>
+                <p className="md:text-lg">Welcome back! Please enter your details to log in.</p>
               </div>
 
               <form onSubmit={handleLogin}>
@@ -80,6 +86,7 @@ const Login = () => {
                     type="email"
                     onChange={handleChange}
                     name="email"
+                    required
                   />
                 </div>
 
@@ -91,41 +98,28 @@ const Login = () => {
                     type="password"
                     onChange={handleChange}
                     name="password"
+                    required
                   />
                 </div>
 
-                {/* {errorMessages.map((error: CustomerError) => (
-                  <p
-                    key={error.code}
-                    className="font-medium text-red-500 truncate mt-2"
-                  >
-                    *
-                    {error.code === "UNIDENTIFIED_CUSTOMER"
-                      ? `${error.message}`
-                      : "Invalid Email or Password"}
+                {errorMessages.map((error, index) => (
+                  <p key={index} className="font-medium text-red-500 truncate mt-2">
+                    {error}
                   </p>
-                ))} */}
+                ))}
 
                 <button
                   type="submit"
                   className="btn btn-primary md:text-lg md:font-medium w-full mt-10"
+                  disabled={loading}
                 >
-                  {loading ? (
-                    <BiLoaderAlt className={`animate-spin mx-auto`} size={26} />
-                  ) : (
-                    "Log In"
-                  )}
+                  {loading ? <BiLoaderAlt className="animate-spin mx-auto" size={26} /> : "Log In"}
                 </button>
               </form>
 
               <div className="flex gap-x-2 text-sm md:text-base mt-4">
-                <p className="text-light dark:text-darkmode-light">
-                  Don&apos;t have an account?
-                </p>
-                <Link
-                  className="underline font-medium text-dark dark:text-darkmode-dark"
-                  href={"/sign-up"}
-                >
+                <p className="text-light dark:text-darkmode-light">Don&apos;t have an account?</p>
+                <Link className="underline font-medium text-dark dark:text-darkmode-dark" href="/sign-up">
                   Register
                 </Link>
               </div>
