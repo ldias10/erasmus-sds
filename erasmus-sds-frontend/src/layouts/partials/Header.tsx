@@ -5,7 +5,7 @@ import ThemeSwitcher from "@/components/ThemeSwitcher";
 import config from "@/config/config.json";
 import menu from "@/config/menu.json";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
@@ -27,24 +27,27 @@ export interface INavigationLink {
 const Header = () => {
   // distructuring the main menu from menu object
   const { main }: { main: INavigationLink[] } = menu;
-  const { navigation_button, settings } = config;
+  const { navigation_button, settings, nav_button } = config;
   // get current path
   const pathname = usePathname();
+  const router = useRouter();
   const [isVisible, setIsVisible] = useState(false);
+
   useEffect(() => {
     const updateVisibility = () => {
-      const newValue = sessionStorage.getItem('userState');
-      setIsVisible(newValue === 'student' || newValue === 'teacher');
+      const userState = sessionStorage.getItem("userState");
+      setIsVisible(userState === "student" || userState === "teacher");
     };
+
     updateVisibility();
     const handleStorageChange = () => {
-      updateVisibility();   
+      updateVisibility();
     };
 
-    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener("storage", handleStorageChange);
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener("storage", handleStorageChange);
     };
   }, []);
 
@@ -52,6 +55,14 @@ const Header = () => {
   useEffect(() => {
     window.scroll(0, 0);
   }, [pathname]);
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("userData");
+    sessionStorage.removeItem("userState");
+    window.dispatchEvent(new Event("storage"));
+    setIsVisible(false);
+    router.push("/login");
+  };
 
   return (
     <header
@@ -144,7 +155,7 @@ const Header = () => {
                 </li>
               )}
             </React.Fragment>
-          ))} 
+          ))}
           {navigation_button.enable && (
             <li className="mt-4 inline-block lg:hidden">
               <Link
@@ -167,15 +178,21 @@ const Header = () => {
             </button>
           )}
           <ThemeSwitcher className="mr-5" />
-          {navigation_button.enable && (
+          {isVisible ? (
+            <button
+              className="btn btn-outline-primary btn-sm hidden lg:inline-block"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          ) : (
             <Link
               className="btn btn-outline-primary btn-sm hidden lg:inline-block"
-              href={navigation_button.url}
+              href="/login"
             >
-              {navigation_button.label}
+              Login
             </Link>
           )}
-          {/* userState==="teacher" */}
           {isVisible && (
             <Link href="/editProfile" className="text-3xl p-2">
               <CgProfile />

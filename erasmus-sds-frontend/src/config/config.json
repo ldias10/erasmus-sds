@@ -33,6 +33,11 @@
     "label": "Login",
     "url": "/login"
   },
+  "nav_button": {
+    "enable": true,
+    "label": "Logout",
+    "url": "/logout"
+  },
 
   "disqus": {
     "enable": true,

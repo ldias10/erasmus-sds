@@ -45,18 +45,13 @@ const Login = () => {
       const responseData = await response.json();
 
       if (response.ok) {
-       // Stocke les données utilisateur dans sessionStorage
-      sessionStorage.setItem("userData", JSON.stringify(responseData));
-      console.log("The User data is: ", sessionStorage.getItem("userData"));
-
-      // Mets à jour l'état de l'utilisateur en tant qu'enseignant
-      sessionStorage.setItem("userState", "teacher");
-      
-      // Déclenche un événement de stockage pour mettre à jour d'autres onglets ou fenêtres
-      window.dispatchEvent(new Event("storage"));
-
-      // Redirige l'utilisateur vers la page principale
-      router.push("/");
+        sessionStorage.setItem("userData", JSON.stringify(responseData));
+        console.log("The User data is: ",sessionStorage.getItem("userData"));
+        console.log("the full response is: ",response);
+        sessionStorage.setItem("userState", "teacher");
+        window.dispatchEvent(new Event("storage"));
+        console.log(sessionStorage.getItem("userState"));
+        router.push("/");
         
       } else if (response.status === 401 || response.status === 404) {
         setErrorMessages([responseData.error || "Invalid email or password."]);
