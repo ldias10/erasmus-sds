@@ -43,16 +43,13 @@ const Login = () => {
       });
 
       const responseData = await response.json();
-
       if (response.ok) {
         sessionStorage.setItem("userData", JSON.stringify(responseData));
-        console.log("The User data is: ",sessionStorage.getItem("userData"));
-        console.log("the full response is: ",response);
-        sessionStorage.setItem("userState", "teacher");
+        console.log("The User data is: ", sessionStorage.getItem("userData"));
+        const userType = responseData.role === 'student' ? 'student' : 'teacher';
+        sessionStorage.setItem("userState", userType);
         window.dispatchEvent(new Event("storage"));
-        console.log(sessionStorage.getItem("userState"));
         router.push("/");
-        
       } else if (response.status === 401 || response.status === 404) {
         setErrorMessages([responseData.error || "Invalid email or password."]);
       } else if (response.status === 500) {
