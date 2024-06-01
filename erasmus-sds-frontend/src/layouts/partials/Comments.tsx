@@ -6,6 +6,7 @@ import "swiper/css";
 import { Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { BiAlignMiddle } from "react-icons/bi";
+import Link from "next/link";
 
 interface Comment {
   id: number;
@@ -17,6 +18,7 @@ interface Comment {
 
 const Comments = ({ id }: { id: any }) => {
   const [comments, setComments] = useState<any[]>([]);
+  
   useEffect(() => {
     const fetchComments = async () => {
       try {
@@ -51,7 +53,29 @@ const Comments = ({ id }: { id: any }) => {
   );
   return (
     <>
-      { <section className="section">
+      {<section className="section">
+        <div className="container">
+            <div className="row">
+              <div className="mx-auto mb-12 text-center md:col-10 lg:col-8 xl:col-6">
+                <h3
+                  dangerouslySetInnerHTML={markdownify("Write here your comment")}
+                  className="mb-4"
+                />
+              </div>
+                
+            </div>
+            <form action="submitCourse()">
+              <input
+                  className="form-input"
+                  placeholder="Write here your comment ..."
+                  type="text"
+                  name="comment"
+                />
+                <br></br>
+              <button className="btn3 btn-primary">Submit</button>
+            </form>
+          </div>
+              <br></br><br></br>
           <div className="container">
             <div className="row">
               <div className="mx-auto mb-12 text-center md:col-10 lg:col-8 xl:col-6">
@@ -134,6 +158,7 @@ const Comments = ({ id }: { id: any }) => {
               </div>
             </div>
           </div>
+          
         </section>
       }
     </>

@@ -31,12 +31,23 @@ const Course = () => {
 
   const [isTeacher, setIsTeacher] = useState<boolean>(true); //["student" | "teacher"]
 
+  const [isStudent, setIsStudent] = useState<boolean>(true);
+
   useEffect(() => {
     // Check if window is defined (browser environment)
     if (typeof window !== 'undefined') {
       const storedUserState = sessionStorage.getItem("userState");
       setIsTeacher(storedUserState === "teacher");
       console.log("isTeacher is!!!!!",isTeacher)
+    }
+  }, []);
+
+  useEffect(() => {
+    // Check if window is defined (browser environment)
+    if (typeof window !== 'undefined') {
+      const storedUserState = sessionStorage.getItem("userState");
+      setIsStudent(storedUserState === "student");
+      console.log("isStudent is!!!!!",isStudent)
     }
   }, []);
 
@@ -92,7 +103,7 @@ const Course = () => {
           <div className="row justify-center">
             {courses.map((course: Course, index: number) => (
               <div className="mb-14 md:col-6 lg:col-4" key={index}>
-                <CourseCard data={course} isTeacher={isTeacher} />
+                <CourseCard data={course} isTeacher={isTeacher} isStudent={isStudent} />
               </div>
             ))}
           </div>

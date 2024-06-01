@@ -3,6 +3,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Course } from "@/app/courses/page";
 import Comments from "@/partials/Comments";
+import Link from "next/link";
 
 const CourseDetail = () => {
   const params = useParams();
@@ -68,6 +69,14 @@ const CourseDetail = () => {
       <div className="mt-6">
         <h2 className="text-xl font-semibold">Description</h2>
         <p className="mt-2 text-base">{course.description}</p>
+      </div>
+      <div className="mt-6">
+      <Link
+        className="btn btn-primary"
+        href={"/learning_agreement"}
+        target={"/learning_agreement".startsWith("http") ? "_blank" : "_self"}
+                  rel="noopener">Add this course to my LA!
+      </Link>
       </div>
       <Comments id = {id} />
     </div>

@@ -3,11 +3,13 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Course } from "@/app/courses/page";
 import { IoIosMore } from "react-icons/io";
+import { IoMdAddCircleOutline } from "react-icons/io";
 
-const CourseCard = ({ data, isTeacher }: { data: Course , isTeacher:boolean}) => {
+const CourseCard = ({ data, isTeacher, isStudent }: { data: Course , isTeacher:boolean, isStudent:boolean}) => {
   console.log(isTeacher)
   const { name } = data;
   const [showMenu, setShowMenu] = useState(false);
+  
   const menuRef = useRef<HTMLDivElement>(null);
 
   const handleMenuToggle = () => {
@@ -33,6 +35,7 @@ const CourseCard = ({ data, isTeacher }: { data: Course , isTeacher:boolean}) =>
         <h4 className="mb-3">
           <Link href={`/courses/${data.id}`}>{name}</Link>
         </h4>
+        
         {isTeacher && (
         <div className="absolute top-0 right-0 mt-2 mr-2" ref={menuRef}>
           <button onClick={handleMenuToggle} className="focus:outline-none">
@@ -67,7 +70,17 @@ const CourseCard = ({ data, isTeacher }: { data: Course , isTeacher:boolean}) =>
         </div>
         )}
       </div>
-      <p className="mb-4">{plainify(data.description.slice(0, 100))}</p>
+      <p className="mb-4">{plainify(data.description.slice(0, 100))}</p><br></br>
+      {isStudent && (
+          <Link href={"/courses"}
+          className="btn2 btn-primary"
+          target={
+            "/courses/addCourse".startsWith("http") ? "_blank" : "_self"
+          }
+          rel="noopener">
+          {"Add to my LA"}
+           </Link>
+        )}
     </div>
   );
 };
