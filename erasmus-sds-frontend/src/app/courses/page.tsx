@@ -38,7 +38,6 @@ const Course = () => {
     if (typeof window !== 'undefined') {
       const storedUserState = sessionStorage.getItem("userState");
       setIsTeacher(storedUserState === "teacher");
-      console.log("isTeacher is!!!!!",isTeacher)
     }
   }, []);
 
@@ -47,7 +46,6 @@ const Course = () => {
     if (typeof window !== 'undefined') {
       const storedUserState = sessionStorage.getItem("userState");
       setIsStudent(storedUserState === "student");
-      console.log("isStudent is!!!!!",isStudent)
     }
   }, []);
 
@@ -102,7 +100,7 @@ const Course = () => {
         <div className="container">
           <div className="row justify-center">
             {courses.map((course: Course, index: number) => (
-              <div className="mb-14 md:col-6 lg:col-4" key={index}>
+              <div className={`mb-14 md:col-6 lg:col-4 ${!course.isAvailable && isTeacher? " opacity-50" : !course.isAvailable ? "hidden":""}`} key={index}>
                 <CourseCard data={course} isTeacher={isTeacher} isStudent={isStudent} />
               </div>
             ))}
