@@ -5,7 +5,7 @@ import { Course } from "@/app/courses/page";
 import { IoIosMore } from "react-icons/io";
 import { IoMdAddCircleOutline } from "react-icons/io";
 
-const CourseCard = ({ data, isTeacher, isStudent }: { data: Course , isTeacher:boolean, isStudent:boolean}) => {
+const CourseCard = ({ data, isTeacher, isStudent, handleDelete }: { data: Course , isTeacher:boolean, isStudent:boolean, handleDelete: (id: number, name:string) => void;}) => {
   console.log(isTeacher)
   const { name } = data;
   const [showMenu, setShowMenu] = useState(false);
@@ -56,14 +56,14 @@ const CourseCard = ({ data, isTeacher, isStudent }: { data: Course , isTeacher:b
                     </button>
                   </li>
                 </Link>
-                {/* <li>
+                <li>
                   <button
                     className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left"
-                    onClick={() => console.log('Delete clicked')}
+                    onClick={() => handleDelete(data.id, data.name)}
                   >
                     Delete
                   </button>
-                </li> */}
+                </li>
               </ul>
             </div>
           )}
