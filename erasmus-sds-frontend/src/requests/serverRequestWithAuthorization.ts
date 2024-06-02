@@ -10,15 +10,19 @@ const requestWithAutorization = async (request: string, body: string, method:str
       method: method,
       headers: {
         "Content-Type": "application/json",
-        // Assuming cookies is a function that returns cookies from the request headers
         Cookie: cookies().toString(),
       },
       body: body,
       redirect: "follow",
     });
-
-    const responseData = await response.json();
-
+    const res = await response;
+    var responseData = {};
+    if (res.body === null) {
+      responseData = {};
+    }
+    else {
+      responseData = res.json();
+    }
     return {
       ok: response.ok,
       responseData: responseData,

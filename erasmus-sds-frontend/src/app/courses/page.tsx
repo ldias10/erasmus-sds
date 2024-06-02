@@ -5,6 +5,7 @@ import CourseCard from "@/components/CourseCard";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import Link from "next/link";
 import config from "@/config/config.json";
+import requestWithAutorization from "@/requests/serverRequestWithAuthorization";
 
 export interface Course {
   id: number;
@@ -33,8 +34,6 @@ const Course = () => {
   const [isTeacher, setIsTeacher] = useState<boolean>(true); //["student" | "teacher"]
 
   const [isStudent, setIsStudent] = useState<boolean>(true);
-
-  const [showNotAuthorized, setShowNotAuthorized] = useState<boolean>(false);
 
   const url:string = config.site.API_URL; 
 
@@ -67,7 +66,6 @@ const Course = () => {
         if (!response.ok) {
           throw new Error('Failed to fetch courses');
         }
-    
         const courses = await response.json();
         console.log("The courses are: ",courses);
         setCourses(courses);
@@ -83,29 +81,15 @@ const Course = () => {
 const handleDelete = async (id:number, name:string) => {
   window.confirm(`Are you sure you want to delete the course ${name}?`);
   try {
-    const response = await fetch(`${url}/course/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Accept': 'application/json'
-      }
-    });
+    const response = await requestWithAutorization(`${url}/course/${id}`,JSON.stringify({}),'DELETE');
     if (response.ok) {
       setCourses(courses.filter((c:Course) => c.id !== id));
       console.log('Course deleted');
-    }
-    if (response.status === 401){
-      console.log('Not authorized to delete course');
-      handleNotAuthorized();
     }
   } catch (error) {
     console.error('Error deleting course', error);
   }
 };
-const handleNotAuthorized = async () => {
-  setShowNotAuthorized(true);
-  console.log("showNotAuthorized: ", showNotAuthorized);
-  setTimeout(() => { setShowNotAuthorized(false); console.log("5spassed") }, 5000);
-}
 
   return (
     <>  
@@ -117,11 +101,6 @@ const handleNotAuthorized = async () => {
 
             </div>
         )}
-          <div id="notAuthorized">
-          {showNotAuthorized && (
-            <div className="absolute top-1 z-50 min-w-fit bg-red-500 p-3 text-white text-center left-1/2 transform -translate-x-1/2 rounded">You are not authorized to delete this course</div>
-          )}
-        </div>
 
         <div className="text-center flex-grow">
           <h2 className="max-md:h1 md:mb-2">Available Courses</h2>

@@ -66,7 +66,7 @@ const EditCourse = () => {
             
             setSaveSucceeded(1);
           } else {
-            const errors = response.responseData.error || [];
+            const errors = response.responseData;
             console.log("The errors are: ",errors);
             setSaveSucceeded(0);
           }
