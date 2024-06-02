@@ -1,12 +1,10 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import ImageFallback from "@/helpers/ImageFallback";
 import { markdownify } from "@/lib/utils/textConverter";
 import "swiper/css";
 import { Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { BiAlignMiddle } from "react-icons/bi";
-import Link from "next/link";
 
 interface Comment {
   id: number;
@@ -16,9 +14,27 @@ interface Comment {
   courseId: number
 }
 
+interface FormData {
+  content: string;
+  date: string;
+  studentUserId : number; 
+  courseId : number;
+}
+
+
 const Comments = ({ id }: { id: any }) => {
   const [comments, setComments] = useState<any[]>([]);
-  
+  const role = sessionStorage.getItem("userState");
+  const [loading, setLoading] = useState(false);
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
+
+  const [formData, setFormData] = useState<FormData>({
+    content: "",
+    studentUserId: 7,
+    date: "",
+    courseId: 6,
+  });
+
   useEffect(() => {
     const fetchComments = async () => {
       try {
@@ -51,12 +67,72 @@ const Comments = ({ id }: { id: any }) => {
       fetchComments();
     },[]
   );
+
+  
+  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  
+  //  const getStudentName = async (item: Comment): Promise<any> => {
+  //   const response = await fetch(`http://localhost:8080/student/${item.studentUserId}`, {
+  //         method: 'GET',
+  //         headers: {
+  //           'Accept': 'application/json'
+  //         }
+  //       });
+  //   const studentName = await response.json();
+  //   return studentName;
+  // }
+
+  const handleComment = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+    const data = new Date();
+    formData.date = data.toISOString();
+    console.log(formData);
+    console.log(data.toDateString())
+    console.log(sessionStorage.getItem("userData"));
+    console.log("trying to comment");
+    e.preventDefault();
+    setLoading(true);
+    setErrorMessages([]);
+
+    try {
+      console.log(formData)
+      const response = await fetch("http://localhost:8080/comment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+       
+      });
+
+      const responseData = await response.json();
+      console.log(responseData);
+    } catch (error) {
+      console.error("Error:", error);
+      setErrorMessages(["An unexpected error occurred."]);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <>
       {<section className="section">
+        {role === 'student' && 
         <div className="container">
             <div className="row">
               <div className="mx-auto mb-12 text-center md:col-10 lg:col-8 xl:col-6">
+              {/* <div> 
+                <h2>Rate this course</h2> 
+                <ReactStars 
+                  count={5} 
+                  size={24} 
+                  color2={'#ffd700'} /> 
+              </div>  */}
                 <h3
                   dangerouslySetInnerHTML={markdownify("Write here your comment")}
                   className="mb-4"
@@ -64,17 +140,18 @@ const Comments = ({ id }: { id: any }) => {
               </div>
                 
             </div>
-            <form action="submitCourse()">
+            <form onSubmit={handleComment}>
               <input
                   className="form-input"
                   placeholder="Write here your comment ..."
                   type="text"
                   name="comment"
+                  onChange={handleChange}
                 />
                 <br></br>
-              <button className="btn3 btn-primary">Submit</button>
+              <button type="submit" className="btn3 btn-primary">Submit</button>
             </form>
-          </div>
+          </div>}
               <br></br><br></br>
           <div className="container">
             <div className="row">
@@ -136,6 +213,7 @@ const Comments = ({ id }: { id: any }) => {
                                 alt= "avatar"
                               />
                             </div>
+                            
                             {/* <div className="ml-4">
                               <h3
                                 dangerouslySetInnerHTML={markdownify(item.name)}
@@ -149,6 +227,7 @@ const Comments = ({ id }: { id: any }) => {
                               />
                             </div> */}
                           </div>
+                          {/* {getStudentName(item)} */}
                         </div>
                       </SwiperSlide>
                     ),

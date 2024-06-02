@@ -46,7 +46,7 @@ const Login = () => {
       if (response.ok) {
         sessionStorage.setItem("userData", JSON.stringify(responseData));
         console.log("The User data is: ", sessionStorage.getItem("userData"));
-        const userType = responseData.role === 'student' ? 'student' : 'teacher';
+        const userType = responseData.Professor === false ? 'student' : 'teacher';
         sessionStorage.setItem("userState", userType);
         window.dispatchEvent(new Event("storage"));
         router.push("/");
