@@ -1,12 +1,13 @@
 "use client"
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 import   CourseForm, {FormData} from "../courseForm"
 
 import requestWithAuthorization from "@/requests/serverRequestWithAuthorization";
 
 const AddCourse = () => {
-
+  const router = useRouter();
   const [uploadSucceeded, setUploadSucceeded] = useState(-1);
   const [formData, setFormData] = useState<FormData>({
     isAvailable: true,
@@ -30,10 +31,10 @@ const AddCourse = () => {
           console.log("the  response is: ",response);
           if (response.ok) {
             const data = response.responseData;
-            
+            router.push('/courses');
             setUploadSucceeded(1);
           } else {
-            const errors = response.responseData.error || [];
+            const errors = response.responseData?.error ?? [];
             console.log("The errors are: ",errors);
             setUploadSucceeded(0);
           }

@@ -2,6 +2,9 @@
 
 import { cookies } from "next/headers";
 
+interface ResponseData {
+  [key: string]: any;
+}
 
 const requestWithAutorization = async (request: string, body: string, method:string) => {
   console.log("trying a request to the server");
@@ -16,7 +19,7 @@ const requestWithAutorization = async (request: string, body: string, method:str
       redirect: "follow",
     });
     const res = await response;
-    var responseData = {};
+    var responseData:ResponseData = {};
     if (res.body === null) {
       responseData = {};
     }
