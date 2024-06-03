@@ -1,5 +1,6 @@
 "use client";
 
+import {loginRequest} from "@/requests/loginRequest";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
@@ -44,6 +45,20 @@ const Login = () => {
 
       const responseData = await response.json();
       if (response.ok) {
+        setErrorMessages([]);
+        try {
+          const loginResponse = await loginRequest(formData.email, formData.password);
+          const loginResponseData = await loginResponse;
+          console.log("The login response is: ",loginResponseData);
+          if (!loginResponse.ok) {
+            const errors = loginResponseData.error || [];
+            console.log("Error:",errors);
+          }
+        }
+        catch (error) {
+          console.error("Error during login:", error);
+        }
+
         sessionStorage.setItem("userData", JSON.stringify(responseData));
         console.log("The User data is: ", sessionStorage.getItem("userData"));
         const userType = responseData.Professor === false ? 'student' : 'teacher';
