@@ -11,17 +11,6 @@
     {
       "name": "LA",
       "url": "/learning_agreement"
-    },
-    {
-      "name": "Pages",
-      "url": "",
-      "hasChildren": true,
-      "children": [
-        {
-          "name": "Blog",
-          "url": "/blog"
-        }
-      ]
     }
   ],
   "footer": [

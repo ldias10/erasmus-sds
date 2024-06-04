@@ -5,6 +5,8 @@ import { markdownify } from "@/lib/utils/textConverter";
 import "swiper/css";
 import { Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import requestWithAuthorization from "@/requests/serverRequestWithAuthorization";
+import { FormData } from "@/components/SignUpForm";
 
 interface Comment {
   id: number;
@@ -14,7 +16,7 @@ interface Comment {
   courseId: number
 }
 
-interface FormData {
+interface form {
   content: string;
   date: string;
   studentUserId : number; 
@@ -25,96 +27,129 @@ interface FormData {
 const Comments = ({ id }: { id: any }) => {
   const [comments, setComments] = useState<any[]>([]);
   const role = sessionStorage.getItem("userState");
+  const [formData, setFormData] = useState<FormData>({} as FormData);
   const [loading, setLoading] = useState(false);
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
-
-  const [formData, setFormData] = useState<FormData>({
+  
+  const [saveSucceeded, setSaveSucceeded] = useState(-1);
+  const [form, setForm] = useState<form>({
     content: "",
-    studentUserId: 7,
+    studentUserId: 0,
     date: "",
-    courseId: 6,
+    courseId: id,
   });
 
-  useEffect(() => {
-    const fetchComments = async () => {
+  const jsonString = sessionStorage.getItem("userData");
+    if (jsonString !== null) {
       try {
-        const response = await fetch(`http://localhost:8080/comments?courseId=${id}`, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json'
-          }
-        });
-    
-        if (!response.ok) {
-          throw new Error('Failed to fetch comments');
+        // Parse the JSON string to an object
+        const jsonObject = JSON.parse(jsonString);
+        form.studentUserId = jsonObject.id;
+      }
+     catch (error) {
+      console.error('Error parsing JSON string from session storage:', error);
+    }}
+
+  // const getStudentName = async () => {
+  //   try {
+  //     const request: string = `http://127.0.0.1:8080/student/${form.studentUserId}`;
+  //     const raw = JSON.stringify("");
+  //     console.log("entrei")
+  //     const comment = await requestWithAuthorization2(request, raw, "GET");
+  //     // const response2 = await comment;
+  //     // console.log(response2.responseData);
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //     setErrorMessages(["An unexpected error occurred."]);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+
+  const fetchComments = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/comments?courseId=${id}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
         }
-    
-        const comments = await response.json();
-        console.log("The comments are: ", comments);
-        if (comments.length ===1) {
-          comments.push(comments[0])
-          comments.push(comments[0])
-        }
-        if (comments.length ===2) {
-          comments.push(comments[0])
-          comments.push(comments[1])
-        }
-        setComments(comments);
-        } catch (error) {
-          console.error('Error fetching comments:', error);
-        }
-      };
-      fetchComments();
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to fetch comments');
+      }
+  
+      const comments = await response.json();
+      console.log("The comments are: ", comments);
+      if (comments.length ===1) {
+        comments.push(comments[0])
+        comments.push(comments[0])
+      }
+      if (comments.length ===2) {
+        comments.push(comments[0])
+        comments.push(comments[1])
+      }
+      setComments(comments);
+      } catch (error) {
+        console.error('Error fetching comments:', error);
+      }
+    };
+
+  useEffect(() => {
+    setFormData(JSON.parse(sessionStorage.getItem("userData") as string));
+    fetchComments();
+    // getStudentName();
     },[]
   );
 
+  const getDate = (date : string) => {
+    const newDate = new Date(date);
+    return <>
+      {newDate.toDateString()}
+    </>
+  }
+
   
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setFormData({
-      ...formData,
+    setForm({
+      ...form,
       [e.target.name]: e.target.value,
     });
   };
 
-  
-  //  const getStudentName = async (item: Comment): Promise<any> => {
-  //   const response = await fetch(`http://localhost:8080/student/${item.studentUserId}`, {
-  //         method: 'GET',
-  //         headers: {
-  //           'Accept': 'application/json'
-  //         }
-  //       });
-  //   const studentName = await response.json();
-  //   return studentName;
-  // }
-
   const handleComment = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     const data = new Date();
-    formData.date = data.toISOString();
-    console.log(formData);
-    console.log(data.toDateString())
-    console.log(sessionStorage.getItem("userData"));
+    form.date = data.toISOString();
     console.log("trying to comment");
     e.preventDefault();
     setLoading(true);
     setErrorMessages([]);
 
     try {
-      console.log(formData)
-      const response = await fetch("http://localhost:8080/comment", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+      console.log(form)
+      const request: string = `http://127.0.0.1:8080/comment`;
+      const raw = JSON.stringify(form);
+      const comment = await requestWithAuthorization(request, raw, "POST");
+      const response2 = await comment;
+      console.log(response2.responseData);
+      setSaveSucceeded(1);
+      fetchComments();
+      // const response = await fetch("http://localhost:8080/comment", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(form),
        
-      });
+      // });
 
-      const responseData = await response.json();
-      console.log(responseData);
+      // const responseData = await response.json();
+      // console.log(responseData);
     } catch (error) {
       console.error("Error:", error);
       setErrorMessages(["An unexpected error occurred."]);
+      setSaveSucceeded(0);
     } finally {
       setLoading(false);
     }
@@ -145,13 +180,19 @@ const Comments = ({ id }: { id: any }) => {
                   className="form-input"
                   placeholder="Write here your comment ..."
                   type="text"
-                  name="comment"
+                  name="content"
                   onChange={handleChange}
                 />
                 <br></br>
               <button type="submit" className="btn3 btn-primary">Submit</button>
             </form>
           </div>}
+          {saveSucceeded === 1 && (
+              <div className="success-message">Comment submited</div>
+              )}
+              {saveSucceeded === 0 && (
+              <div className="error-message">Failed to comment</div>
+            )}
               <br></br><br></br>
           <div className="container">
             <div className="row">
@@ -213,21 +254,8 @@ const Comments = ({ id }: { id: any }) => {
                                 alt= "avatar"
                               />
                             </div>
-                            
-                            {/* <div className="ml-4">
-                              <h3
-                                dangerouslySetInnerHTML={markdownify(item.name)}
-                                className="h5 font-primary font-semibold"
-                              />
-                              <p
-                                dangerouslySetInnerHTML={markdownify(
-                                  item.designation,
-                                )}
-                                className="text-dark dark:text-white"
-                              />
-                            </div> */}
-                          </div>
-                          {/* {getStudentName(item)} */}
+                          </div><br></br>
+                            {getDate(item.date)}
                         </div>
                       </SwiperSlide>
                     ),
