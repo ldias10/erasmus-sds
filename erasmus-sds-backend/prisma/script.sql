@@ -1,18 +1,18 @@
--- Start a transaction block
-BEGIN;
-
--- Disable all foreign key constraints
-SET CONSTRAINTS ALL DEFERRED;
-
--- Execute your operation (TRUNCATE, DELETE, etc.)
-TRUNCATE TABLE public."Country";
-TRUNCATE TABLE public."StudyLevel";
-
--- Re-enable all foreign key constraints
-SET CONSTRAINTS ALL IMMEDIATE;
-
--- Commit the transaction
-COMMIT;
+DELETE FROM "ProfessorOnFieldOfStudy";
+DELETE FROM "StudentOnFieldOfStudy";
+DELETE FROM "StudentOnCourse";
+DELETE FROM "Comment";
+DELETE FROM "Rate";
+DELETE FROM "Course";
+DELETE FROM "FieldOfStudy";
+DELETE FROM "Admin";
+DELETE FROM "Professor";
+DELETE FROM "Student";
+DELETE FROM "User";
+DELETE FROM "StudyLevel";
+DELETE FROM "School";
+DELETE FROM "University";
+DELETE FROM "Country";
 
 INSERT INTO public."Country" (id, name, tag) VALUES
 (1, 'Afghanistan', 'AFG'),
@@ -219,3 +219,317 @@ INSERT INTO public."StudyLevel" (id, name) VALUES
 (4, 'First year - Master''s Degree'),
 (5, 'Second year - Master''s Degree'),
 (6, 'Doctorat - PhD');
+
+
+INSERT INTO public."University" (id, name, "countryId") VALUES
+(1, 'Harvard University', 187),
+(2, 'University of Cambridge', 186),
+(3, 'University of Tokyo', 86),
+(4, 'University of Toronto', 32),
+(5, 'University of Melbourne', 9),
+(6, 'University of São Paulo', 24),
+(7, 'University of Cape Town', 163),
+(8, 'Peking University', 36),
+(9, 'Indian Institute of Technology Bombay', 78),
+(10, 'Seoul National University', 92),
+(11, 'National University of Singapore', 158),
+(12, 'University of Buenos Aires', 7),
+(13, 'University of Nairobi', 89),
+(14, 'University of Vienna', 10),
+(15, 'University of Copenhagen', 47),
+(16, 'University of Helsinki', 61),
+(17, 'University of Paris-Saclay', 62),
+(18, 'Ludwig Maximilian University of Munich', 66),
+(19, 'University of Athens', 68),
+(20, 'Trinity College Dublin', 82),
+(21, 'University of Rome La Sapienza', 84),
+(22, 'University of Amsterdam', 126),
+(23, 'University of Warsaw', 141),
+(24, 'University of Lisbon', 142),
+(25, 'Moscow State University', 145),
+(26, 'University of Belgrade', 155),
+(27, 'University of Barcelona', 164),
+(28, 'University of Bern', 170),
+(29, 'University of Edinburgh', 186),
+(30, 'University of Lagos', 130),
+(31, 'University of Ghana', 67),
+(32, 'Makerere University', 183),
+(33, 'American University in Cairo', 53),
+(34, 'King Saud University', 153),
+(35, 'University of Zambia', 195),
+(36, 'University of Zimbabwe', 196),
+(37, 'University of the Andes', 37),
+(38, 'Pontifical Catholic University of Chile', 35),
+(39, 'University of the Philippines', 140),
+(40, 'University of Queensland', 9),
+(41, 'University of Oslo', 132),
+(42, 'Aarhus University', 47),
+(43, 'University of Tartu', 57),
+(44, 'University of Latvia', 97),
+(45, 'University of Vilnius', 103),
+(46, 'Charles University', 46),
+(47, 'Eötvös Loránd University', 76),
+(48, 'University of Zagreb', 43),
+(49, 'University of Ljubljana', 160),
+(50, 'University of Sarajevo', 22),
+(51, 'University of Pristina', 93),
+(52, 'University of Tirana', 2),
+(53, 'University of Skopje', 131),
+(54, 'University of Montenegro', 119),
+(55, 'University of Malta', 110),
+(56, 'University of Cyprus', 45),
+(57, 'University of Bucharest', 144),
+(58, 'Sofia University', 26),
+(59, 'University of Iceland', 77),
+(60, 'University of Luxembourg', 104);
+
+
+INSERT INTO public."School" (id, name, "universityId") VALUES
+(1, 'Harvard Business School', 1),
+(2, 'Harvard Law School', 1),
+(3, 'Harvard Medical School', 1),
+(4, 'Faculty of Law, University of Cambridge', 2),
+(5, 'Faculty of Medicine, University of Cambridge', 2),
+(6, 'Cambridge Judge Business School', 2),
+(7, 'Faculty of Engineering, University of Tokyo', 3),
+(8, 'Graduate School of Medicine, University of Tokyo', 3),
+(9, 'Faculty of Law, University of Tokyo', 3),
+(10, 'Rotman School of Management, University of Toronto', 4),
+(11, 'Faculty of Law, University of Toronto', 4),
+(12, 'Faculty of Medicine, University of Toronto', 4),
+(13, 'Melbourne Business School, University of Melbourne', 5),
+(14, 'Melbourne Law School, University of Melbourne', 5),
+(15, 'Faculty of Medicine, University of Melbourne', 5),
+(16, 'School of Economics, Business and Accounting, University of São Paulo', 6),
+(17, 'Faculty of Law, University of São Paulo', 6),
+(18, 'Faculty of Medicine, University of São Paulo', 6),
+(19, 'Graduate School of Business, University of Cape Town', 7),
+(20, 'Faculty of Law, University of Cape Town', 7),
+(21, 'Faculty of Health Sciences, University of Cape Town', 7),
+(22, 'Guanghua School of Management, Peking University', 8),
+(23, 'Peking University Law School', 8),
+(24, 'Peking University Health Science Center', 8),
+(25, 'Shailesh J. Mehta School of Management, IIT Bombay', 9),
+(26, 'School of Technology and Computer Science, IIT Bombay', 9),
+(27, 'Department of Electrical Engineering, IIT Bombay', 9),
+(28, 'College of Business Administration, Seoul National University', 10),
+(29, 'College of Law, Seoul National University', 10),
+(30, 'College of Medicine, Seoul National University', 10),
+(31, 'NUS Business School, National University of Singapore', 11),
+(32, 'NUS Faculty of Law, National University of Singapore', 11),
+(33, 'NUS Yong Loo Lin School of Medicine, National University of Singapore', 11),
+(34, 'Faculty of Economic Sciences, University of Buenos Aires', 12),
+(35, 'Faculty of Law, University of Buenos Aires', 12),
+(36, 'Faculty of Medicine, University of Buenos Aires', 12),
+(37, 'School of Business, University of Nairobi', 13),
+(38, 'School of Law, University of Nairobi', 13),
+(39, 'School of Medicine, University of Nairobi', 13),
+(40, 'Faculty of Business, University of Vienna', 14),
+(41, 'Faculty of Law, University of Vienna', 14),
+(42, 'Faculty of Medicine, University of Vienna', 14),
+(43, 'Faculty of Social Sciences, University of Copenhagen', 15),
+(44, 'Faculty of Law, University of Copenhagen', 15),
+(45, 'Faculty of Health and Medical Sciences, University of Copenhagen', 15),
+(46, 'School of Business, University of Helsinki', 16),
+(47, 'Faculty of Law, University of Helsinki', 16),
+(48, 'Faculty of Medicine, University of Helsinki', 16),
+(49, 'Faculty of Sciences, University of Paris-Saclay', 17),
+(50, 'Faculty of Law, University of Paris-Saclay', 17),
+(51, 'Faculty of Medicine, University of Paris-Saclay', 17),
+(52, 'School of Management, Ludwig Maximilian University of Munich', 18),
+(53, 'Faculty of Law, Ludwig Maximilian University of Munich', 18),
+(54, 'Faculty of Medicine, Ludwig Maximilian University of Munich', 18),
+(55, 'Faculty of Business and Economics, University of Athens', 19),
+(56, 'Faculty of Law, University of Athens', 19),
+(57, 'Faculty of Medicine, University of Athens', 19),
+(58, 'School of Business, Trinity College Dublin', 20),
+(59, 'School of Law, Trinity College Dublin', 20),
+(60, 'School of Medicine, Trinity College Dublin', 20),
+(61, 'Faculty of Economics, University of Rome La Sapienza', 21),
+(62, 'Faculty of Law, University of Rome La Sapienza', 21),
+(63, 'Faculty of Medicine, University of Rome La Sapienza', 21),
+(64, 'Amsterdam Business School, University of Amsterdam', 22),
+(65, 'Amsterdam Law School, University of Amsterdam', 22),
+(66, 'Amsterdam Medical Center, University of Amsterdam', 22),
+(67, 'Faculty of Mathematics and Computer Science, University of Warsaw', 23),
+(68, 'Faculty of Law and Administration, University of Warsaw', 23),
+(69, 'Faculty of Medicine, University of Warsaw', 23),
+(70, 'Faculty of Sciences, University of Lisbon', 24),
+(71, 'Faculty of Law, University of Lisbon', 24),
+(72, 'Faculty of Medicine, University of Lisbon', 24),
+(73, 'Faculty of Mechanics and Mathematics, Moscow State University', 25),
+(74, 'Faculty of Law, Moscow State University', 25),
+(75, 'Faculty of Medicine, Moscow State University', 25),
+(76, 'Faculty of Mechanical Engineering, University of Belgrade', 26),
+(77, 'Faculty of Law, University of Belgrade', 26),
+(78, 'Faculty of Medicine, University of Belgrade', 26),
+(79, 'Faculty of Economics and Business, University of Barcelona', 27),
+(80, 'Faculty of Law, University of Barcelona', 27),
+(81, 'Faculty of Medicine, University of Barcelona', 27),
+(82, 'Faculty of Economics, University of Bern', 28),
+(83, 'Faculty of Law, University of Bern', 28),
+(84, 'Faculty of Medicine, University of Bern', 28),
+(85, 'School of Economics, University of Edinburgh', 29),
+(86, 'School of Law, University of Edinburgh', 29),
+(87, 'School of Medicine, University of Edinburgh', 29),
+(88, 'Faculty of Business Administration, University of Lagos', 30),
+(89, 'Faculty of Law, University of Lagos', 30),
+(90, 'Faculty of Medicine, University of Lagos', 30),
+(91, 'Faculty of Law, University of Ghana', 31),
+(92, 'School of Medicine, University of Ghana', 31),
+(93, 'Faculty of Business, Makerere University', 32),
+(94, 'Faculty of Law, Makerere University', 32),
+(95, 'Faculty of Medicine, Makerere University', 32),
+(96, 'School of Business, American University in Cairo', 33),
+(97, 'School of Law, American University in Cairo', 33),
+(98, 'School of Medicine, American University in Cairo', 33),
+(99, 'Faculty of Medicine, King Saud University', 34),
+(100, 'Faculty of Law, King Saud University', 34),
+(101, 'Faculty of Business, University of Zambia', 35),
+(102, 'Faculty of Law, University of Zambia', 35),
+(103, 'Faculty of Medicine, University of Zambia', 35),
+(104, 'Faculty of Commerce, University of Zimbabwe', 36),
+(105, 'Faculty of Law, University of Zimbabwe', 36),
+(106, 'Faculty of Medicine, University of Zimbabwe', 36),
+(107, 'Faculty of Business Administration, University of the Andes', 37),
+(108, 'Faculty of Law, University of the Andes', 37),
+(109, 'Faculty of Medicine, University of the Andes', 37),
+(110, 'Faculty of Business Administration, Pontifical Catholic University of Chile', 38),
+(111, 'Faculty of Law, Pontifical Catholic University of Chile', 38),
+(112, 'Faculty of Medicine, Pontifical Catholic University of Chile', 38),
+(113, 'School of Economics, University of the Philippines', 39),
+(114, 'School of Law, University of the Philippines', 39),
+(115, 'School of Medicine, University of the Philippines', 39),
+(116, 'Faculty of Business, University of Queensland', 40),
+(117, 'Faculty of Law, University of Queensland', 40),
+(118, 'Faculty of Medicine, University of Queensland', 40),
+(119, 'Faculty of Medicine, University of Oslo', 41),
+(120, 'Faculty of Law, University of Oslo', 41),
+(121, 'Faculty of Medicine, University of Oslo', 41),
+(122, 'Faculty of Business, Aarhus University', 42),
+(123, 'Faculty of Law, Aarhus University', 42),
+(124, 'Faculty of Medicine, Aarhus University', 42),
+(125, 'Faculty of Mathematics and Computer Science, University of Tartu', 43),
+(126, 'Faculty of Law, University of Tartu', 43),
+(127, 'Faculty of Medicine, University of Tartu', 43),
+(128, 'Faculty of Law, University of Latvia', 44),
+(129, 'Faculty of Medicine, University of Latvia', 44),
+(130, 'Faculty of Business, University of Vilnius', 45),
+(131, 'Faculty of Law, University of Vilnius', 45),
+(132, 'Faculty of Medicine, University of Vilnius', 45),
+(133, 'Faculty of Law, Charles University', 46),
+(134, 'Faculty of Medicine, Charles University', 46),
+(135, 'Faculty of Law, Eötvös Loránd University', 47),
+(136, 'Faculty of Medicine, Eötvös Loránd University', 47),
+(137, 'Faculty of Economics and Business, University of Zagreb', 48),
+(138, 'Faculty of Law, University of Zagreb', 48),
+(139, 'Faculty of Medicine, University of Zagreb', 48),
+(140, 'Faculty of Economics, University of Ljubljana', 49),
+(141, 'Faculty of Law, University of Ljubljana', 49),
+(142, 'Faculty of Medicine, University of Ljubljana', 49),
+(143, 'Faculty of Business, University of Sarajevo', 50),
+(144, 'Faculty of Law, University of Sarajevo', 50),
+(145, 'Faculty of Medicine, University of Sarajevo', 50),
+(146, 'Faculty of Business, University of Pristina', 51),
+(147, 'Faculty of Law, University of Pristina', 51),
+(148, 'Faculty of Medicine, University of Pristina', 51),
+(149, 'Faculty of Economics, University of Tirana', 52),
+(150, 'Faculty of Law, University of Tirana', 52),
+(151, 'Faculty of Medicine, University of Tirana', 52),
+(152, 'Faculty of Economics, University of Skopje', 53),
+(153, 'Faculty of Law, University of Skopje', 53),
+(154, 'Faculty of Medicine, University of Skopje', 53),
+(155, 'Faculty of Business, University of Montenegro', 54),
+(156, 'Faculty of Law, University of Montenegro', 54),
+(157, 'Faculty of Medicine, University of Montenegro', 54),
+(158, 'Faculty of Economics, University of Malta', 55),
+(159, 'Faculty of Law, University of Malta', 55),
+(160, 'Faculty of Medicine, University of Malta', 55),
+(161, 'Faculty of Economics, University of Cyprus', 56),
+(162, 'Faculty of Law, University of Cyprus', 56),
+(163, 'Faculty of Medicine, University of Cyprus', 56),
+(164, 'Faculty of Business, University of Bucharest', 57),
+(165, 'Faculty of Law, University of Bucharest', 57),
+(166, 'Faculty of Medicine, University of Bucharest', 57),
+(167, 'Faculty of Economics, Sofia University', 58),
+(168, 'Faculty of Law, Sofia University', 58),
+(169, 'Faculty of Medicine, Sofia University', 58),
+(170, 'Faculty of Business, University of Iceland', 59),
+(171, 'Faculty of Law, University of Iceland', 59),
+(172, 'Faculty of Medicine, University of Iceland', 59),
+(173, 'Faculty of Economics, University of Luxembourg', 60),
+(174, 'Faculty of Law, University of Luxembourg', 60),
+(175, 'Faculty of Medicine, University of Luxembourg', 60);
+
+
+INSERT INTO public."FieldOfStudy" (id, name) VALUES
+(1, 'Computer Science'),
+(2, 'Artificial intelligence    '),
+(3, 'Electrical Engineering'),
+(4, 'Civil Engineering'),
+(5, 'Biology'),
+(6, 'Chemistry'),
+(7, 'Physics'),
+(8, 'Mathematics'),
+(9, 'Psychology'),
+(10, 'Economics'),
+(11, 'Political Science'),
+(12, 'Architecture'),
+(13, 'Environmental Science'),
+(14, 'Business Administration'),
+(15, 'Graphic Design');
+
+
+INSERT INTO public."Course" (id, name, description, ects, "hoursOfLecture", "hoursOfLabs", "numberOfExams", "isAvailable", "fieldOfStudyId", "studyLevelId") VALUES
+(1, 'Software Devolopment Studio 1', 'Development of the skills related to the software product development (especially, the skills related
+to project management, requirements engineering, and software architecture) by participation in a
+capstone project. The goal of the project is to solve a problem of a real customer. The main focus is on
+developing skills related to the preparation of business case, project initiation, elicitation and
+documentation of requirements, and software architectures.', 6, 0, 0, 0, true, 1, 4),
+
+(2, 'Database Perfomance', '1. Provide students with knowledge regarding database server performance evaluation and
+management techniques. Develop students skills in solving problems related to performance issues in database applications.', 5, 30, 30, 1, true, 1, 3),
+
+(3, 'Big Data and Distributed Processing', 'The objective for this course is to give the students basic knowledge in the field of big data and
+distributed processing. In particular the presentation Big Data organization, and theoretical and practical
+aspects of the design of distributed systems that process such Big Data, as well as the challenges
+related to their development and management. Developing students skills to solve problems related to
+the organization, management and processing of Big Data in distributed environments.', 5, 30, 30, 1, true, 2, 2),
+
+(4, 'IT in Administration', 'To give students the knowledge about IT systems used in administration, with particular emphasis on
+systems used in higher education.',3, 20, 30, 0, true, 1, 4),
+
+(5, 'Data Visualization','Introduction to data visualization, i.e. creating computer-based visual representations of datasets that
+help people carry out tasks more effectively. Teaching what (data abstraction), why (task abstraction),
+and how (visual idiom) can be visualized. Helping develop practical skills of conveying information and
+enhancing decision-making through static and interactive visualizations. ', 3, 15, 15, 1, true, 2, 3),
+
+(6, 'Project Management', 'The aim of the course is to support sutdents in the preparation to play the role of a leader/manager in
+small software projects and IT ventures. The course focuses on the syncretic approach to project
+management methodologies and approaches. ', 4, 20, 30, 0, true, 1, 5),
+
+(7, 'Software Design and Modeling', 'The objective for this course is to give the students knowledge on object-oriented software modeling
+and design, based on re-using commonly accepted best practices and design patterns elaborated and
+published in literature. Additionally, the course is expected to develop skills in evaluating the quality of
+software design and source code, and the use of selected mechanisms available in object-oriented
+programming languages.', 4, 30, 30, 1, true, 1, 5),
+
+(8, 'Technolgies of Software Development', 'Provide students knowledge regarding .NET Framework and corresponding technologies, creating
+websites using Ruby on Rails framework, scripting, dynamic, functional, distributed, cloud programming.22. Develop students skills in solving problems related to creating application using different
+technologies.', 6, 30, 30, 1, true, 1, 4),
+
+(9, 'Cryptography and Basics of Cryptanalysis', 'To provide students with knowledge of advanced principles of cryptographic algorithms and to teach
+their design. To acquaint students with methods of designing selected cryptographic algorithms and
+protocols, to teach methods of analysis and evaluation of selected cryptographic systems.', 6, 30, 30, 0, true, 1, 4),
+
+(10, 'Frontend Development', 'Provide students with basic knowledge about technologies used in the construction of web
+applications, in particular frontend techniques, in the field of design approaches, technology selection
+and implementation (including solutions for mobile devices)', 4, 30, 30, 0, true, 1, 4);
+
+
+
+
+
+
+
+
