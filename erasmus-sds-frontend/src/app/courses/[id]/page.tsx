@@ -10,10 +10,11 @@ const CourseDetail = () => {
   const router = useRouter();
   const { id } = params;
 
-  const role = sessionStorage.getItem("userState");
+  const [role, setRole] = useState<string>("");
   const [course, setCourse] = useState<Course | null>(null);
 
   useEffect(() => {
+    setRole(sessionStorage.getItem("userState") as string);
     if (id) {
       // Fetch course data based on id
       // Replace this with your actual data fetching logic

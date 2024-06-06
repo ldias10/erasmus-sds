@@ -6,7 +6,6 @@ import "swiper/css";
 import { Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import requestWithAuthorization from "@/requests/serverRequestWithAuthorization";
-import { FormData } from "@/components/SignUpForm";
 
 interface Comment {
   id: number;
@@ -26,8 +25,7 @@ interface form {
 
 const Comments = ({ id }: { id: any }) => {
   const [comments, setComments] = useState<any[]>([]);
-  const role = sessionStorage.getItem("userState");
-  const [formData, setFormData] = useState<FormData>({} as FormData);
+  const [role, setRole] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   
@@ -39,16 +37,6 @@ const Comments = ({ id }: { id: any }) => {
     courseId: id,
   });
 
-  const jsonString = sessionStorage.getItem("userData");
-    if (jsonString !== null) {
-      try {
-        // Parse the JSON string to an object
-        const jsonObject = JSON.parse(jsonString);
-        form.studentUserId = jsonObject.id;
-      }
-     catch (error) {
-      console.error('Error parsing JSON string from session storage:', error);
-    }}
 
   // const getStudentName = async () => {
   //   try {
@@ -97,8 +85,12 @@ const Comments = ({ id }: { id: any }) => {
     };
 
   useEffect(() => {
-    setFormData(JSON.parse(sessionStorage.getItem("userData") as string));
+    setRole(sessionStorage.getItem("userState") as string);
+    const studentUserId: number = parseInt(JSON.parse(sessionStorage.getItem("userData") as string).userId);
+    console.log("The user data id is:",studentUserId);
     fetchComments();
+    form.studentUserId = studentUserId;
+    console.log("The form is: ",form);
     // getStudentName();
     },[]
   );
@@ -133,8 +125,15 @@ const Comments = ({ id }: { id: any }) => {
       const comment = await requestWithAuthorization(request, raw, "POST");
       const response2 = await comment;
       console.log(response2.responseData);
-      setSaveSucceeded(1);
-      fetchComments();
+      if (response2.ok) {
+        setSaveSucceeded(1);
+        fetchComments();
+      }
+      else {
+        setSaveSucceeded(0);
+      }
+      
+      
       // const response = await fetch("http://localhost:8080/comment", {
       //   method: "POST",
       //   headers: {
