@@ -29,7 +29,9 @@ import requestWithAuthorization from "@/requests/serverRequestWithAuthorization"
           router.push("/");
         }
         setIsStudent(storedUserState === "student");
-        setFormData(JSON.parse(sessionStorage.getItem("userData") as string));
+        setFormData((JSON.parse(sessionStorage.getItem("userData") as string)) as FormData);
+        console.log("the form data is:",((JSON.parse(sessionStorage.getItem("userData") as string))) as FormData);
+        console.log("the real form data is", formData);
       }
     }, []);
 
@@ -43,6 +45,7 @@ import requestWithAuthorization from "@/requests/serverRequestWithAuthorization"
     if (path === "teacher") {
       path = "professor";
     }
+    console.log("the id is:" , formData.userId);
     
     const request: string = `http://127.0.0.1:8080/${path}/${formData.userId}`;
     const raw = JSON.stringify(formData);
@@ -54,18 +57,18 @@ import requestWithAuthorization from "@/requests/serverRequestWithAuthorization"
       setLoading(true);
       console.log("The form data is:----------------dckgfthj-gfnbhgfrbf-------- ",formData);
       const editResponse = await requestWithAuthorization(request, raw, "PUT");
-      const response2 = await editResponse;
-      console.log("the edit response is: ",response2);
-      if (response2.ok) {
+      const response = await editResponse;
+      console.log("the edit response is: ",response);
+      if (response.ok) {
         setErrorMessages([]);
-        const data = response2.responseData;
+        const data = response.responseData;
         
-        sessionStorage.setItem("userData", JSON.stringify(response2.responseData));
+        sessionStorage.setItem("userData", JSON.stringify(response.responseData));
         console.log("The User data is: ",sessionStorage.getItem("userData"));
         
         setSaveSucceeded(1);
       } else {
-        const errors = response2.responseData.error || [];
+        const errors = response.responseData.error || [];
         setErrorMessages(errors);
         console.log("The errors are: ",errors);
 

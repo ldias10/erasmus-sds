@@ -18,14 +18,23 @@ const requestWithAutorization = async (request: string, body: string, method:str
       body: body,
       redirect: "follow",
     });
-    const res = await response;
-    var responseData:ResponseData = {};
-    if (res.body === null) {
+    console.log("dfsdgdsfg");
+    
+    let responseData;
+    try {
+      responseData = await response.json();
+    } catch (jsonError) {
+      // In case the response body is empty or not a valid JSON, assign an empty object
       responseData = {};
     }
-    else {
-      responseData = res.json();
-    }
+    
+    // var responseData:ResponseData = {};
+    // if (response.body === null) {
+    //   responseData = {};
+    // }
+    // else {
+    //   responseData = response.json();
+    // }
     return {
       ok: response.ok,
       responseData: responseData,

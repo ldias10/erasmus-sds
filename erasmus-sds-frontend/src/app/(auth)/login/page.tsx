@@ -5,18 +5,21 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { BiLoaderAlt } from "react-icons/bi";
+import { FormData } from "@/components/SignUpForm";
 
-interface FormData {
-  email: string;
-  password: string;
-  isVerified?: boolean; // This field might not be needed here
-}
 
 const Login = () => {
   const router = useRouter();
   const [formData, setFormData] = useState<FormData>({
+    surname: "",
+    name: "",
     email: "",
+    isVerified: true,
+    countryId: 0,
+    schoolId: 0,
+    studyLevelId: 0,
     password: "",
+    
   });
 
   const [loading, setLoading] = useState(false);
@@ -35,50 +38,46 @@ const Login = () => {
     setErrorMessages([]);
 
     try {
-      const response = await fetch("http://127.0.0.1:8080/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
 
-      const responseData = await response.json();
-      if (response.ok) {
         setErrorMessages([]);
         try {
           const loginResponse = await loginRequest(formData.email, formData.password);
           const loginResponseData = await loginResponse;
-          console.log("The login response is: ",loginResponseData);
+          console.log("The login response is: ", loginResponseData);
           if (!loginResponse.ok) {
             const errors = loginResponseData.error || [];
-            console.log("Error:",errors);
+            console.log("Error:", errors);
+          } else {
+            if (loginResponseData.body) {
+              setFormData(loginResponseData.body);
+              // sessionStorage.setItem("userData", JSON.stringify(loginResponseData.body));
+              // console.log("The User data is: ", sessionStorage.getItem("userData"));
+              const userType = loginResponseData.body.Professor === false ? 'student' : 'teacher';
+              sessionStorage.setItem("userState", userType);
+              window.dispatchEvent(new Event("storage"));
+              router.push("/");
+            }
           }
         }
         catch (error) {
           console.error("Error during login:", error);
         }
 
-        sessionStorage.setItem("userData", JSON.stringify(responseData));
-        console.log("The User data is: ", sessionStorage.getItem("userData"));
-        const userType = responseData.Professor === false ? 'student' : 'teacher';
-        sessionStorage.setItem("userState", userType);
-        window.dispatchEvent(new Event("storage"));
-        router.push("/");
-      } else if (response.status === 401 || response.status === 404) {
-        setErrorMessages([responseData.error || "Invalid email or password."]);
-      } else if (response.status === 500) {
-        setErrorMessages(["Server error, please try again later."]);
-      } else {
-        setErrorMessages(["An unexpected error occurred."]);
-      }
+        
+      // } else if (response.status === 401 || response.status === 404) {
+      //   setErrorMessages([responseData.error || "Invalid email or password."]);
+      // } else if (response.status === 500) {
+      //   setErrorMessages(["Server error, please try again later."]);
+      // } else {
+      //   setErrorMessages(["An unexpected error occurred."]);
+      // }
     } catch (error) {
       console.error("Error during login:", error);
       setErrorMessages(["An unexpected error occurred."]);
     } finally {
       setLoading(false);
-    }
-  };
+    };
+  }
 
   return (
     <>

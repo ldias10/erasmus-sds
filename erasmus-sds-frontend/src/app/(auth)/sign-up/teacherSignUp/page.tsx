@@ -60,8 +60,8 @@ const TeacherSignUp = () => {
           console.error("Error during login:", error);
         }
 
-        sessionStorage.setItem("userData", JSON.stringify(responseData));
-        console.log("The User data is: ",sessionStorage.getItem("userData"));
+        // sessionStorage.setItem("userData", JSON.stringify(responseData));
+        // console.log("The User data is: ",sessionStorage.getItem("userData"));
         console.log("the full response is: ",response);
         sessionStorage.setItem("userState", "teacher");
         window.dispatchEvent(new Event("storage"));

@@ -79,8 +79,12 @@ const Course = () => {
 );
 
 const handleDelete = async (id:number, name:string) => {
-  window.confirm(`Are you sure you want to delete the course ${name}?`);
+  const isConfirmed:boolean = window.confirm(`Are you sure you want to delete the course ${name}?`);
+  if (!isConfirmed) {
+    return;
+  }
   try {
+    console.log("The id of the course to be deleted is: ",id);
     const response = await requestWithAutorization(`${url}/course/${id}`,JSON.stringify({}),'DELETE');
     if (response.ok) {
       setCourses(courses.filter((c:Course) => c.id !== id));

@@ -13,6 +13,7 @@ export interface FormData {
   password: string;
   userId?: number;
   access_token?: string;
+  Professor?: boolean;
   }
 
 interface SignUpFormProps {
