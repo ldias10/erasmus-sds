@@ -71,7 +71,7 @@ const CourseCard = ({ data, isTeacher, isStudent, handleDelete }: { data: Course
         )}
       </div>
       <p className="mb-4">{plainify(data.description.slice(0, 100))}</p><br></br>
-      {isStudent && (
+      {/* {isStudent && (
           <Link href={"/courses"}
           className="btn2 btn-primary"
           target={
@@ -80,7 +80,7 @@ const CourseCard = ({ data, isTeacher, isStudent, handleDelete }: { data: Course
           rel="noopener">
           {"Add to my LA"}
            </Link>
-        )}
+        )} */}
     </div>
   );
 };

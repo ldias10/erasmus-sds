@@ -73,13 +73,13 @@ const CourseDetail = () => {
         <p className="mt-2 text-base">{course.description}</p>
       </div>
       <div className="mt-6">
-        {role === 'student' && 
+        {/* {role === 'student' && 
       <Link
         className="btn btn-primary"
         href={"/learning_agreement"}
         target={"/learning_agreement".startsWith("http") ? "_blank" : "_self"}
                   rel="noopener">Add this course to my LA!
-      </Link>}
+      </Link>} */}
       </div>
       <Comments id = {id} />
     </div>
