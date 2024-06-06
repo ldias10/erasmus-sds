@@ -79,3 +79,6 @@ erasmus-sds-frontend.iml
 # typescript
 /erasmus-sds-frontend/*.tsbuildinfo
 /erasmus-sds-frontend/next-env.d.ts
+
+node_modules/.yarn-integrity
+yarn.lock

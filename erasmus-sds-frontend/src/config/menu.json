@@ -1,0 +1,22 @@
+{
+  "main": [
+    {
+      "name": "Home",
+      "url": "/"
+    },
+    {
+      "name": "Courses",
+      "url": "/courses"
+    }
+  ],
+  "footer": [
+    {
+      "name": "Courses",
+      "url": "/courses"
+    },
+    {
+      "name": "LA",
+      "url": "/learning_agreement"
+    }
+  ]
+}
