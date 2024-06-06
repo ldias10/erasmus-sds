@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BiLoaderAlt } from "react-icons/bi";
 import SelectInput from './SelectInput';
+import { Option } from './SelectInput';
 
 export interface FormData {
   surname: string;
@@ -146,12 +147,11 @@ const SignUpForm = ({ formData, onSubmit, setFormData, loading, buttonText, isSt
         console.log(formData);
       };
 
-    const handleChangeSelect = (e: React.ChangeEvent<HTMLSelectElement>): void => {
-      const { name, value } = e.target;
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
+      const handleChangeSelect = (name: string, selectedOption: Option | null): void => {
+        setFormData({
+          ...formData,
+          [name]: selectedOption ? selectedOption.id : '',
+        });
       };
 
 return  (

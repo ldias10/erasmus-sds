@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Course } from "@/app/courses/page";
 import { IoIosMore } from "react-icons/io";
 import { IoMdAddCircleOutline } from "react-icons/io";
+import { set } from "date-fns";
 
 const CourseCard = ({ data, isTeacher, isStudent, handleDelete }: { data: Course , isTeacher:boolean, isStudent:boolean, handleDelete: (id: number, name:string) => void;}) => {
   console.log(isTeacher)
@@ -21,6 +22,11 @@ const CourseCard = ({ data, isTeacher, isStudent, handleDelete }: { data: Course
       setShowMenu(false);
     }
   };
+
+  const localHandleDelete = () => {
+    setShowMenu(false);
+    handleDelete(data.id, data.name);
+  }
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
@@ -59,7 +65,7 @@ const CourseCard = ({ data, isTeacher, isStudent, handleDelete }: { data: Course
                 <li>
                   <button
                     className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left"
-                    onClick={() => handleDelete(data.id, data.name)}
+                    onClick={() => localHandleDelete()}
                   >
                     Delete
                   </button>
