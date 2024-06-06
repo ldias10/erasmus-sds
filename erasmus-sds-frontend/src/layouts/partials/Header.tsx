@@ -156,16 +156,29 @@ const Header = () => {
               )}
             </React.Fragment>
           ))}
-          {navigation_button.enable && (
-            <li className="mt-4 inline-block lg:hidden">
-              <Link
-                className="btn btn-outline-primary btn-sm"
-                href={navigation_button.url}
-              >
-                {navigation_button.label}
-              </Link>
-            </li>
-          )}
+          {isVisible ? (
+  nav_button.enable && (
+    <li className="mt-4 inline-block lg:hidden">
+      <Link
+        className="btn btn-outline-primary btn-sm"
+        href={nav_button.url}
+      >
+        {nav_button.label}
+      </Link>
+    </li>
+  )
+) : (
+  navigation_button.enable && (
+    <li className="mt-4 inline-block lg:hidden">
+      <Link
+        className="btn btn-outline-primary btn-sm"
+        href={navigation_button.url}
+      >
+        {navigation_button.label}
+      </Link>
+    </li>
+  )
+)}
         </ul>
         <div className="order-1 ml-auto flex items-center md:order-2 lg:ml-0">
           {settings.search && (
