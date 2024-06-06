@@ -18,7 +18,6 @@ const requestWithAutorization = async (request: string, body: string, method:str
       body: body,
       redirect: "follow",
     });
-    console.log("dfsdgdsfg");
     
     let responseData;
     try {

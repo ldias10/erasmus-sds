@@ -87,10 +87,8 @@ const Comments = ({ id }: { id: any }) => {
   useEffect(() => {
     setRole(sessionStorage.getItem("userState") as string);
     const studentUserId: number = parseInt(JSON.parse(sessionStorage.getItem("userData") as string).userId);
-    console.log("The user data id is:",studentUserId);
     fetchComments();
     form.studentUserId = studentUserId;
-    console.log("The form is: ",form);
     // getStudentName();
     },[]
   );
